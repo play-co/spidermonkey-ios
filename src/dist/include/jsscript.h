@@ -1,1 +1,0 @@
-/Users/cat/sandbox/spidermonkey-ios/src/jsscript.h
