@@ -401,11 +401,12 @@ js_DoubleToECMAInt32(jsdouble d)
     }
 
     return int32(du.d);
-#elif defined (__arm__) && defined (__GNUC__) && !defined(__thumb__)
+#elif defined (__arm__) && defined (__GNUC__)
     int32_t i;
     uint32_t    tmp0;
     uint32_t    tmp1;
     uint32_t    tmp2;
+    uint32_t    tmp3;
     asm (
     // We use a pure integer solution here. In the 'softfp' ABI, the argument
     // will start in r0 and r1, and VFP can't do all of the necessary ECMA
@@ -419,12 +420,12 @@ js_DoubleToECMAInt32(jsdouble d)
     // %1, %2 and %3 are used as temporary values.
 
     // Extract the exponent.
-"   mov     %1, %R4, LSR #20\n"
+"   mov     %1, R4, LSR #20\n"
 "   bic     %1, %1, #(1 << 11)\n"  // Clear the sign.
 
     // Set the implicit top bit of the mantissa. This clobbers a bit of the
     // exponent, but we have already extracted that.
-"   orr     %R4, %R4, #(1 << 20)\n"
+"   orr     R4, R4, #(1 << 20)\n"
 
     // Special Cases
     //   We should return zero in the following special cases:
@@ -462,13 +463,13 @@ js_DoubleToECMAInt32(jsdouble d)
 "   orr     %3, %3, %2, LSR #3\n"
     // We can now perform a straight shift, avoiding the need for any
     // conditional instructions or extra branches.
-"   mov     %Q4, %Q4, LSL %3\n"
+"   mov     %4, %4, LSL %3\n"
 "   b       2f\n"
 "1:\n" // Shift r0 right by 52-exp.
     // We know that 0 <= exp < 52, and we can shift up to 255 bits so 52-exp
     // will always be a valid shift and we can sk%3 the range check for this case.
 "   rsb     %3, %1, #52\n"
-"   mov     %Q4, %Q4, LSR %3\n"
+"   mov     %4, %4, LSR %3\n"
 
     //  %1 = (decoded) exponent
     //  %R4 = upper mantissa and sign
@@ -483,7 +484,7 @@ js_DoubleToECMAInt32(jsdouble d)
     // it left more to remove the sign and exponent so it is effectively
     // pre-shifted by 31 bits.
 "   subs    %3, %1, #31\n"          // Calculate exp-31
-"   mov     %1, %R4, LSL #11\n"     // Re-use %1 as a temporary register.
+"   mov     %1, R4, LSL #11\n"     // Re-use %1 as a temporary register.
 "   bmi     3f\n"
 
     // Shift %R4 left by exp-31.
@@ -505,21 +506,21 @@ js_DoubleToECMAInt32(jsdouble d)
 
 "4:\n"
     // Combine the converted parts.
-"   orr     %Q4, %Q4, %2\n"
+"   orr     %4, %4, %2\n"
     // Negate the result if we have to, and move it to %0 in the process. To
     // avoid conditionals, we can do this by inverting on %R4[31], then adding
     // %R4[31]>>31.
-"   eor     %Q4, %Q4, %R4, ASR #31\n"
-"   add     %0, %Q4, %R4, LSR #31\n"
+"   eor     %4, %4, R4, ASR #31\n"
+"   add     %0, %4, R4, LSR #31\n"
 "   b       9f\n"
 "8:\n"
     // +/-INFINITY, +/-0, subnormals, NaNs, and anything else out-of-range that
     // will result in a conversion of '0'.
 "   mov     %0, #0\n"
 "9:\n"
-    : "=r" (i), "=&r" (tmp0), "=&r" (tmp1), "=&r" (tmp2)
+    : "=r" (i), "=&r" (tmp0), "=&r" (tmp1), "=&r" (tmp2), "=&r" (tmp3)
     : "r" (d)
-    : "cc"
+    : "cc", "r4"
         );
     return i;
 #else

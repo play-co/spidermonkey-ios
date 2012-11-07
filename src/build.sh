@@ -55,6 +55,48 @@ OLD_HOST_CC=$HOST_CC
 OLD_HOST_CXX=$HOST_CXX
 
 
+# Build for iPhone device
+make distclean
+rm -f libjs_static.a.armv7
+export DEVROOT=/Applications/Xcode.app/Contents/Developer//Platforms/iPhoneOS.platform/Developer/
+export SDKROOT=$DEVROOT/SDKs/iPhoneOS6.0.sdk
+#_local_cflags="-isysroot $SDKROOT -no-cpp-precomp -pipe -I$SDKROOT/usr/include/ -L$SDKROOT/usr/lib/"
+
+echo "------------------------------------------------------------------------"
+echo "Building for iPhone with $SDKROOT"
+echo "------------------------------------------------------------------------"
+
+export SDKCFLAGS="-isysroot $SDKROOT -no-cpp-precomp -pipe -I$SDKROOT/usr/include/ -Wall -L$SDKROOT/usr/lib -F$SDKROOT/System/Library/Frameworks -march=armv7-a $CAT_NATIVE_CFLAGS -no-integrated-as -DWTF_CPU_ARM_THUMB2=1 -ftree-vectorize -mfloat-abi=hard -ffast-math -fsingle-precision-constant"
+export CC="$DEVROOT/usr/bin/arm-apple-darwin10-llvm-gcc-4.2 $SDKCFLAGS"
+export CFLAGS=""
+export CXX="$DEVROOT/usr/bin/arm-apple-darwin10-llvm-g++-4.2 $SDKCFLAGS -I$SDKROOT/usr/include/c++/4.2.1/"
+export CXXFLAGS="$CFLAGS"
+export LD="$DEVROOT/usr/bin/ld"
+export LDFLAGS="-L$SDKROOT/usr/lib"
+export AR="$DEVROOT/usr/bin/ar"
+export AS="$DEVROOT/usr/bin/as -arch armv7"
+export RANLIB="$DEVROOT/usr/bin/ranlib"
+export HOST_CC="/usr/bin/gcc"
+export HOST_CXX="/usr/bin/g++"
+
+echo "Testing GCC for workingness...."
+echo $CC
+$CC test.c || exit 1
+
+echo "Testing G++ for workingness...."
+echo $CXX
+$CXX test.cpp || exit 1
+
+./configure \
+	--disable-tracejit \
+	--disable-optimize \
+	--host=arm-apple-darwin \
+    --disable-shared \
+    --enable-static || exit 1
+make -j8 || exit 1
+
+mv libjs_static.a libjs_static.a.armv7
+
 
 # Build for iPhone simulator
 make distclean
@@ -99,95 +141,10 @@ make -j8 || exit 1
 mv libjs_static.a libjs_static.a.i386
 
 
-# Build for iPhone4 device
-make distclean
-rm -f libjs_static.a.armv7
-export DEVROOT=/Applications/Xcode.app/Contents/Developer//Platforms/iPhoneOS.platform/Developer/
-export SDKROOT=$DEVROOT/SDKs/iPhoneOS6.0.sdk
-#_local_cflags="-isysroot $SDKROOT -no-cpp-precomp -pipe -I$SDKROOT/usr/include/ -L$SDKROOT/usr/lib/"
-
-echo "------------------------------------------------------------------------"
-echo "Building for iPhone3GS-iPhone4S with $SDKROOT"
-echo "------------------------------------------------------------------------"
-
-export SDKCFLAGS="-isysroot $SDKROOT -no-cpp-precomp -pipe -I$SDKROOT/usr/include/ -Wall -L$SDKROOT/usr/lib -F$SDKROOT/System/Library/Frameworks -march=armv7 -mthumb $CAT_NATIVE_CFLAGS"
-export CC="$DEVROOT/usr/bin/arm-apple-darwin10-llvm-gcc-4.2 $SDKCFLAGS"
-export CFLAGS=""
-export CXX="$DEVROOT/usr/bin/arm-apple-darwin10-llvm-g++-4.2 $SDKCFLAGS -I$SDKROOT/usr/include/c++/4.2.1/"
-export CXXFLAGS="$CFLAGS"
-export LD="$DEVROOT/usr/bin/ld"
-export LDFLAGS="-L$SDKROOT/usr/lib"
-export AR="$DEVROOT/usr/bin/ar"
-export AS="$DEVROOT/usr/bin/as"
-export RANLIB="$DEVROOT/usr/bin/ranlib"
-export HOST_CC="/usr/bin/gcc"
-export HOST_CXX="/usr/bin/g++"
-
-echo "Testing GCC for workingness...."
-echo $CC
-$CC test.c || exit 1
-
-echo "Testing G++ for workingness...."
-echo $CXX
-$CXX test.cpp || exit 1
-
-./configure \
-	--disable-tracejit \
-	--disable-optimize \
-	--host=arm-apple-darwin \
-    --disable-shared \
-    --enable-static || exit 1
-make -j8 || exit 1
-
-mv libjs_static.a libjs_static.a.armv7
-
-# Build for iPhone5 device
-make distclean
-rm -f libjs_static.a.armv7s
-export DEVROOT=/Applications/Xcode.app/Contents/Developer//Platforms/iPhoneOS.platform/Developer/
-export SDKROOT=$DEVROOT/SDKs/iPhoneOS6.0.sdk
-#_local_cflags="-isysroot $SDKROOT -no-cpp-precomp -pipe -I$SDKROOT/usr/include/"
-
-echo "------------------------------------------------------------------------"
-echo "Building for iPhone5 with $SDKROOT"
-echo "------------------------------------------------------------------------"
-
-export SDKCFLAGS="-isysroot $SDKROOT -no-cpp-precomp -pipe -I$SDKROOT/usr/include/ -Wall -L$SDKROOT/usr/lib -F$SDKROOT/System/Library/Frameworks -march=armv7s -mthumb $CAT_NATIVE_CFLAGS"
-export CC="$DEVROOT/usr/bin/arm-apple-darwin10-llvm-gcc-4.2 $SDKCFLAGS"
-export CFLAGS=""
-export CXX="$DEVROOT/usr/bin/arm-apple-darwin10-llvm-g++-4.2 $SDKCFLAGS -I$SDKROOT/usr/include/c++/4.2.1/"
-export CXXFLAGS="$CFLAGS"
-export LD="$DEVROOT/usr/bin/ld"
-export LDFLAGS="-L$SDKROOT/usr/lib"
-export AR="$DEVROOT/usr/bin/ar"
-export AS="$DEVROOT/usr/bin/as"
-export RANLIB="$DEVROOT/usr/bin/ranlib"
-export HOST_CC="/usr/bin/gcc"
-export HOST_CXX="/usr/bin/g++"
-
-echo "Testing GCC for workingness...."
-echo $CC
-$CC test.c || exit 1
-
-echo "Testing G++ for workingness...."
-echo $CXX
-$CXX test.cpp || exit 1
-
-./configure \
-	--disable-tracejit \
-	--disable-optimize \
-	--host=arm-apple-darwin \
-    --disable-shared \
-    --enable-static || exit 1
-make -j8 || exit 1
-
-mv libjs_static.a libjs_static.a.armv7s
-
 # Make a fat library
 export LIPO="xcrun -sdk iphoneos lipo"
 
 $LIPO \
-    -arch armv7s libjs_static.a.armv7s \
     -arch armv7 libjs_static.a.armv7 \
     -arch i386 libjs_static.a.i386 \
     -create -output libjs_static.a

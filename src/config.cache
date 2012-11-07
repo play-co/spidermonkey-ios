@@ -12,12 +12,12 @@
 # config.status only pays attention to the cache file if you give it the
 # --recheck option to rerun configure.
 #
-ac_cv___va_copy=${ac_cv___va_copy=no}
+ac_cv___va_copy=${ac_cv___va_copy=yes}
 ac_cv_c_const=${ac_cv_c_const=yes}
 ac_cv_can_resolve_const_ambiguity=${ac_cv_can_resolve_const_ambiguity=yes}
 ac_cv_cpp_access_changing_using2=${ac_cv_cpp_access_changing_using2=yes}
 ac_cv_cpp_ambiguity_resolving_using=${ac_cv_cpp_ambiguity_resolving_using=yes}
-ac_cv_cpp_dynamic_cast_void_ptr=${ac_cv_cpp_dynamic_cast_void_ptr=no}
+ac_cv_cpp_dynamic_cast_void_ptr=${ac_cv_cpp_dynamic_cast_void_ptr=yes}
 ac_cv_cpp_explicit=${ac_cv_cpp_explicit=yes}
 ac_cv_cpp_modern_specialize_template_syntax=${ac_cv_cpp_modern_specialize_template_syntax=yes}
 ac_cv_cpp_namespace_std=${ac_cv_cpp_namespace_std=yes}
@@ -25,37 +25,36 @@ ac_cv_cpp_partial_specialization=${ac_cv_cpp_partial_specialization=yes}
 ac_cv_cpp_reinterpret_cast=${ac_cv_cpp_reinterpret_cast=yes}
 ac_cv_cpp_typename=${ac_cv_cpp_typename=yes}
 ac_cv_cpp_unambiguous_std_notequal=${ac_cv_cpp_unambiguous_std_notequal=unambiguous}
-ac_cv_cpp_unused_required=${ac_cv_cpp_unused_required=yes}
-ac_cv_func__Unwind_Backtrace=${ac_cv_func__Unwind_Backtrace=no}
-ac_cv_func___cxa_demangle=${ac_cv_func___cxa_demangle=no}
+ac_cv_cpp_unused_required=${ac_cv_cpp_unused_required=no}
+ac_cv_func__Unwind_Backtrace=${ac_cv_func__Unwind_Backtrace=yes}
+ac_cv_func___cxa_demangle=${ac_cv_func___cxa_demangle=yes}
 ac_cv_func__getc_nolock=${ac_cv_func__getc_nolock=no}
-ac_cv_func_dladdr=${ac_cv_func_dladdr=no}
-ac_cv_func_fchmod=${ac_cv_func_fchmod=no}
-ac_cv_func_flockfile=${ac_cv_func_flockfile=no}
-ac_cv_func_getc_unlocked=${ac_cv_func_getc_unlocked=no}
-ac_cv_func_getpagesize=${ac_cv_func_getpagesize=no}
+ac_cv_func_dladdr=${ac_cv_func_dladdr=yes}
+ac_cv_func_fchmod=${ac_cv_func_fchmod=yes}
+ac_cv_func_flockfile=${ac_cv_func_flockfile=yes}
+ac_cv_func_getc_unlocked=${ac_cv_func_getc_unlocked=yes}
+ac_cv_func_getpagesize=${ac_cv_func_getpagesize=yes}
 ac_cv_func_gnu_get_libc_version=${ac_cv_func_gnu_get_libc_version=no}
-ac_cv_func_lchown=${ac_cv_func_lchown=no}
-ac_cv_func_localeconv=${ac_cv_func_localeconv=no}
-ac_cv_func_localtime_r=${ac_cv_func_localtime_r=no}
-ac_cv_func_lstat64=${ac_cv_func_lstat64=no}
-ac_cv_func_memcmp_clean=${ac_cv_func_memcmp_clean=no}
-ac_cv_func_memmove=${ac_cv_func_memmove=no}
-ac_cv_func_random=${ac_cv_func_random=no}
+ac_cv_func_lchown=${ac_cv_func_lchown=yes}
+ac_cv_func_localeconv=${ac_cv_func_localeconv=yes}
+ac_cv_func_localtime_r=${ac_cv_func_localtime_r=yes}
+ac_cv_func_lstat64=${ac_cv_func_lstat64=yes}
+ac_cv_func_memcmp_clean=${ac_cv_func_memcmp_clean=yes}
+ac_cv_func_memmove=${ac_cv_func_memmove=yes}
+ac_cv_func_random=${ac_cv_func_random=yes}
 ac_cv_func_res_ninit=${ac_cv_func_res_ninit=no}
-ac_cv_func_rint=${ac_cv_func_rint=no}
-ac_cv_func_sbrk=${ac_cv_func_sbrk=no}
-ac_cv_func_setlocale=${ac_cv_func_setlocale=no}
-ac_cv_func_snprintf=${ac_cv_func_snprintf=no}
-ac_cv_func_stat64=${ac_cv_func_stat64=no}
-ac_cv_func_statvfs=${ac_cv_func_statvfs=no}
+ac_cv_func_rint=${ac_cv_func_rint=yes}
+ac_cv_func_sbrk=${ac_cv_func_sbrk=yes}
+ac_cv_func_setlocale=${ac_cv_func_setlocale=yes}
+ac_cv_func_snprintf=${ac_cv_func_snprintf=yes}
+ac_cv_func_stat64=${ac_cv_func_stat64=yes}
+ac_cv_func_statvfs=${ac_cv_func_statvfs=yes}
 ac_cv_func_statvfs64=${ac_cv_func_statvfs64=no}
-ac_cv_func_strerror=${ac_cv_func_strerror=no}
-ac_cv_func_strtok_r=${ac_cv_func_strtok_r=no}
+ac_cv_func_strerror=${ac_cv_func_strerror=yes}
+ac_cv_func_strtok_r=${ac_cv_func_strtok_r=yes}
 ac_cv_func_truncate64=${ac_cv_func_truncate64=no}
-ac_cv_gcc_arm_eabi=${ac_cv_gcc_arm_eabi=no}
 ac_cv_gcc_three_abi=${ac_cv_gcc_three_abi=yes}
-ac_cv_have_dash_pthread=${ac_cv_have_dash_pthread=no}
+ac_cv_have_dash_pthread=${ac_cv_have_dash_pthread=yes}
 ac_cv_have_dash_pthreads=${ac_cv_have_dash_pthreads=no}
 ac_cv_have_getsystemtimeasfiletime=${ac_cv_have_getsystemtimeasfiletime=no}
 ac_cv_have_systemtimetofiletime=${ac_cv_have_systemtimetofiletime=no}
@@ -72,7 +71,7 @@ ac_cv_header_gnu_libc_version_h=${ac_cv_header_gnu_libc_version_h=no}
 ac_cv_header_linux_perf_event_h=${ac_cv_header_linux_perf_event_h=no}
 ac_cv_header_malloc_h=${ac_cv_header_malloc_h=no}
 ac_cv_header_memory_h=${ac_cv_header_memory_h=yes}
-ac_cv_header_mmintrin_h=${ac_cv_header_mmintrin_h=no}
+ac_cv_header_mmintrin_h=${ac_cv_header_mmintrin_h=yes}
 ac_cv_header_new=${ac_cv_header_new=yes}
 ac_cv_header_nl_types_h=${ac_cv_header_nl_types_h=yes}
 ac_cv_header_stdc=${ac_cv_header_stdc=yes}
@@ -97,7 +96,7 @@ ac_cv_lib_socket_socket=${ac_cv_lib_socket_socket=no}
 ac_cv_mkshlib_force_and_unforce=${ac_cv_mkshlib_force_and_unforce=no}
 ac_cv_need_cpp_template_cast_to_base=${ac_cv_need_cpp_template_cast_to_base=no}
 ac_cv_need_derived_template_operators=${ac_cv_need_derived_template_operators=no}
-ac_cv_path_AS=${ac_cv_path_AS=/Applications/Xcode.app/Contents/Developer//Platforms/iPhoneOS.platform/Developer//usr/bin/as}
+ac_cv_path_AS=${ac_cv_path_AS=/Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//usr/bin/as}
 ac_cv_path_AUTOCONF=${ac_cv_path_AUTOCONF=/usr/local/bin/autoconf}
 ac_cv_path_DOXYGEN=${ac_cv_path_DOXYGEN=:}
 ac_cv_path_MAKE=${ac_cv_path_MAKE=/usr/bin/make}
@@ -110,21 +109,21 @@ ac_cv_path_UNZIP=${ac_cv_path_UNZIP=/usr/bin/unzip}
 ac_cv_path_XARGS=${ac_cv_path_XARGS=/usr/bin/xargs}
 ac_cv_path_ZIP=${ac_cv_path_ZIP=/usr/bin/zip}
 ac_cv_path_install=${ac_cv_path_install='/usr/bin/install -c'}
-ac_cv_prog_AR=${ac_cv_prog_AR=/Applications/Xcode.app/Contents/Developer//Platforms/iPhoneOS.platform/Developer//usr/bin/ar}
+ac_cv_prog_AR=${ac_cv_prog_AR=/Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//usr/bin/ar}
 ac_cv_prog_AWK=${ac_cv_prog_AWK=gawk}
-ac_cv_prog_CC=${ac_cv_prog_CC='/Applications/Xcode.app/Contents/Developer//Platforms/iPhoneOS.platform/Developer//usr/bin/arm-apple-darwin10-llvm-gcc-4.2 -isysroot /Applications/Xcode.app/Contents/Developer//Platforms/iPhoneOS.platform/Developer//SDKs/iPhoneOS6.0.sdk -no-cpp-precomp -pipe -I/Applications/Xcode.app/Contents/Developer//Platforms/iPhoneOS.platform/Developer//SDKs/iPhoneOS6.0.sdk/usr/include/ -Wall -L/Applications/Xcode.app/Contents/Developer//Platforms/iPhoneOS.platform/Developer//SDKs/iPhoneOS6.0.sdk/usr/lib -F/Applications/Xcode.app/Contents/Developer//Platforms/iPhoneOS.platform/Developer//SDKs/iPhoneOS6.0.sdk/System/Library/Frameworks -march=armv7s -mthumb -O3'}
-ac_cv_prog_CPP=${ac_cv_prog_CPP='/Applications/Xcode.app/Contents/Developer//Platforms/iPhoneOS.platform/Developer//usr/bin/arm-apple-darwin10-llvm-gcc-4.2 -isysroot /Applications/Xcode.app/Contents/Developer//Platforms/iPhoneOS.platform/Developer//SDKs/iPhoneOS6.0.sdk -no-cpp-precomp -pipe -I/Applications/Xcode.app/Contents/Developer//Platforms/iPhoneOS.platform/Developer//SDKs/iPhoneOS6.0.sdk/usr/include/ -Wall -L/Applications/Xcode.app/Contents/Developer//Platforms/iPhoneOS.platform/Developer//SDKs/iPhoneOS6.0.sdk/usr/lib -F/Applications/Xcode.app/Contents/Developer//Platforms/iPhoneOS.platform/Developer//SDKs/iPhoneOS6.0.sdk/System/Library/Frameworks -march=armv7s -mthumb -O3 -E'}
-ac_cv_prog_CXX=${ac_cv_prog_CXX='/Applications/Xcode.app/Contents/Developer//Platforms/iPhoneOS.platform/Developer//usr/bin/arm-apple-darwin10-llvm-g++-4.2 -isysroot /Applications/Xcode.app/Contents/Developer//Platforms/iPhoneOS.platform/Developer//SDKs/iPhoneOS6.0.sdk -no-cpp-precomp -pipe -I/Applications/Xcode.app/Contents/Developer//Platforms/iPhoneOS.platform/Developer//SDKs/iPhoneOS6.0.sdk/usr/include/ -Wall -L/Applications/Xcode.app/Contents/Developer//Platforms/iPhoneOS.platform/Developer//SDKs/iPhoneOS6.0.sdk/usr/lib -F/Applications/Xcode.app/Contents/Developer//Platforms/iPhoneOS.platform/Developer//SDKs/iPhoneOS6.0.sdk/System/Library/Frameworks -march=armv7s -mthumb -O3 -I/Applications/Xcode.app/Contents/Developer//Platforms/iPhoneOS.platform/Developer//SDKs/iPhoneOS6.0.sdk/usr/include/c++/4.2.1/'}
-ac_cv_prog_CXXCPP=${ac_cv_prog_CXXCPP='/Applications/Xcode.app/Contents/Developer//Platforms/iPhoneOS.platform/Developer//usr/bin/arm-apple-darwin10-llvm-g++-4.2 -isysroot /Applications/Xcode.app/Contents/Developer//Platforms/iPhoneOS.platform/Developer//SDKs/iPhoneOS6.0.sdk -no-cpp-precomp -pipe -I/Applications/Xcode.app/Contents/Developer//Platforms/iPhoneOS.platform/Developer//SDKs/iPhoneOS6.0.sdk/usr/include/ -Wall -L/Applications/Xcode.app/Contents/Developer//Platforms/iPhoneOS.platform/Developer//SDKs/iPhoneOS6.0.sdk/usr/lib -F/Applications/Xcode.app/Contents/Developer//Platforms/iPhoneOS.platform/Developer//SDKs/iPhoneOS6.0.sdk/System/Library/Frameworks -march=armv7s -mthumb -O3 -I/Applications/Xcode.app/Contents/Developer//Platforms/iPhoneOS.platform/Developer//SDKs/iPhoneOS6.0.sdk/usr/include/c++/4.2.1/ -E'}
-ac_cv_prog_LD=${ac_cv_prog_LD=/Applications/Xcode.app/Contents/Developer//Platforms/iPhoneOS.platform/Developer//usr/bin/ld}
+ac_cv_prog_CC=${ac_cv_prog_CC='/Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//usr/bin/i686-apple-darwin11-llvm-gcc-4.2 -isysroot /Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk -mmacosx-version-min=10.6 -L/Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk/usr/lib -no-cpp-precomp -pipe -O3'}
+ac_cv_prog_CPP=${ac_cv_prog_CPP='/Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//usr/bin/i686-apple-darwin11-llvm-gcc-4.2 -isysroot /Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk -mmacosx-version-min=10.6 -L/Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk/usr/lib -no-cpp-precomp -pipe -O3 -E'}
+ac_cv_prog_CXX=${ac_cv_prog_CXX='/Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//usr/bin/i686-apple-darwin11-llvm-g++-4.2 -isysroot /Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk -mmacosx-version-min=10.6 -L/Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk/usr/lib -no-cpp-precomp -pipe -O3'}
+ac_cv_prog_CXXCPP=${ac_cv_prog_CXXCPP='/Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//usr/bin/i686-apple-darwin11-llvm-g++-4.2 -isysroot /Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk -mmacosx-version-min=10.6 -L/Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk/usr/lib -no-cpp-precomp -pipe -O3 -E'}
+ac_cv_prog_LD=${ac_cv_prog_LD=/Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//usr/bin/ld}
 ac_cv_prog_LN_S=${ac_cv_prog_LN_S='ln -s'}
-ac_cv_prog_RANLIB=${ac_cv_prog_RANLIB=/Applications/Xcode.app/Contents/Developer//Platforms/iPhoneOS.platform/Developer//usr/bin/ranlib}
+ac_cv_prog_RANLIB=${ac_cv_prog_RANLIB=/Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//usr/bin/ranlib}
 ac_cv_prog_STRIP=${ac_cv_prog_STRIP=strip}
-ac_cv_prog_cc__Applications_Xcode_app_Contents_Developer__Platforms_iPhoneOS_platform_Developer__usr_bin_arm_apple_darwin10_llvm_gcc_4_2_c_o=${ac_cv_prog_cc__Applications_Xcode_app_Contents_Developer__Platforms_iPhoneOS_platform_Developer__usr_bin_arm_apple_darwin10_llvm_gcc_4_2_c_o=yes}
-ac_cv_prog_cc_cross=${ac_cv_prog_cc_cross=yes}
+ac_cv_prog_cc__Applications_Xcode_app_Contents_Developer__Platforms_iPhoneSimulator_platform_Developer__usr_bin_i686_apple_darwin11_llvm_gcc_4_2_c_o=${ac_cv_prog_cc__Applications_Xcode_app_Contents_Developer__Platforms_iPhoneSimulator_platform_Developer__usr_bin_i686_apple_darwin11_llvm_gcc_4_2_c_o=yes}
+ac_cv_prog_cc_cross=${ac_cv_prog_cc_cross=no}
 ac_cv_prog_cc_g=${ac_cv_prog_cc_g=yes}
 ac_cv_prog_cc_works=${ac_cv_prog_cc_works=yes}
-ac_cv_prog_cxx_cross=${ac_cv_prog_cxx_cross=yes}
+ac_cv_prog_cxx_cross=${ac_cv_prog_cxx_cross=no}
 ac_cv_prog_cxx_g=${ac_cv_prog_cxx_g=yes}
 ac_cv_prog_cxx_works=${ac_cv_prog_cxx_works=yes}
 ac_cv_prog_gcc=${ac_cv_prog_gcc=yes}
@@ -141,9 +140,9 @@ ac_cv_type_pid_t=${ac_cv_type_pid_t=yes}
 ac_cv_type_size_t=${ac_cv_type_size_t=yes}
 ac_cv_type_ssize_t=${ac_cv_type_ssize_t=true}
 ac_cv_uint=${ac_cv_uint=true}
-ac_cv_uint16_t=${ac_cv_uint16_t=true}
+ac_cv_uint16_t=${ac_cv_uint16_t=false}
 ac_cv_uint_t=${ac_cv_uint_t=false}
-ac_cv_va_copy=${ac_cv_va_copy=no}
+ac_cv_va_copy=${ac_cv_va_copy=yes}
 ac_cv_va_val_copy=${ac_cv_va_val_copy=yes}
 ac_cv_visibility_builtin_bug=${ac_cv_visibility_builtin_bug=yes}
 ac_cv_visibility_default=${ac_cv_visibility_default=yes}
