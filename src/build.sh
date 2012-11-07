@@ -66,7 +66,7 @@ echo "------------------------------------------------------------------------"
 echo "Building for iPhone with $SDKROOT"
 echo "------------------------------------------------------------------------"
 
-export SDKCFLAGS="-isysroot $SDKROOT -no-cpp-precomp -pipe -I$SDKROOT/usr/include/ -Wall -L$SDKROOT/usr/lib -F$SDKROOT/System/Library/Frameworks -march=armv7-a $CAT_NATIVE_CFLAGS -no-integrated-as -DWTF_CPU_ARM_THUMB2=1 -ftree-vectorize -mfloat-abi=hard -ffast-math -fsingle-precision-constant"
+export SDKCFLAGS="-isysroot $SDKROOT -no-cpp-precomp -pipe -I$SDKROOT/usr/include/ -Wall -L$SDKROOT/usr/lib -F$SDKROOT/System/Library/Frameworks -march=armv7-a -mthumb $CAT_NATIVE_CFLAGS -no-integrated-as -DWTF_CPU_ARM_THUMB2=1 -ftree-vectorize -mfloat-abi=hard"
 export CC="$DEVROOT/usr/bin/arm-apple-darwin10-llvm-gcc-4.2 $SDKCFLAGS"
 export CFLAGS=""
 export CXX="$DEVROOT/usr/bin/arm-apple-darwin10-llvm-g++-4.2 $SDKCFLAGS -I$SDKROOT/usr/include/c++/4.2.1/"
