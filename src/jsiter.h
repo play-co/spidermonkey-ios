@@ -1,41 +1,9 @@
-/* -*- Mode: C; tab-width: 8; indent-tabs-mode: nil; c-basic-offset: 4 -*-
+/* -*- Mode: C++; tab-width: 8; indent-tabs-mode: nil; c-basic-offset: 4 -*-
  * vim: set ts=8 sw=4 et tw=78:
  *
- * ***** BEGIN LICENSE BLOCK *****
- * Version: MPL 1.1/GPL 2.0/LGPL 2.1 *
- * The contents of this file are subject to the Mozilla Public License Version
- * 1.1 (the "License"); you may not use this file except in compliance with
- * the License. You may obtain a copy of the License at
- * http://www.mozilla.org/MPL/
- *
- * Software distributed under the License is distributed on an "AS IS" basis,
- * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
- * for the specific language governing rights and limitations under the
- * License.
- *
- * The Original Code is Mozilla Communicator client code, released
- * March 31, 1998.
- *
- * The Initial Developer of the Original Code is
- * Netscape Communications Corporation.
- * Portions created by the Initial Developer are Copyright (C) 1998
- * the Initial Developer. All Rights Reserved.
- *
- * Contributor(s):
- *
- * Alternatively, the contents of this file may be used under the terms of
- * either of the GNU General Public License Version 2 or later (the "GPL"),
- * or the GNU Lesser General Public License Version 2.1 or later (the "LGPL"),
- * in which case the provisions of the GPL or the LGPL are applicable instead
- * of those above. If you wish to allow use of your version of this file only
- * under the terms of either the GPL or the LGPL, and not to allow others to
- * use your version of this file under the terms of the MPL, indicate your
- * decision by deleting the provisions above and replace them with the notice
- * and other provisions required by the GPL or the LGPL. If you do not delete
- * the provisions above, a recipient may use your version of this file under
- * the terms of any one of the MPL, the GPL or the LGPL.
- *
- * ***** END LICENSE BLOCK ***** */
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 #ifndef jsiter_h___
 #define jsiter_h___
@@ -43,223 +11,310 @@
 /*
  * JavaScript iterators.
  */
+#include "jscntxt.h"
 #include "jsprvtd.h"
 #include "jspubtd.h"
 #include "jsversion.h"
 
-/*
- * NB: these flag bits are encoded into the bytecode stream in the immediate
- * operand of JSOP_ITER, so don't change them without advancing jsxdrapi.h's
- * JSXDR_BYTECODE_VERSION.
- */
-#define JSITER_ENUMERATE  0x1   /* for-in compatible hidden default iterator */
-#define JSITER_FOREACH    0x2   /* return [key, value] pair rather than key */
-#define JSITER_KEYVALUE   0x4   /* destructuring for-in wants [key, value] */
-#define JSITER_OWNONLY    0x8   /* iterate over obj's own properties only */
-#define JSITER_HIDDEN     0x10  /* also enumerate non-enumerable properties */
+#include "gc/Barrier.h"
+#include "vm/Stack.h"
 
-struct NativeIterator {
-    JSObject  *obj;
-    void      *props_array;
-    void      *props_cursor;
-    void      *props_end;
-    uint32    *shapes_array;
-    uint32    shapes_length;
-    uint32    shapes_key;
-    uintN     flags;
-    JSObject  *next;
+/*
+ * For cacheable native iterators, whether the iterator is currently active.
+ * Not serialized by XDR.
+ */
+#define JSITER_ACTIVE       0x1000
+#define JSITER_UNREUSABLE   0x2000
+
+namespace js {
+
+struct NativeIterator
+{
+    HeapPtrObject obj;
+    HeapPtr<JSFlatString> *props_array;
+    HeapPtr<JSFlatString> *props_cursor;
+    HeapPtr<JSFlatString> *props_end;
+    Shape **shapes_array;
+    uint32_t shapes_length;
+    uint32_t shapes_key;
+    uint32_t flags;
+    PropertyIteratorObject *next;  /* Forms cx->enumerators list, garbage otherwise. */
 
     bool isKeyIter() const { return (flags & JSITER_FOREACH) == 0; }
 
-    inline jsid *beginKey() const {
-        JS_ASSERT(isKeyIter());
-        return (jsid *)props_array;
+    inline HeapPtr<JSFlatString> *begin() const {
+        return props_array;
     }
 
-    inline jsid *endKey() const {
-        JS_ASSERT(isKeyIter());
-        return (jsid *)props_end;
+    inline HeapPtr<JSFlatString> *end() const {
+        return props_end;
     }
 
     size_t numKeys() const {
-        return endKey() - beginKey();
+        return end() - begin();
     }
 
-    jsid *currentKey() const {
-        JS_ASSERT(isKeyIter());
-        return reinterpret_cast<jsid *>(props_cursor);
+    HeapPtr<JSFlatString> *current() const {
+        JS_ASSERT(props_cursor < props_end);
+        return props_cursor;
     }
 
-    void incKeyCursor() {
-        JS_ASSERT(isKeyIter());
-        props_cursor = reinterpret_cast<jsid *>(props_cursor) + 1;
+    void incCursor() {
+        props_cursor = props_cursor + 1;
     }
 
-    inline js::Value *beginValue() const {
-        JS_ASSERT(!isKeyIter());
-        return (js::Value *)props_array;
-    }
-
-    inline js::Value *endValue() const {
-        JS_ASSERT(!isKeyIter());
-        return (js::Value *)props_end;
-    }
-
-    size_t numValues() const {
-        return endValue() - beginValue();
-    }
-
-    js::Value *currentValue() const {
-        JS_ASSERT(!isKeyIter());
-        return reinterpret_cast<js::Value *>(props_cursor);
-    }
-
-    void incValueCursor() {
-        JS_ASSERT(!isKeyIter());
-        props_cursor = reinterpret_cast<js::Value *>(props_cursor) + 1;
-    }
-
-    static NativeIterator *allocateKeyIterator(JSContext *cx, uint32 slength,
-                                               const js::AutoIdVector &props);
-    static NativeIterator *allocateValueIterator(JSContext *cx, uint32 slength,
-                                                 const js::AutoValueVector &props);
-    void init(JSObject *obj, uintN flags, const uint32 *sarray, uint32 slength, uint32 key);
+    static NativeIterator *allocateIterator(JSContext *cx, uint32_t slength,
+                                            const js::AutoIdVector &props);
+    void init(RawObject obj, unsigned flags, uint32_t slength, uint32_t key);
 
     void mark(JSTracer *trc);
 };
 
-bool
-VectorToIdArray(JSContext *cx, js::AutoIdVector &props, JSIdArray **idap);
+class PropertyIteratorObject : public JSObject
+{
+  public:
+    static Class class_;
+
+    inline NativeIterator *getNativeIterator() const;
+    inline void setNativeIterator(js::NativeIterator *ni);
+
+    size_t sizeOfMisc(JSMallocSizeOfFun mallocSizeOf) const;
+
+  private:
+    static void trace(JSTracer *trc, RawObject obj);
+    static void finalize(FreeOp *fop, RawObject obj);
+};
+
+/*
+ * Array iterators are roughly like this:
+ *
+ *   Array.prototype.iterator = function iterator() {
+ *       for (var i = 0; i < (this.length >>> 0); i++)
+ *           yield this[i];
+ *   }
+ *
+ * However they are not generators. They are a different class. The semantics
+ * of Array iterators will be given in the eventual ES6 spec in full detail.
+ */
+class ElementIteratorObject : public JSObject
+{
+  public:
+    static JSObject *create(JSContext *cx, Handle<Value> target);
+    static JSFunctionSpec methods[];
+
+    enum {
+        TargetSlot,
+        IndexSlot,
+        NumSlots
+    };
+
+    static JSBool next(JSContext *cx, unsigned argc, Value *vp);
+    static bool next_impl(JSContext *cx, JS::CallArgs args);
+};
 
 bool
-GetPropertyNames(JSContext *cx, JSObject *obj, uintN flags, js::AutoIdVector &props);
+VectorToIdArray(JSContext *cx, AutoIdVector &props, JSIdArray **idap);
 
 bool
-GetIterator(JSContext *cx, JSObject *obj, uintN flags, js::Value *vp);
+GetIterator(JSContext *cx, HandleObject obj, unsigned flags, MutableHandleValue vp);
+
+JSObject *
+GetIteratorObject(JSContext *cx, HandleObject obj, unsigned flags);
 
 bool
-VectorToKeyIterator(JSContext *cx, JSObject *obj, uintN flags, js::AutoIdVector &props, js::Value *vp);
+VectorToKeyIterator(JSContext *cx, HandleObject obj, unsigned flags, AutoIdVector &props,
+                    MutableHandleValue vp);
 
 bool
-VectorToValueIterator(JSContext *cx, JSObject *obj, uintN flags, js::AutoValueVector &props, js::Value *vp);
+VectorToValueIterator(JSContext *cx, HandleObject obj, unsigned flags, AutoIdVector &props,
+                      MutableHandleValue vp);
 
 /*
  * Creates either a key or value iterator, depending on flags. For a value
  * iterator, performs value-lookup to convert the given list of jsids.
  */
 bool
-EnumeratedIdVectorToIterator(JSContext *cx, JSObject *obj, uintN flags, js::AutoIdVector &props, js::Value *vp);
+EnumeratedIdVectorToIterator(JSContext *cx, HandleObject obj, unsigned flags, AutoIdVector &props,
+                             MutableHandleValue vp);
 
 /*
  * Convert the value stored in *vp to its iteration object. The flags should
- * contain JSITER_ENUMERATE if js_ValueToIterator is called when enumerating
+ * contain JSITER_ENUMERATE if js::ValueToIterator is called when enumerating
  * for-in semantics are required, and when the caller can guarantee that the
  * iterator will never be exposed to scripts.
  */
-extern JS_FRIEND_API(JSBool)
-js_ValueToIterator(JSContext *cx, uintN flags, js::Value *vp);
-
-extern JS_FRIEND_API(JSBool)
-js_CloseIterator(JSContext *cx, JSObject *iterObj);
+bool
+ValueToIterator(JSContext *cx, unsigned flags, MutableHandleValue vp);
 
 bool
-js_SuppressDeletedProperty(JSContext *cx, JSObject *obj, jsid id);
+CloseIterator(JSContext *cx, HandleObject iterObj);
+
+bool
+UnwindIteratorForException(JSContext *cx, js::HandleObject obj);
+
+void
+UnwindIteratorForUncatchableException(JSContext *cx, RawObject obj);
+
+JSBool
+IteratorConstructor(JSContext *cx, unsigned argc, Value *vp);
+
+}
+
+extern bool
+js_SuppressDeletedProperty(JSContext *cx, js::HandleObject obj, jsid id);
+
+extern bool
+js_SuppressDeletedElement(JSContext *cx, js::HandleObject obj, uint32_t index);
+
+extern bool
+js_SuppressDeletedElements(JSContext *cx, js::HandleObject obj, uint32_t begin, uint32_t end);
 
 /*
  * IteratorMore() indicates whether another value is available. It might
  * internally call iterobj.next() and then cache the value until its
  * picked up by IteratorNext(). The value is cached in the current context.
  */
-extern JSBool
-js_IteratorMore(JSContext *cx, JSObject *iterobj, js::Value *rval);
+extern bool
+js_IteratorMore(JSContext *cx, js::HandleObject iterobj, js::MutableHandleValue rval);
 
-extern JSBool
-js_IteratorNext(JSContext *cx, JSObject *iterobj, js::Value *rval);
+extern bool
+js_IteratorNext(JSContext *cx, js::HandleObject iterobj, js::MutableHandleValue rval);
 
 extern JSBool
 js_ThrowStopIteration(JSContext *cx);
+
+namespace js {
+
+/*
+ * Get the next value from an iterator object.
+ *
+ * On success, store the next value in *vp and return true; if there are no
+ * more values, store the magic value JS_NO_ITER_VALUE in *vp and return true.
+ */
+inline bool
+Next(JSContext *cx, HandleObject iter, MutableHandleValue vp)
+{
+    if (!js_IteratorMore(cx, iter, vp))
+        return false;
+    if (vp.toBoolean())
+        return js_IteratorNext(cx, iter, vp);
+    vp.setMagic(JS_NO_ITER_VALUE);
+    return true;
+}
+
+/*
+ * Convenience class for imitating a JS level for-of loop. Typical usage:
+ *
+ *     ForOfIterator it(cx, iterable);
+ *     while (it.next()) {
+ *        if (!DoStuff(cx, it.value()))
+ *            return false;
+ *     }
+ *     if (!it.close())
+ *         return false;
+ *
+ * The final it.close() check is needed in order to check for cases where
+ * any of the iterator operations fail.
+ *
+ * it.close() may be skipped only if something in the body of the loop fails
+ * and the failure is allowed to propagate on cx, as in this example if DoStuff
+ * fails. In that case, ForOfIterator's destructor does all necessary cleanup.
+ */
+class ForOfIterator
+{
+  private:
+    JSContext *cx;
+    RootedObject iterator;
+    RootedValue currentValue;
+    bool ok;
+    bool closed;
+
+    ForOfIterator(const ForOfIterator &) MOZ_DELETE;
+    ForOfIterator &operator=(const ForOfIterator &) MOZ_DELETE;
+
+  public:
+    ForOfIterator(JSContext *cx, const Value &iterable)
+        : cx(cx), iterator(cx, NULL), currentValue(cx), closed(false)
+    {
+        RootedValue iterv(cx, iterable);
+        ok = ValueToIterator(cx, JSITER_FOR_OF, &iterv);
+        iterator = ok ? &iterv.get().toObject() : NULL;
+    }
+
+    ~ForOfIterator() {
+        if (!closed)
+            close();
+    }
+
+    bool next() {
+        JS_ASSERT(!closed);
+        ok = ok && Next(cx, iterator, &currentValue);
+        return ok && !currentValue.get().isMagic(JS_NO_ITER_VALUE);
+    }
+
+    Value &value() {
+        JS_ASSERT(ok);
+        JS_ASSERT(!closed);
+        return currentValue.get();
+    }
+
+    bool close() {
+        JS_ASSERT(!closed);
+        closed = true;
+        if (!iterator)
+            return false;
+        bool throwing = cx->isExceptionPending();
+        RootedValue exc(cx);
+        if (throwing) {
+            exc = cx->getPendingException();
+            cx->clearPendingException();
+        }
+        bool closedOK = CloseIterator(cx, iterator);
+        if (throwing && closedOK)
+            cx->setPendingException(exc);
+        return ok && !throwing && closedOK;
+    }
+};
+
+} /* namespace js */
 
 #if JS_HAS_GENERATORS
 
 /*
  * Generator state codes.
  */
-typedef enum JSGeneratorState {
+enum JSGeneratorState
+{
     JSGEN_NEWBORN,  /* not yet started */
     JSGEN_OPEN,     /* started by a .next() or .send(undefined) call */
     JSGEN_RUNNING,  /* currently executing via .next(), etc., call */
     JSGEN_CLOSING,  /* close method is doing asynchronous return */
     JSGEN_CLOSED    /* closed, cannot be started or closed again */
-} JSGeneratorState;
+};
 
-struct JSGenerator {
-    JSObject            *obj;
+struct JSGenerator
+{
+    js::HeapPtrObject   obj;
     JSGeneratorState    state;
-    JSFrameRegs         savedRegs;
-    uintN               vplen;
-    JSStackFrame        *liveFrame;
-    JSObject            *enumerators;
-    js::Value           floatingStack[1];
-
-    JSStackFrame *getFloatingFrame() {
-        return reinterpret_cast<JSStackFrame *>(floatingStack + vplen);
-    }
-
-    JSStackFrame *getLiveFrame() {
-        JS_ASSERT((state == JSGEN_RUNNING || state == JSGEN_CLOSING) ==
-                  (liveFrame != getFloatingFrame()));
-        return liveFrame;
-    }
+    js::FrameRegs       regs;
+    js::PropertyIteratorObject *enumerators;
+    JSGenerator         *prevGenerator;
+    js::StackFrame      *fp;
+    js::HeapValue       stackSnapshot[1];
 };
 
 extern JSObject *
 js_NewGenerator(JSContext *cx);
 
-/*
- * Generator stack frames do not have stable pointers since they get copied to
- * and from the generator object and the stack (see SendToGenerator). This is a
- * problem for Block and With objects, which need to store a pointer to the
- * enclosing stack frame. The solution is for Block and With objects to store
- * a pointer to the "floating" stack frame stored in the generator object,
- * since it is stable, and maintain, in the generator object, a pointer to the
- * "live" stack frame (either a copy on the stack or the floating frame). Thus,
- * Block and With objects must "normalize" to and from the floating/live frames
- * in the case of generators using the following functions.
- */
-inline JSStackFrame *
-js_FloatingFrameIfGenerator(JSContext *cx, JSStackFrame *fp)
-{
-    JS_ASSERT(cx->stack().contains(fp));
-    if (JS_UNLIKELY(fp->isGenerator()))
-        return cx->generatorFor(fp)->getFloatingFrame();
-    return fp;
-}
+namespace js {
 
-/* Given a floating frame, given the JSGenerator containing it. */
-extern JSGenerator *
-js_FloatingFrameToGenerator(JSStackFrame *fp);
+bool
+GeneratorHasMarkableFrame(JSGenerator *gen);
 
-inline JSStackFrame *
-js_LiveFrameIfGenerator(JSStackFrame *fp)
-{
-    if (fp->flags & JSFRAME_GENERATOR)
-        return js_FloatingFrameToGenerator(fp)->getLiveFrame();
-    return fp;
-}
-
+} /* namespace js */
 #endif
 
-extern js::Class js_GeneratorClass;
-extern js::Class js_IteratorClass;
-extern js::Class js_StopIterationClass;
-
-static inline bool
-js_ValueIsStopIteration(const js::Value &v)
-{
-    return v.isObject() && v.toObject().getClass() == &js_StopIterationClass;
-}
-
 extern JSObject *
-js_InitIteratorClasses(JSContext *cx, JSObject *obj);
+js_InitIteratorClasses(JSContext *cx, js::HandleObject obj);
 
 #endif /* jsiter_h___ */

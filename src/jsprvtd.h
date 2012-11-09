@@ -1,41 +1,8 @@
-/* -*- Mode: C; tab-width: 8; indent-tabs-mode: nil; c-basic-offset: 4 -*-
+/* -*- Mode: C++; tab-width: 8; indent-tabs-mode: nil; c-basic-offset: 4 -*-
  *
- * ***** BEGIN LICENSE BLOCK *****
- * Version: MPL 1.1/GPL 2.0/LGPL 2.1
- *
- * The contents of this file are subject to the Mozilla Public License Version
- * 1.1 (the "License"); you may not use this file except in compliance with
- * the License. You may obtain a copy of the License at
- * http://www.mozilla.org/MPL/
- *
- * Software distributed under the License is distributed on an "AS IS" basis,
- * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
- * for the specific language governing rights and limitations under the
- * License.
- *
- * The Original Code is Mozilla Communicator client code, released
- * March 31, 1998.
- *
- * The Initial Developer of the Original Code is
- * Netscape Communications Corporation.
- * Portions created by the Initial Developer are Copyright (C) 1998
- * the Initial Developer. All Rights Reserved.
- *
- * Contributor(s):
- *
- * Alternatively, the contents of this file may be used under the terms of
- * either of the GNU General Public License Version 2 or later (the "GPL"),
- * or the GNU Lesser General Public License Version 2.1 or later (the "LGPL"),
- * in which case the provisions of the GPL or the LGPL are applicable instead
- * of those above. If you wish to allow use of your version of this file only
- * under the terms of either the GPL or the LGPL, and not to allow others to
- * use your version of this file under the terms of the MPL, indicate your
- * decision by deleting the provisions above and replace them with the notice
- * and other provisions required by the GPL or the LGPL. If you do not delete
- * the provisions above, a recipient may use your version of this file under
- * the terms of any one of the MPL, the GPL or the LGPL.
- *
- * ***** END LICENSE BLOCK ***** */
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 #ifndef jsprvtd_h___
 #define jsprvtd_h___
@@ -54,10 +21,13 @@
  * make dependency induced by this file should not prove painful.
  */
 
-#include "jspubtd.h"
+#include "jsapi.h"
 #include "jsutil.h"
 
-JS_BEGIN_EXTERN_C
+#ifdef __cplusplus
+#include "js/HashTable.h"
+#include "js/Vector.h"
+#endif
 
 /*
  * Convenience constants.
@@ -66,64 +36,31 @@ JS_BEGIN_EXTERN_C
 #define JS_BITS_PER_UINT32      32
 
 /* The alignment required of objects stored in GC arenas. */
-static const uintN JS_GCTHING_ALIGN = 8;
-static const uintN JS_GCTHING_ZEROBITS = 3;
+static const unsigned JS_GCTHING_ALIGN = 8;
+static const unsigned JS_GCTHING_ZEROBITS = 3;
 
 /* Scalar typedefs. */
-typedef uint8  jsbytecode;
-typedef uint8  jssrcnote;
-typedef uint32 jsatomid;
-
-#ifdef __cplusplus
-
-/* Class and struct forward declarations in namespace js. */
-extern "C++" {
-namespace js {
-struct Parser;
-struct Compiler;
-class RegExp;
-}
-}
-
-#endif
+typedef uint8_t     jsbytecode;
+typedef uint8_t     jssrcnote;
+typedef uintptr_t   jsatomid;
 
 /* Struct typedefs. */
-typedef struct JSArgumentFormatMap  JSArgumentFormatMap;
-typedef struct JSCodeGenerator      JSCodeGenerator;
 typedef struct JSGCThing            JSGCThing;
 typedef struct JSGenerator          JSGenerator;
 typedef struct JSNativeEnumerator   JSNativeEnumerator;
-typedef struct JSFunctionBox        JSFunctionBox;
-typedef struct JSObjectBox          JSObjectBox;
-typedef struct JSParseNode          JSParseNode;
-typedef struct JSProperty           JSProperty;
-typedef struct JSSharpObjectMap     JSSharpObjectMap;
-typedef struct JSEmptyScope         JSEmptyScope;
-typedef struct JSThread             JSThread;
-typedef struct JSThreadData         JSThreadData;
-typedef struct JSTreeContext        JSTreeContext;
 typedef struct JSTryNote            JSTryNote;
-typedef struct JSWeakRoots          JSWeakRoots;
 
 /* Friend "Advanced API" typedefs. */
-typedef struct JSAtom               JSAtom;
-typedef struct JSAtomList           JSAtomList;
-typedef struct JSAtomListElement    JSAtomListElement;
-typedef struct JSAtomMap            JSAtomMap;
 typedef struct JSAtomState          JSAtomState;
 typedef struct JSCodeSpec           JSCodeSpec;
 typedef struct JSPrinter            JSPrinter;
-typedef struct JSRegExpStatics      JSRegExpStatics;
-typedef struct JSScope              JSScope;
-typedef struct JSScopeOps           JSScopeOps;
-typedef struct JSScopeProperty      JSScopeProperty;
 typedef struct JSStackHeader        JSStackHeader;
 typedef struct JSSubString          JSSubString;
-typedef struct JSNativeTraceInfo    JSNativeTraceInfo;
 typedef struct JSSpecializedNative  JSSpecializedNative;
+
+#if JS_HAS_XML_SUPPORT
 typedef struct JSXML                JSXML;
-typedef struct JSXMLArray           JSXMLArray;
-typedef struct JSXMLArrayCursor     JSXMLArrayCursor;
+#endif
 
 /*
  * Template declarations.
@@ -133,60 +70,189 @@ typedef struct JSXMLArrayCursor     JSXMLArrayCursor;
  * templates.
  */
 #ifdef __cplusplus
+
 extern "C++" {
+
+class JSDependentString;
+class JSExtensibleString;
+class JSExternalString;
+class JSLinearString;
+class JSRope;
+class JSAtom;
+class JSWrapper;
 
 namespace js {
 
-class RegExp;
+struct ArgumentsData;
+struct Class;
+
+class RegExpGuard;
+class RegExpObject;
+class RegExpObjectBuilder;
+class RegExpShared;
 class RegExpStatics;
-class AutoStringRooter;
+class MatchPairs;
+class PropertyName;
+
+namespace detail { class RegExpCode; }
+
+enum RegExpFlag
+{
+    IgnoreCaseFlag  = 0x01,
+    GlobalFlag      = 0x02,
+    MultilineFlag   = 0x04,
+    StickyFlag      = 0x08,
+
+    NoFlags         = 0x00,
+    AllFlags        = 0x0f
+};
+
+enum RegExpExecType
+{
+    RegExpExec,
+    RegExpTest
+};
+
 class ExecuteArgsGuard;
 class InvokeFrameGuard;
 class InvokeArgsGuard;
-class TraceRecorder;
-struct TraceMonitor;
-class StackSpace;
-class StackSegment;
+class StringBuffer;
 
-class TokenStream;
+class FrameRegs;
+class StackFrame;
+class StackSegment;
+class StackSpace;
+class ContextStack;
+class ScriptFrameIter;
+
+class Proxy;
+class JS_FRIEND_API(BaseProxyHandler);
+class JS_FRIEND_API(Wrapper);
+class JS_FRIEND_API(CrossCompartmentWrapper);
+
+class TempAllocPolicy;
+class RuntimeAllocPolicy;
+
+class GlobalObject;
+
+template <typename K,
+          typename V,
+          size_t InlineElems>
+class InlineMap;
+
+class LifoAlloc;
+
+class BaseShape;
+class UnownedBaseShape;
+struct Shape;
+struct EmptyShape;
+class ShapeKindArray;
+class Bindings;
+
+struct StackBaseShape;
+struct StackShape;
+
+class Breakpoint;
+class BreakpointSite;
+class Debugger;
+class WatchpointMap;
+
+/*
+ * Env is the type of what ES5 calls "lexical environments" (runtime
+ * activations of lexical scopes). This is currently just JSObject, and is
+ * implemented by Call, Block, With, and DeclEnv objects, among others--but
+ * environments and objects are really two different concepts.
+ */
+typedef JSObject Env;
+
+typedef JSNative             Native;
+typedef JSPropertyOp         PropertyOp;
+typedef JSStrictPropertyOp   StrictPropertyOp;
+typedef JSPropertyDescriptor PropertyDescriptor;
+
+namespace frontend {
+
+struct BytecodeEmitter;
+struct Definition;
+class FunctionBox;
+class ObjectBox;
 struct Token;
 struct TokenPos;
 struct TokenPtr;
+class TokenStream;
+struct Parser;
+class ParseMapPool;
+struct ParseNode;
 
-class ContextAllocPolicy;
-class SystemAllocPolicy;
+} /* namespace frontend */
 
-template <class T,
-          size_t MinInlineCapacity = 0,
-          class AllocPolicy = ContextAllocPolicy>
-class Vector;
+namespace analyze {
 
-template <class>
-struct DefaultHasher;
+struct LifetimeVariable;
+class LoopAnalysis;
+class ScriptAnalysis;
+class SlotValue;
+class SSAValue;
+class SSAUseChain;
 
-template <class Key,
-          class Value,
-          class HashPolicy = DefaultHasher<Key>,
-          class AllocPolicy = ContextAllocPolicy>
-class HashMap;
+} /* namespace analyze */
 
-template <class T,
-          class HashPolicy = DefaultHasher<T>,
-          class AllocPolicy = ContextAllocPolicy>
-class HashSet;
+namespace types {
 
-class DeflatedStringCache;
+class TypeSet;
+struct TypeCallsite;
+struct TypeObject;
+struct TypeCompartment;
 
-class PropertyCache;
-struct PropertyCacheEntry;
+} /* namespace types */
 
+typedef JS::Handle<Shape*>             HandleShape;
+typedef JS::Handle<BaseShape*>         HandleBaseShape;
+typedef JS::Handle<types::TypeObject*> HandleTypeObject;
+typedef JS::Handle<JSAtom*>            HandleAtom;
+typedef JS::Handle<PropertyName*>      HandlePropertyName;
+
+typedef JS::MutableHandle<Shape*>      MutableHandleShape;
+typedef JS::MutableHandle<JSAtom*>     MutableHandleAtom;
+
+typedef JSAtom *                       RawAtom;
+
+typedef js::Rooted<Shape*>             RootedShape;
+typedef js::Rooted<BaseShape*>         RootedBaseShape;
+typedef js::Rooted<types::TypeObject*> RootedTypeObject;
+typedef js::Rooted<JSAtom*>            RootedAtom;
+typedef js::Rooted<PropertyName*>      RootedPropertyName;
+
+enum XDRMode {
+    XDR_ENCODE,
+    XDR_DECODE
+};
+
+template <XDRMode mode>
+class XDRState;
+
+class FreeOp;
 
 } /* namespace js */
 
-/* Common instantiations. */
-typedef js::Vector<jschar, 32> JSCharBuffer;
+namespace JSC {
+
+class ExecutableAllocator;
+
+} /* namespace JSC */
+
+namespace WTF {
+
+class BumpPointerAllocator;
+
+} /* namespace WTF */
 
 } /* export "C++" */
+
+#else
+
+typedef struct JSAtom JSAtom;
+
 #endif  /* __cplusplus */
 
 /* "Friend" types used by jscntxt.h and jsdbgapi.h. */
@@ -222,19 +288,19 @@ typedef JSBool
 typedef void
 (* JSNewScriptHook)(JSContext  *cx,
                     const char *filename,  /* URL of script */
-                    uintN      lineno,     /* first line */
+                    unsigned      lineno,     /* first line */
                     JSScript   *script,
                     JSFunction *fun,
                     void       *callerdata);
 
 /* called just before script destruction */
 typedef void
-(* JSDestroyScriptHook)(JSContext *cx,
-                        JSScript  *script,
+(* JSDestroyScriptHook)(JSFreeOp *fop,
+                        JSRawScript script,
                         void      *callerdata);
 
 typedef void
-(* JSSourceHandler)(const char *filename, uintN lineno, jschar *str,
+(* JSSourceHandler)(const char *filename, unsigned lineno, const jschar *str,
                     size_t length, void **listenerTSData, void *closure);
 
 /*
@@ -291,94 +357,25 @@ typedef struct JSDebugHooks {
     void                *debugErrorHookData;
 } JSDebugHooks;
 
-/* JSObjectOps function pointer typedefs. */
-
-/*
- * Look for id in obj and its prototype chain, returning false on error or
- * exception, true on success.  On success, return null in *propp if id was
- * not found.  If id was found, return the first object searching from obj
- * along its prototype chain in which id names a direct property in *objp, and
- * return a non-null, opaque property pointer in *propp.
- *
- * If JSLookupPropOp succeeds and returns with *propp non-null, that pointer
- * may be passed as the prop parameter to a JSAttributesOp, as a short-cut
- * that bypasses id re-lookup.  In any case, a non-null *propp result after a
- * successful lookup must be dropped via JSObject::dropProperty.
- *
- * NB: successful return with non-null *propp means the implementation may
- * have locked *objp and added a reference count associated with *propp, so
- * callers should not risk deadlock by nesting or interleaving other lookups
- * or any obj-bearing ops before dropping *propp.
- */
-typedef JSBool
-(* JSLookupPropOp)(JSContext *cx, JSObject *obj, jsid id, JSObject **objp,
-                   JSProperty **propp);
-
-/*
- * Define obj[id], a direct property of obj named id, having the given initial
- * value, with the specified getter, setter, and attributes.
- */
-typedef JSBool
-(* JSDefinePropOp)(JSContext *cx, JSObject *obj, jsid id, const jsval *value,
-                   JSPropertyOp getter, JSPropertyOp setter, uintN attrs);
-
-/*
- * Get, set, or delete obj[id], returning false on error or exception, true
- * on success.  If getting or setting, the new value is returned in *vp on
- * success.  If deleting without error, *vp will be JSVAL_FALSE if obj[id] is
- * permanent, and JSVAL_TRUE if id named a direct property of obj that was in
- * fact deleted, or if id names no direct property of obj (id could name a
- * prototype property, or no property in obj or its prototype chain).
- */
-typedef JSBool
-(* JSPropertyIdOp)(JSContext *cx, JSObject *obj, jsid id, jsval *vp);
-
-/*
- * Get or set attributes of the property obj[id]. Return false on error or
- * exception, true with current attributes in *attrsp.
- */
-typedef JSBool
-(* JSAttributesOp)(JSContext *cx, JSObject *obj, jsid id, uintN *attrsp);
-
-/*
- * The type of ops->call. Same argument types as JSFastNative, but a different
- * contract. A JSCallOp expects a dummy stack frame with the caller's
- * scopeChain.
- */
-typedef JSBool
-(* JSCallOp)(JSContext *cx, uintN argc, jsval *vp);
+/* js::ObjectOps function pointer typedefs. */
 
 /*
  * A generic type for functions mapping an object to another object, or null
  * if an error or exception was thrown on cx.
  */
 typedef JSObject *
-(* JSObjectOp)(JSContext *cx, JSObject *obj);
+(* JSObjectOp)(JSContext *cx, JSHandleObject obj);
+
+/* Signature for class initialization ops. */
+typedef JSObject *
+(* JSClassInitializerOp)(JSContext *cx, JSHandleObject obj);
 
 /*
  * Hook that creates an iterator object for a given object. Returns the
  * iterator object or null if an error or exception was thrown on cx.
  */
 typedef JSObject *
-(* JSIteratorOp)(JSContext *cx, JSObject *obj, JSBool keysonly);
+(* JSIteratorOp)(JSContext *cx, JSHandleObject obj, JSBool keysonly);
 
-/*
- * The following determines whether JS_EncodeCharacters and JS_DecodeBytes
- * treat char[] as utf-8 or simply as bytes that need to be inflated/deflated.
- */
-#ifdef JS_C_STRINGS_ARE_UTF8
-# define js_CStringsAreUTF8 JS_TRUE
-#else
-extern JSBool js_CStringsAreUTF8;
-#endif
-
-/*
- * Hack to expose obj->getOps()->outer to the C implementation of the debugger
- * interface.
- */
-extern JS_FRIEND_API(JSObject *)
-js_ObjectToOuterObject(JSContext *cx, JSObject *obj);
-
-JS_END_EXTERN_C
 
 #endif /* jsprvtd_h___ */

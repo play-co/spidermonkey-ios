@@ -25,7 +25,7 @@
 
 #include "ExecutableAllocator.h"
 
-#if ENABLE_ASSEMBLER && WTF_PLATFORM_UNIX && !WTF_PLATFORM_SYMBIAN
+#if ENABLE_ASSEMBLER && WTF_OS_UNIX && !WTF_OS_SYMBIAN
 
 #include <sys/mman.h>
 #include <unistd.h>
@@ -33,27 +33,28 @@
 
 namespace JSC {
 
-void ExecutableAllocator::intializePageSize()
+size_t ExecutableAllocator::determinePageSize()
 {
-    ExecutableAllocator::pageSize = getpagesize();
+    return getpagesize();
 }
 
-ExecutablePool::Allocation ExecutablePool::systemAlloc(size_t n)
+ExecutablePool::Allocation ExecutableAllocator::systemAlloc(size_t n)
 {
     void* allocation = mmap(NULL, n, INITIAL_PROTECTION_FLAGS, MAP_PRIVATE | MAP_ANON, VM_TAG_FOR_EXECUTABLEALLOCATOR_MEMORY, 0);
     if (allocation == MAP_FAILED)
-        CRASH();
+        allocation = NULL;
     ExecutablePool::Allocation alloc = { reinterpret_cast<char*>(allocation), n };
     return alloc;
 }
 
-void ExecutablePool::systemRelease(const ExecutablePool::Allocation& alloc)
+void ExecutableAllocator::systemRelease(const ExecutablePool::Allocation& alloc)
 { 
     int result = munmap(alloc.pages, alloc.size);
     ASSERT_UNUSED(result, !result);
 }
 
-void ExecutableAllocator::reprotectRegion(void* start, size_t size, ProtectionSeting setting)
+#if WTF_ENABLE_ASSEMBLER_WX_EXCLUSIVE
+void ExecutableAllocator::reprotectRegion(void* start, size_t size, ProtectionSetting setting)
 {
     if (!pageSize)
         intializePageSize();
@@ -71,8 +72,9 @@ void ExecutableAllocator::reprotectRegion(void* start, size_t size, ProtectionSe
 
     mprotect(pageStart, size, (setting == Writable) ? PROTECTION_FLAGS_RW : PROTECTION_FLAGS_RX);
 }
+#endif
 
-#if WTF_CPU_ARM_TRADITIONAL && WTF_PLATFORM_LINUX && WTF_COMPILER_RVCT
+#if WTF_CPU_ARM_TRADITIONAL && WTF_OS_LINUX && WTF_COMPILER_RVCT
 __asm void ExecutableAllocator::cacheFlush(void* code, size_t size)
 {
     ARM

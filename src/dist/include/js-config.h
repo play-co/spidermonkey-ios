@@ -1,1 +1,1 @@
-/Users/cat/Downloads/mozilla-central-5cce3845d654/js/src/js-config.h
+/Users/cat/Downloads/newsm/js/src/js-config.h

@@ -1,40 +1,7 @@
 /* -*- Mode: C++; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
-/* ***** BEGIN LICENSE BLOCK *****
- * Version: MPL 1.1/GPL 2.0/LGPL 2.1
- *
- * The contents of this file are subject to the Mozilla Public License Version
- * 1.1 (the "License"); you may not use this file except in compliance with
- * the License. You may obtain a copy of the License at
- * http://www.mozilla.org/MPL/
- *
- * Software distributed under the License is distributed on an "AS IS" basis,
- * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
- * for the specific language governing rights and limitations under the
- * License.
- *
- * The Original Code is Mozilla Communicator client code, released
- * March 31, 1998.
- *
- * The Initial Developer of the Original Code is
- * Netscape Communications Corporation.
- * Portions created by the Initial Developer are Copyright (C) 1998
- * the Initial Developer. All Rights Reserved.
- *
- * Contributor(s):
- *
- * Alternatively, the contents of this file may be used under the terms of
- * either the GNU General Public License Version 2 or later (the "GPL"), or
- * the GNU Lesser General Public License Version 2.1 or later (the "LGPL"),
- * in which case the provisions of the GPL or the LGPL are applicable instead
- * of those above. If you wish to allow use of your version of this file only
- * under the terms of either the GPL or the LGPL, and not to allow others to
- * use your version of this file under the terms of the MPL, indicate your
- * decision by deleting the provisions above and replace them with the notice
- * and other provisions required by the GPL or the LGPL. If you do not delete
- * the provisions above, a recipient may use your version of this file under
- * the terms of any one of the MPL, the GPL or the LGPL.
- *
- * ***** END LICENSE BLOCK ***** */
+/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 
 /**
@@ -124,25 +91,6 @@ new TestCase( SECTION, "\\333",      String.fromCharCode(219),      "\333" );
 //    new TestCase( SECTION, "\\444",      "444",                         "\444" );
 
 // DoubleStringCharacters:DoubleStringCharacter::EscapeSequence::HexEscapeSequence
-/*
-  new TestCase( SECTION, "\\x0",      String.fromCharCode(0),         "\x0" );
-  new TestCase( SECTION, "\\x1",      String.fromCharCode(1),         "\x1" );
-  new TestCase( SECTION, "\\x2",      String.fromCharCode(2),         "\x2" );
-  new TestCase( SECTION, "\\x3",      String.fromCharCode(3),         "\x3" );
-  new TestCase( SECTION, "\\x4",      String.fromCharCode(4),         "\x4" );
-  new TestCase( SECTION, "\\x5",      String.fromCharCode(5),         "\x5" );
-  new TestCase( SECTION, "\\x6",      String.fromCharCode(6),         "\x6" );
-  new TestCase( SECTION, "\\x7",      String.fromCharCode(7),         "\x7" );
-  new TestCase( SECTION, "\\x8",      String.fromCharCode(8),         "\x8" );
-  new TestCase( SECTION, "\\x9",      String.fromCharCode(9),         "\x9" );
-  new TestCase( SECTION, "\\xA",      String.fromCharCode(10),         "\xA" );
-  new TestCase( SECTION, "\\xB",      String.fromCharCode(11),         "\xB" );
-  new TestCase( SECTION, "\\xC",      String.fromCharCode(12),         "\xC" );
-  new TestCase( SECTION, "\\xD",      String.fromCharCode(13),         "\xD" );
-  new TestCase( SECTION, "\\xE",      String.fromCharCode(14),         "\xE" );
-  new TestCase( SECTION, "\\xF",      String.fromCharCode(15),         "\xF" );
-
-*/
 new TestCase( SECTION, "\\xF0",      String.fromCharCode(240),         "\xF0" );
 new TestCase( SECTION, "\\xE1",      String.fromCharCode(225),         "\xE1" );
 new TestCase( SECTION, "\\xD2",      String.fromCharCode(210),         "\xD2" );
@@ -180,11 +128,6 @@ new TestCase( SECTION, "\\x2D2",      String.fromCharCode(45)+"2",         "\x2D
 new TestCase( SECTION, "\\x1E1",      String.fromCharCode(30)+"1",         "\x1E1" );
 new TestCase( SECTION, "\\x0F0",      String.fromCharCode(15)+"0",         "\x0F0" );
 
-// G is out of hex range
-
-new TestCase( SECTION, "\\xG",        "xG",                                 "\xG" );
-new TestCase( SECTION, "\\xCG",       "xCG",      				"\xCG" );
-
 // DoubleStringCharacter::EscapeSequence::CharacterEscapeSequence::\ NonEscapeCharacter
 new TestCase( SECTION, "\\a",    "a",        "\a" );
 new TestCase( SECTION, "\\c",    "c",        "\c" );
@@ -201,10 +144,7 @@ new TestCase( SECTION, "\\o",    "o",        "\o" );
 new TestCase( SECTION, "\\p",    "p",        "\p" );
 new TestCase( SECTION, "\\q",    "q",        "\q" );
 new TestCase( SECTION, "\\s",    "s",        "\s" );
-new TestCase( SECTION, "\\u",    "u",        "\u" );
-
 new TestCase( SECTION, "\\w",    "w",        "\w" );
-new TestCase( SECTION, "\\x",    "x",        "\x" );
 new TestCase( SECTION, "\\y",    "y",        "\y" );
 new TestCase( SECTION, "\\z",    "z",        "\z" );
 new TestCase( SECTION, "\\9",    "9",        "\9" );

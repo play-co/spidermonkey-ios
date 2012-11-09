@@ -1,4 +1,7 @@
-/*
+/* -*- Mode: C++; tab-width: 8; indent-tabs-mode: nil; c-basic-offset: 4 -*-
+ * vim: set ts=8 sw=4 et tw=79:
+ *
+ * ***** BEGIN LICENSE BLOCK *****
  * Copyright (C) 2008 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -21,7 +24,8 @@
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
- */
+ * 
+ * ***** END LICENSE BLOCK ***** */
 
 #ifndef AbstractMacroAssembler_h
 #define AbstractMacroAssembler_h
@@ -29,7 +33,6 @@
 #include "assembler/wtf/Platform.h"
 #include "assembler/assembler/MacroAssemblerCodeRef.h"
 #include "assembler/assembler/CodeLocation.h"
-#include "jsstdint.h"
 
 #if ENABLE_ASSEMBLER
 
@@ -77,6 +80,8 @@ public:
     //
     // Describes a simple base-offset address.
     struct Address {
+        explicit Address() {}
+
         explicit Address(RegisterID base, int32_t offset = 0)
             : base(base)
             , offset(offset)
@@ -160,13 +165,13 @@ public:
         void* m_ptr;
     };
 
-    // ImmPtr:
+    // TrustedImmPtr:
     //
     // A pointer sized immediate operand to an instruction - this is wrapped
     // in a class requiring explicit construction in order to differentiate
     // from pointers used as absolute addresses to memory operations
-    struct ImmPtr {
-        explicit ImmPtr(const void* value)
+    struct TrustedImmPtr {
+        explicit TrustedImmPtr(const void* value)
             : m_value(value)
         {
         }
@@ -179,14 +184,21 @@ public:
         const void* m_value;
     };
 
-    // Imm32:
+    struct ImmPtr : public TrustedImmPtr {
+        explicit ImmPtr(const void* value)
+            : TrustedImmPtr(value)
+        {
+        }
+    };
+ 
+    // TrustedImm32:
     //
     // A 32bit immediate operand to an instruction - this is wrapped in a
     // class requiring explicit construction in order to prevent RegisterIDs
     // (which are implemented as an enum) from accidentally being passed as
     // immediate values.
-    struct Imm32 {
-        explicit Imm32(int32_t value)
+    struct TrustedImm32 {
+        explicit TrustedImm32(int32_t value)
             : m_value(value)
 #if WTF_CPU_ARM || WTF_CPU_MIPS
             , m_isPointer(false)
@@ -195,7 +207,7 @@ public:
         }
 
 #if !WTF_CPU_X86_64
-        explicit Imm32(ImmPtr ptr)
+        explicit TrustedImm32(TrustedImmPtr ptr)
             : m_value(ptr.asIntptr())
 #if WTF_CPU_ARM || WTF_CPU_MIPS
             , m_isPointer(true)
@@ -217,6 +229,37 @@ public:
 #endif
     };
 
+
+    struct Imm32 : public TrustedImm32 {
+        explicit Imm32(int32_t value)
+            : TrustedImm32(value)
+        {
+        }
+#if !WTF_CPU_X86_64
+        explicit Imm32(TrustedImmPtr ptr)
+            : TrustedImm32(ptr)
+        {
+        }
+#endif
+    };
+
+    struct ImmDouble {
+        union {
+            struct {
+#if WTF_CPU_BIG_ENDIAN || WTF_CPU_MIDDLE_ENDIAN
+                uint32_t msb, lsb;
+#else
+                uint32_t lsb, msb;
+#endif
+            } s;
+            uint64_t u64;
+            double d;
+        } u;
+
+        explicit ImmDouble(double d) {
+            u.d = d;
+        }
+    };
 
     // Section 2: MacroAssembler code buffer handles
     //
@@ -249,7 +292,7 @@ public:
         
         bool isUsed() const { return m_label.isUsed(); }
         void used() { m_label.used(); }
-        bool isValid() const { return m_label.isValid(); }
+        bool isSet() const { return m_label.isValid(); }
     private:
         JmpDst m_label;
     };
@@ -272,14 +315,16 @@ public:
         {
         }
         
+        bool isSet() const { return m_label.isValid(); }
+
     private:
         JmpDst m_label;
     };
 
     // DataLabel32:
     //
-    // A DataLabelPtr is used to refer to a location in the code containing a pointer to be
-    // patched after the code has been generated.
+    // A DataLabel32 is used to refer to a location in the code containing a
+    // 32-bit constant to be patched after the code has been generated.
     class DataLabel32 {
         template<class TemplateAssemblerType>
         friend class AbstractMacroAssembler;
@@ -373,6 +418,8 @@ public:
             masm->m_assembler.linkJump(m_jmp, label.m_label);
         }
 
+        bool isSet() const { return m_jmp.isSet(); }
+
     private:
         JmpSrc m_jmp;
     };
@@ -386,6 +433,20 @@ public:
 
     public:
         typedef js::Vector<Jump, 16 ,js::SystemAllocPolicy > JumpVector;
+
+        JumpList() {}
+
+        JumpList(const JumpList &other)
+        {
+            m_jumps.append(other.m_jumps);
+        }
+
+        JumpList &operator=(const JumpList &other)
+        {
+            m_jumps.clear();
+            m_jumps.append(other.m_jumps);
+            return *this;
+        }
 
         void link(AbstractMacroAssembler<AssemblerType>* masm)
         {
@@ -408,9 +469,14 @@ public:
             m_jumps.append(jump);
         }
         
-        void append(JumpList& other)
+        void append(const JumpList& other)
         {
             m_jumps.append(other.m_jumps.begin(), other.m_jumps.length());
+        }
+
+        void clear()
+        {
+            m_jumps.clear();
         }
 
         bool empty()
@@ -418,7 +484,7 @@ public:
             return !m_jumps.length();
         }
         
-        const JumpVector& jumps() { return m_jumps; }
+        const JumpVector& jumps() const { return m_jumps; }
 
     private:
         JumpVector m_jumps;
@@ -442,14 +508,25 @@ public:
         return m_assembler.buffer();
     }
 
-    void* executableCopy(void* buffer)
+    bool oom()
     {
-        return m_assembler.executableCopy(buffer);
+        return m_assembler.oom();
+    }
+
+    void executableCopy(void* buffer)
+    {
+        ASSERT(!oom());
+        m_assembler.executableCopy(buffer);
     }
 
     Label label()
     {
         return Label(this);
+    }
+
+    DataLabel32 dataLabel32()
+    {
+        return DataLabel32(this);
     }
     
     Label align()
@@ -479,6 +556,16 @@ public:
     }
 
     ptrdiff_t differenceBetween(Label from, DataLabel32 to)
+    {
+        return AssemblerType::getDifferenceBetweenLabels(from.m_label, to.m_label);
+    }
+
+    ptrdiff_t differenceBetween(DataLabel32 from, Label to)
+    {
+        return AssemblerType::getDifferenceBetweenLabels(from.m_label, to.m_label);
+    }
+
+    ptrdiff_t differenceBetween(DataLabelPtr from, Label to)
     {
         return AssemblerType::getDifferenceBetweenLabels(from.m_label, to.m_label);
     }
@@ -532,6 +619,11 @@ protected:
     static void repatchJump(CodeLocationJump jump, CodeLocationLabel destination)
     {
         AssemblerType::relinkJump(jump.dataLocation(), destination.dataLocation());
+    }
+
+    static bool canRepatchJump(CodeLocationJump jump, CodeLocationLabel destination)
+    {
+        return AssemblerType::canRelinkJump(jump.dataLocation(), destination.dataLocation());
     }
 
     static void repatchNearCall(CodeLocationNearCall nearCall, CodeLocationLabel destination)

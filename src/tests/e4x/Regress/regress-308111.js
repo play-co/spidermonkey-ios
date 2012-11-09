@@ -1,39 +1,8 @@
+// |reftest| pref(javascript.options.xml.content,true) skip-if(!xulRuntime.shell&&isDebugBuild) slow
 /* -*- Mode: java; tab-width: 8; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
-/* ***** BEGIN LICENSE BLOCK *****
- * Version: MPL 1.1/GPL 2.0/LGPL 2.1
- *
- * The contents of this file are subject to the Mozilla Public License Version
- * 1.1 (the "License"); you may not use this file except in compliance with
- * the License. You may obtain a copy of the License at
- * http://www.mozilla.org/MPL/
- *
- * Software distributed under the License is distributed on an "AS IS" basis,
- * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
- * for the specific language governing rights and limitations under the
- * License.
- *
- * The Original Code is JavaScript Engine testing utilities.
- *
- * The Initial Developer of the Original Code is
- * Mozilla Foundation.
- * Portions created by the Initial Developer are Copyright (C) 2005
- * the Initial Developer. All Rights Reserved.
- *
- * Contributor(s): Aaron Boodman
- *
- * Alternatively, the contents of this file may be used under the terms of
- * either the GNU General Public License Version 2 or later (the "GPL"), or
- * the GNU Lesser General Public License Version 2.1 or later (the "LGPL"),
- * in which case the provisions of the GPL or the LGPL are applicable instead
- * of those above. If you wish to allow use of your version of this file only
- * under the terms of either the GPL or the LGPL, and not to allow others to
- * use your version of this file under the terms of the MPL, indicate your
- * decision by deleting the provisions above and replace them with the notice
- * and other provisions required by the GPL or the LGPL. If you do not delete
- * the provisions above, a recipient may use your version of this file under
- * the terms of any one of the MPL, the GPL or the LGPL.
- *
- * ***** END LICENSE BLOCK ***** */
+/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 
 var summary = "Regression - Do not crash when searching large e4x tree";
@@ -281,7 +250,6 @@ var xml = <prefs>
 <pref><name>intl.charsetmenu.browser.more4</name></pref>
 <pref><name>network.http.keep-alive</name></pref>
 <pref><name>ui.key.accelKey</name></pref>
-<pref><name>privacy.popups.firstTime</name></pref>
 <pref><name>browser.fixup.alternate.enabled</name></pref>
 <pref><name>font.name-list.serif.x-cans</name></pref>
 <pref><name>security.enable_ssl3</name></pref>
@@ -631,7 +599,6 @@ var xml = <prefs>
 <pref><name>font.size.variable.x-guru</name></pref>
 <pref><name>font.size.variable.x-gujr</name></pref>
 <pref><name>network.protocol-handler.external.vnd.ms.radio</name></pref>
-<pref><name>advanced.system.supportDDEExec</name></pref>
 <pref><name>browser.tabs.opentabfor.urlbar</name></pref>
 <pref><name>font.name.sans-serif.x-khmr</name></pref>
 <pref><name>mousewheel.horizscroll.withshiftkey.sysnumlines</name></pref>
@@ -713,7 +680,6 @@ var xml = <prefs>
 <pref><name>capability.policy.mailnews.Window.outerHeight.set</name></pref>
 <pref><name>capability.policy.mailnews.SOAPFault.faultActor</name></pref>
 <pref><name>font.size.fixed.tr</name></pref>
-<pref><name>extensions.getMoreThemesURL</name></pref>
 <pref><name>browser.search.param.Google.1.custom</name></pref>
 <pref><name>extensions.logging.enabled</name></pref>
 <pref><name>browser.frames.enabled</name></pref>
@@ -758,7 +724,6 @@ var xml = <prefs>
 <pref><name>extensions.ignoreMTimeChanges</name></pref>
 <pref><name>network.hosts.pop_server</name></pref>
 <pref><name>privacy.item.history</name></pref>
-<pref><name>editor.quotesPreformatted</name></pref>
 <pref><name>security.password_lifetime</name></pref>
 <pref><name>security.ssl3.dhe_dss_aes_128_sha</name></pref>
 <pref><name>font.name.monospace.x-tamil</name></pref>
@@ -899,7 +864,6 @@ var xml = <prefs>
 <pref><name>font.name-list.sans-serif.ja</name></pref>
 <pref><name>browser.search.order.1</name></pref>
 <pref><name>capability.policy.mailnews.XMLHttpRequest.responseXML</name></pref>
-<pref><name>extensions.getMoreExtensionsURL</name></pref>
 <pref><name>font.name.serif.x-beng</name></pref>
 <pref><name>font.size.variable.th</name></pref>
 <pref><name>network.http.use-cache</name></pref>

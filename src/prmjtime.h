@@ -1,54 +1,13 @@
 /* -*- Mode: C; tab-width: 8; indent-tabs-mode: nil; c-basic-offset: 4 -*-
  *
- * ***** BEGIN LICENSE BLOCK *****
- * Version: MPL 1.1/GPL 2.0/LGPL 2.1
- *
- * The contents of this file are subject to the Mozilla Public License Version
- * 1.1 (the "License"); you may not use this file except in compliance with
- * the License. You may obtain a copy of the License at
- * http://www.mozilla.org/MPL/
- *
- * Software distributed under the License is distributed on an "AS IS" basis,
- * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
- * for the specific language governing rights and limitations under the
- * License.
- *
- * The Original Code is Mozilla Communicator client code, released
- * March 31, 1998.
- *
- * The Initial Developer of the Original Code is
- * Netscape Communications Corporation.
- * Portions created by the Initial Developer are Copyright (C) 1998
- * the Initial Developer. All Rights Reserved.
- *
- * Contributor(s):
- *
- * Alternatively, the contents of this file may be used under the terms of
- * either of the GNU General Public License Version 2 or later (the "GPL"),
- * or the GNU Lesser General Public License Version 2.1 or later (the "LGPL"),
- * in which case the provisions of the GPL or the LGPL are applicable instead
- * of those above. If you wish to allow use of your version of this file only
- * under the terms of either the GPL or the LGPL, and not to allow others to
- * use your version of this file under the terms of the MPL, indicate your
- * decision by deleting the provisions above and replace them with the notice
- * and other provisions required by the GPL or the LGPL. If you do not delete
- * the provisions above, a recipient may use your version of this file under
- * the terms of any one of the MPL, the GPL or the LGPL.
- *
- * ***** END LICENSE BLOCK ***** */
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 #ifndef prmjtime_h___
 #define prmjtime_h___
-/*
- * PR date stuff for mocha and java. Placed here temporarily not to break
- * Navigator and localize changes to mocha.
- */
-#include <time.h>
 
-#include "jslong.h"
-#ifdef MOZILLA_CLIENT
-#include "jscompat.h"
-#endif
+#include <time.h>
 
 struct JSContext;
 
@@ -99,82 +58,30 @@ struct JSContext;
 class DSTOffsetCache {
   public:
     inline DSTOffsetCache();
-    JSInt64 getDSTOffsetMilliseconds(int64 localTimeMilliseconds, JSContext *cx);
+    int64_t getDSTOffsetMilliseconds(int64_t localTimeMilliseconds);
 
     inline void purge();
-#ifdef JS_METER_DST_OFFSET_CACHING
-    void dumpStats();
-#endif
 
   private:
-    JSInt64 computeDSTOffsetMilliseconds(int64 localTimeSeconds);
+    int64_t computeDSTOffsetMilliseconds(int64_t localTimeSeconds);
 
-    JSInt64 offsetMilliseconds;
-    JSInt64 rangeStartSeconds, rangeEndSeconds;
+    int64_t offsetMilliseconds;
+    int64_t rangeStartSeconds, rangeEndSeconds;
 
-#ifdef JS_METER_DST_OFFSET_CACHING
-    size_t totalCalculations;
-    size_t hit;
-    size_t missIncreasing;
-    size_t missDecreasing;
-    size_t missIncreasingOffsetChangeUpper;
-    size_t missIncreasingOffsetChangeExpand;
-    size_t missLargeIncrease;
-    size_t missDecreasingOffsetChangeLower;
-    size_t missDecreasingOffsetChangeExpand;
-    size_t missLargeDecrease;
-#endif
+    int64_t oldOffsetMilliseconds;
+    int64_t oldRangeStartSeconds, oldRangeEndSeconds;
 
-    static const JSInt64 MAX_UNIX_TIMET = 2145859200; /* time_t 12/31/2037 */
-    static const JSInt64 MILLISECONDS_PER_SECOND = 1000;
-    static const JSInt64 SECONDS_PER_MINUTE = 60;
-    static const JSInt64 SECONDS_PER_HOUR = 60 * SECONDS_PER_MINUTE;
-    static const JSInt64 SECONDS_PER_DAY = 24 * SECONDS_PER_HOUR;
+    static const int64_t MAX_UNIX_TIMET = 2145859200; /* time_t 12/31/2037 */
+    static const int64_t MILLISECONDS_PER_SECOND = 1000;
+    static const int64_t SECONDS_PER_MINUTE = 60;
+    static const int64_t SECONDS_PER_HOUR = 60 * SECONDS_PER_MINUTE;
+    static const int64_t SECONDS_PER_DAY = 24 * SECONDS_PER_HOUR;
 
-    static const JSInt64 RANGE_EXPANSION_AMOUNT = 30 * SECONDS_PER_DAY;
+    static const int64_t RANGE_EXPANSION_AMOUNT = 30 * SECONDS_PER_DAY;
 
   private:
     void sanityCheck();
-
-#ifdef JS_METER_DST_OFFSET_CACHING
-#define NOTE_GENERIC(member) this->member++
-#else
-#define NOTE_GENERIC(member) ((void)0)
-#endif
-    void noteOffsetCalculation() {
-        NOTE_GENERIC(totalCalculations);
-    }
-    void noteCacheHit() {
-        NOTE_GENERIC(hit);
-    }
-    void noteCacheMissIncrease() {
-        NOTE_GENERIC(missIncreasing);
-    }
-    void noteCacheMissDecrease() {
-        NOTE_GENERIC(missDecreasing);
-    }
-    void noteCacheMissIncreasingOffsetChangeUpper() {
-        NOTE_GENERIC(missIncreasingOffsetChangeUpper);
-    }
-    void noteCacheMissIncreasingOffsetChangeExpand() {
-        NOTE_GENERIC(missIncreasingOffsetChangeExpand);
-    }
-    void noteCacheMissLargeIncrease() {
-        NOTE_GENERIC(missLargeIncrease);
-    }
-    void noteCacheMissDecreasingOffsetChangeLower() {
-        NOTE_GENERIC(missDecreasingOffsetChangeLower);
-    }
-    void noteCacheMissDecreasingOffsetChangeExpand() {
-        NOTE_GENERIC(missDecreasingOffsetChangeExpand);
-    }
-    void noteCacheMissLargeDecrease() {
-        NOTE_GENERIC(missLargeDecrease);
-    }
-#undef NOTE_GENERIC
 };
-
-JS_BEGIN_EXTERN_C
 
 typedef struct PRMJTime       PRMJTime;
 
@@ -182,16 +89,16 @@ typedef struct PRMJTime       PRMJTime;
  * Broken down form of 64 bit time value.
  */
 struct PRMJTime {
-    JSInt32 tm_usec;            /* microseconds of second (0-999999) */
-    JSInt8 tm_sec;              /* seconds of minute (0-59) */
-    JSInt8 tm_min;              /* minutes of hour (0-59) */
-    JSInt8 tm_hour;             /* hour of day (0-23) */
-    JSInt8 tm_mday;             /* day of month (1-31) */
-    JSInt8 tm_mon;              /* month of year (0-11) */
-    JSInt8 tm_wday;             /* 0=sunday, 1=monday, ... */
-    JSInt32 tm_year;            /* absolute year, AD */
-    JSInt16 tm_yday;            /* day of year (0 to 365) */
-    JSInt8 tm_isdst;            /* non-zero if DST in effect */
+    int32_t tm_usec;            /* microseconds of second (0-999999) */
+    int8_t tm_sec;              /* seconds of minute (0-59) */
+    int8_t tm_min;              /* minutes of hour (0-59) */
+    int8_t tm_hour;             /* hour of day (0-23) */
+    int8_t tm_mday;             /* day of month (1-31) */
+    int8_t tm_mon;              /* month of year (0-11) */
+    int8_t tm_wday;             /* 0=sunday, 1=monday, ... */
+    int32_t tm_year;            /* absolute year, AD */
+    int16_t tm_yday;            /* day of year (0 to 365) */
+    int8_t tm_isdst;            /* non-zero if DST in effect */
 };
 
 /* Some handy constants */
@@ -199,11 +106,11 @@ struct PRMJTime {
 #define PRMJ_USEC_PER_MSEC      1000L
 
 /* Return the current local time in micro-seconds */
-extern JSInt64
+extern int64_t
 PRMJ_Now(void);
 
 /* Release the resources associated with PRMJ_Now; don't call PRMJ_Now again */
-#if defined(JS_THREADSAFE) && (defined(HAVE_GETSYSTEMTIMEASFILETIME) || defined(HAVE_SYSTEMTIMETOFILETIME))
+#if defined(JS_THREADSAFE) && defined(XP_WIN)
 extern void
 PRMJ_NowShutdown(void);
 #else
@@ -211,14 +118,12 @@ PRMJ_NowShutdown(void);
 #endif
 
 /* get the difference between this time zone and  gmt timezone in seconds */
-extern JSInt32
+extern int32_t
 PRMJ_LocalGMTDifference(void);
 
 /* Format a time value into a buffer. Same semantics as strftime() */
 extern size_t
 PRMJ_FormatTime(char *buf, int buflen, const char *fmt, PRMJTime *tm);
-
-JS_END_EXTERN_C
 
 #endif /* prmjtime_h___ */
 

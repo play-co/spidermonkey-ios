@@ -1,6 +1,10 @@
 /* -*- Mode: C++; tab-width: 8; indent-tabs-mode: nil; c-basic-offset: 4 -*-
  * vim: set ts=8 sw=4 et tw=99:
  */
+/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+
 
 #include "tests.h"
 
@@ -11,7 +15,7 @@ BEGIN_TEST(testContexts_IsRunning)
         return true;
     }
 
-    static JSBool chk(JSContext *cx, JSObject *obj, uintN argc, jsval *argv, jsval *rval)
+    static JSBool chk(JSContext *cx, unsigned argc, jsval *vp)
     {
         JSRuntime *rt = JS_GetRuntime(cx);
         JSContext *acx = JS_NewContext(rt, 8192);
@@ -29,54 +33,6 @@ BEGIN_TEST(testContexts_IsRunning)
     }
 END_TEST(testContexts_IsRunning)
 
-#ifdef JS_THREADSAFE
-
-#include "prthread.h"
-
-struct ThreadData {
-    JSRuntime *rt;
-    JSObject *obj;
-    const char *code;
-    bool ok;
-};
-
-BEGIN_TEST(testContexts_bug561444)
-    {
-        const char *code = "<a><b/></a>.b.@c = '';";
-        EXEC(code);
-
-        jsrefcount rc = JS_SuspendRequest(cx);
-        {
-            ThreadData data = {rt, global, code, false};
-            PRThread *thread = 
-                PR_CreateThread(PR_USER_THREAD, threadMain, &data,
-                                PR_PRIORITY_NORMAL, PR_LOCAL_THREAD, PR_JOINABLE_THREAD, 0);
-            CHECK(thread);
-            PR_JoinThread(thread);
-            CHECK(data.ok);
-        }
-        JS_ResumeRequest(cx, rc);
-        return true;
-    }
-
-    static void threadMain(void *arg) {
-        ThreadData *d = (ThreadData *) arg;
-
-        JSContext *cx = JS_NewContext(d->rt, 8192);
-        if (!cx)
-            return;
-        JS_BeginRequest(cx);
-        {
-            jsvalRoot v(cx);
-            if (!JS_EvaluateScript(cx, d->obj, d->code, strlen(d->code), __FILE__, __LINE__, v.addr()))
-                return;
-        }
-        JS_DestroyContext(cx);
-        d->ok = true;
-    }
-END_TEST(testContexts_bug561444)
-#endif
-
 BEGIN_TEST(testContexts_bug563735)
 {
     JSContext *cx2 = JS_NewContext(rt, 8192);
@@ -85,6 +41,7 @@ BEGIN_TEST(testContexts_bug563735)
     JSBool ok;
     {
         JSAutoRequest req(cx2);
+        JSAutoCompartment ac(cx2, global);
         jsval v = JSVAL_NULL;
         ok = JS_SetProperty(cx2, global, "x", &v);
     }

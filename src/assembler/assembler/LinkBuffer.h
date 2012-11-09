@@ -1,4 +1,7 @@
-/* vim: set ts=4 sw=4 tw=99 et:
+/* -*- Mode: C++; tab-width: 8; indent-tabs-mode: nil; c-basic-offset: 4 -*-
+ * vim: set ts=8 sw=4 et tw=79:
+ *
+ * ***** BEGIN LICENSE BLOCK *****
  * Copyright (C) 2009 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -21,7 +24,8 @@
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
- */
+ * 
+ * ***** END LICENSE BLOCK ***** */
 
 #ifndef LinkBuffer_h
 #define LinkBuffer_h
@@ -58,23 +62,36 @@ class LinkBuffer {
     typedef MacroAssembler::DataLabelPtr DataLabelPtr;
 
 public:
-    // Note: Initialization sequence is significant, since executablePool is a PassRefPtr.
-    //       First, executablePool is copied into m_executablePool, then the initialization of
-    //       m_code uses m_executablePool, *not* executablePool, since this is no longer valid.
-    LinkBuffer(MacroAssembler* masm, ExecutablePool* executablePool)
-        : m_executablePool(executablePool)
-        , m_code(masm->m_assembler.executableCopy(m_executablePool))
-        , m_size(masm->m_assembler.size())
+    // 'ok' should be checked after this constructor is called;  it's false if OOM occurred.
+    LinkBuffer(MacroAssembler* masm, ExecutableAllocator* executableAllocator,
+               ExecutablePool** poolp, bool* ok, CodeKind codeKind)
+    {
+        m_codeKind = codeKind;
+        m_code = executableAllocAndCopy(*masm, executableAllocator, poolp);
+        m_executablePool = *poolp;
+        m_size = masm->m_assembler.size();  // must come after call to executableAllocAndCopy()!
+#ifndef NDEBUG
+        m_completed = false;
+#endif
+        *ok = !!m_code;
+    }
+
+    LinkBuffer(CodeKind kind)
+        : m_executablePool(NULL)
+        , m_code(NULL)
+        , m_size(0)
+        , m_codeKind(kind)
 #ifndef NDEBUG
         , m_completed(false)
 #endif
     {
     }
 
-    LinkBuffer(uint8* ncode, size_t size)
+    LinkBuffer(uint8_t* ncode, size_t size, CodeKind kind)
         : m_executablePool(NULL)
         , m_code(ncode)
         , m_size(size)
+        , m_codeKind(kind)
 #ifndef NDEBUG
         , m_completed(false)
 #endif
@@ -175,12 +192,18 @@ public:
         return CodeLocationLabel(code());
     }
 
-private:
+protected:
     // Keep this private! - the underlying code should only be obtained externally via 
     // finalizeCode() or finalizeCodeAddendum().
     void* code()
     {
         return m_code;
+    }
+
+    void *executableAllocAndCopy(MacroAssembler &masm, ExecutableAllocator *allocator,
+                                 ExecutablePool **poolp)
+    {
+        return masm.m_assembler.executableAllocAndCopy(allocator, poolp, m_codeKind);
     }
 
     void performFinalization()
@@ -197,6 +220,7 @@ private:
     ExecutablePool* m_executablePool;
     void* m_code;
     size_t m_size;
+    CodeKind m_codeKind;
 #ifndef NDEBUG
     bool m_completed;
 #endif

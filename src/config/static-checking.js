@@ -1,3 +1,7 @@
+/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+
 /**
  * A script for GCC-dehydra to analyze the Mozilla codebase and catch
  * patterns that are incorrect, but which cannot be detected by a compiler. */
@@ -9,9 +13,6 @@
 function treehydra_enabled() {
   return this.hasOwnProperty('TREE_CODE');
 }
-
-include('unstable/getopt.js');
-[options, args] = getopt();
 
 sys.include_path.push(options.topsrcdir);
 
@@ -71,15 +72,53 @@ function signaturesMatch(m1, m2)
   
   let p1 = m1.type.parameters;
   let p2 = m2.type.parameters;
-  
+
   if (p1.length != p2.length)
     return false;
   
   for (let i = 0; i < p1.length; ++i)
-    if (p1[i] !== p2[i])
+    if (!params_match(p1[i], p2[i]))
       return false;
-  
+
   return true;
+}
+
+function params_match(p1, p2)
+{
+  [p1, p2] = unwrap_types(p1, p2);
+
+  for (let i in p1)
+    if (i == "type" && !types_match(p1.type, p2.type))
+      return false;
+    else if (i != "type" && p1[i] !== p2[i])
+      return false;
+
+  for (let i in p2)
+    if (!(i in p1))
+      return false;
+
+  return true;
+}
+
+function types_match(t1, t2)
+{
+  if (!t1 || !t2)
+    return false;
+
+  [t1, t2] = unwrap_types(t1, t2);
+
+  return t1 === t2;
+}
+
+function unwrap_types(t1, t2)
+{
+  while (t1.variantOf)
+    t1 = t1.variantOf;
+
+  while (t2.variantOf)
+    t2 = t2.variantOf;
+
+  return [t1, t2];
 }
 
 const forward_functions = [

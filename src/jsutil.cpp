@@ -1,59 +1,151 @@
-/* -*- Mode: C++; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 2 -*-
+/* -*- Mode: C++; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*-
  *
- * ***** BEGIN LICENSE BLOCK *****
- * Version: MPL 1.1/GPL 2.0/LGPL 2.1
- *
- * The contents of this file are subject to the Mozilla Public License Version
- * 1.1 (the "License"); you may not use this file except in compliance with
- * the License. You may obtain a copy of the License at
- * http://www.mozilla.org/MPL/
- *
- * Software distributed under the License is distributed on an "AS IS" basis,
- * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
- * for the specific language governing rights and limitations under the
- * License.
- *
- * The Original Code is Mozilla Communicator client code, released
- * March 31, 1998.
- *
- * The Initial Developer of the Original Code is
- * Netscape Communications Corporation.
- * Portions created by the Initial Developer are Copyright (C) 1998
- * the Initial Developer. All Rights Reserved.
- *
- * Contributor(s):
- *   IBM Corp.
- *
- * Alternatively, the contents of this file may be used under the terms of
- * either of the GNU General Public License Version 2 or later (the "GPL"),
- * or the GNU Lesser General Public License Version 2.1 or later (the "LGPL"),
- * in which case the provisions of the GPL or the LGPL are applicable instead
- * of those above. If you wish to allow use of your version of this file only
- * under the terms of either the GPL or the LGPL, and not to allow others to
- * use your version of this file under the terms of the MPL, indicate your
- * decision by deleting the provisions above and replace them with the notice
- * and other provisions required by the GPL or the LGPL. If you do not delete
- * the provisions above, a recipient may use your version of this file under
- * the terms of any one of the MPL, the GPL or the LGPL.
- *
- * ***** END LICENSE BLOCK ***** */
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-/*
- * PR assertion checker.
- */
+/* Various JS utility functions. */
+
+#include "mozilla/Assertions.h"
+#include "mozilla/Attributes.h"
+
 #include <stdio.h>
 #include <stdlib.h>
 #include "jstypes.h"
-#include "jsstdint.h"
 #include "jsutil.h"
 
 #ifdef WIN32
-#    include <windows.h>
+#    include "jswin.h"
 #else
 #    include <signal.h>
 #endif
 
+#include "js/TemplateLib.h"
+#include "js/Utility.h"
+
+#if USE_ZLIB
+#include "zlib.h"
+#endif
+
 using namespace js;
+
+#if USE_ZLIB
+static void *
+zlib_alloc(void *cx, uInt items, uInt size)
+{
+    return js_malloc(items * size);
+}
+
+static void
+zlib_free(void *cx, void *addr)
+{
+    js_free(addr);
+}
+
+Compressor::Compressor(const unsigned char *inp, size_t inplen)
+    : inp(inp),
+      inplen(inplen),
+      outbytes(0)
+{
+    JS_ASSERT(inplen > 0);
+    zs.opaque = NULL;
+    zs.next_in = (Bytef *)inp;
+    zs.avail_in = 0;
+    zs.next_out = NULL;
+    zs.avail_out = 0;
+    zs.zalloc = zlib_alloc;
+    zs.zfree = zlib_free;
+}
+
+
+Compressor::~Compressor()
+{
+    int ret = deflateEnd(&zs);
+    if (ret != Z_OK) {
+        // If we finished early, we can get a Z_DATA_ERROR.
+        JS_ASSERT(ret == Z_DATA_ERROR);
+        JS_ASSERT(uInt(zs.next_in - inp) < inplen || !zs.avail_out);
+    }
+}
+
+bool
+Compressor::init()
+{
+    if (inplen >= UINT32_MAX)
+        return false;
+    int ret = deflateInit(&zs, Z_DEFAULT_COMPRESSION);
+    if (ret != Z_OK) {
+        JS_ASSERT(ret == Z_MEM_ERROR);
+        return false;
+    }
+    return true;
+}
+
+void
+Compressor::setOutput(unsigned char *out, size_t outlen)
+{
+    JS_ASSERT(outlen > outbytes);
+    zs.next_out = out + outbytes;
+    zs.avail_out = outlen - outbytes;
+}
+
+Compressor::Status
+Compressor::compressMore()
+{
+    JS_ASSERT(zs.next_out);
+    uInt left = inplen - (zs.next_in - inp);
+    bool done = left <= CHUNKSIZE;
+    if (done)
+        zs.avail_in = left;
+    else if (zs.avail_in == 0)
+        zs.avail_in = CHUNKSIZE;
+    Bytef *oldout = zs.next_out;
+    int ret = deflate(&zs, done ? Z_FINISH : Z_NO_FLUSH);
+    outbytes += zs.next_out - oldout;
+    if (ret == Z_MEM_ERROR) {
+        zs.avail_out = 0;
+        return OOM;
+    }
+    if (ret == Z_BUF_ERROR || (done && ret == Z_OK)) {
+        JS_ASSERT(zs.avail_out == 0);
+        return MOREOUTPUT;
+    }
+    JS_ASSERT_IF(!done, ret == Z_OK);
+    JS_ASSERT_IF(done, ret == Z_STREAM_END);
+    return done ? DONE : CONTINUE;
+}
+
+bool
+js::DecompressString(const unsigned char *inp, size_t inplen, unsigned char *out, size_t outlen)
+{
+    JS_ASSERT(inplen <= UINT32_MAX);
+    z_stream zs;
+    zs.zalloc = zlib_alloc;
+    zs.zfree = zlib_free;
+    zs.opaque = NULL;
+    zs.next_in = (Bytef *)inp;
+    zs.avail_in = inplen;
+    zs.next_out = out;
+    JS_ASSERT(outlen);
+    zs.avail_out = outlen;
+    int ret = inflateInit(&zs);
+    if (ret != Z_OK) {
+        JS_ASSERT(ret == Z_MEM_ERROR);
+        return false;
+    }
+    ret = inflate(&zs, Z_FINISH);
+    JS_ASSERT(ret == Z_STREAM_END);
+    ret = inflateEnd(&zs);
+    JS_ASSERT(ret == Z_OK);
+    return true;
+}
+#endif
+
+#ifdef DEBUG
+/* For JS_OOM_POSSIBLY_FAIL in jsutil.h. */
+JS_PUBLIC_DATA(uint32_t) OOM_maxAllocations = UINT32_MAX;
+JS_PUBLIC_DATA(uint32_t) OOM_counter = 0;
+#endif
 
 /*
  * Checks the assumption that JS_FUNC_TO_DATA_PTR and JS_DATA_TO_FUNC_PTR
@@ -61,35 +153,17 @@ using namespace js;
  */
 JS_STATIC_ASSERT(sizeof(void *) == sizeof(void (*)()));
 
-JS_PUBLIC_API(void) JS_Assert(const char *s, const char *file, JSIntn ln)
+JS_PUBLIC_API(void)
+JS_Assert(const char *s, const char *file, int ln)
 {
-    fprintf(stderr, "Assertion failure: %s, at %s:%d\n", s, file, ln);
-    fflush(stderr);
-#if defined(WIN32)
-    /*
-     * We used to call DebugBreak() on Windows, but amazingly, it causes
-     * the MSVS 2010 debugger not to be able to recover a call stack.
-     */
-    *((int *) NULL) = 0;
-    exit(3);
-#elif defined(__APPLE__)
-    /*
-     * On Mac OS X, Breakpad ignores signals. Only real Mach exceptions are
-     * trapped.
-     */
-    *((int *) NULL) = 0;  /* To continue from here in GDB: "return" then "continue". */
-    raise(SIGABRT);  /* In case above statement gets nixed by the optimizer. */
-#else
-    raise(SIGABRT);  /* To continue from here in GDB: "signal 0". */
-#endif
+    MOZ_ReportAssertionFailure(s, file, ln);
+    MOZ_CRASH();
 }
 
 #ifdef JS_BASIC_STATS
 
 #include <math.h>
 #include <string.h>
-#include "jscompat.h"
-#include "jsbit.h"
 
 /*
  * Histogram bins count occurrences of values <= the bin label, as follows:
@@ -100,8 +174,8 @@ JS_PUBLIC_API(void) JS_Assert(const char *s, const char *file, JSIntn ln)
  *
  * We wish to count occurrences of 0 and 1 values separately, always.
  */
-static uint32
-BinToVal(uintN logscale, uintN bin)
+static uint32_t
+BinToVal(unsigned logscale, unsigned bin)
 {
     JS_ASSERT(bin <= 10);
     if (bin <= 1 || logscale == 0)
@@ -110,28 +184,28 @@ BinToVal(uintN logscale, uintN bin)
     if (logscale == 2)
         return JS_BIT(bin);
     JS_ASSERT(logscale == 10);
-    return (uint32) pow(10.0, (double) bin);
+    return uint32_t(pow(10.0, (double) bin));
 }
 
-static uintN
-ValToBin(uintN logscale, uint32 val)
+static unsigned
+ValToBin(unsigned logscale, uint32_t val)
 {
-    uintN bin;
+    unsigned bin;
 
     if (val <= 1)
         return val;
     bin = (logscale == 10)
-          ? (uintN) ceil(log10((double) val))
-          : (logscale == 2)
-          ? (uintN) JS_CeilingLog2(val)
-          : val;
-    return JS_MIN(bin, 10);
+        ? (unsigned) ceil(log10((double) val))
+        : (logscale == 2)
+        ? (unsigned) JS_CEILING_LOG2W(val)
+        : val;
+    return Min(bin, 10U);
 }
 
 void
-JS_BasicStatsAccum(JSBasicStats *bs, uint32 val)
+JS_BasicStatsAccum(JSBasicStats *bs, uint32_t val)
 {
-    uintN oldscale, newscale, bin;
+    unsigned oldscale, newscale, bin;
     double mean;
 
     ++bs->num;
@@ -146,14 +220,14 @@ JS_BasicStatsAccum(JSBasicStats *bs, uint32 val)
         if (bs->max > 16 && mean > 8) {
             newscale = (bs->max > 1e6 && mean > 1000) ? 10 : 2;
             if (newscale != oldscale) {
-                uint32 newhist[11], newbin;
+                uint32_t newhist[11], newbin;
 
                 PodArrayZero(newhist);
                 for (bin = 0; bin <= 10; bin++) {
                     newbin = ValToBin(newscale, BinToVal(oldscale, bin));
                     newhist[newbin] += bs->hist[bin];
                 }
-                memcpy(bs->hist, newhist, sizeof bs->hist);
+                js_memcpy(bs->hist, newhist, sizeof bs->hist);
                 bs->logscale = newscale;
             }
         }
@@ -164,7 +238,7 @@ JS_BasicStatsAccum(JSBasicStats *bs, uint32 val)
 }
 
 double
-JS_MeanAndStdDev(uint32 num, double sum, double sqsum, double *sigma)
+JS_MeanAndStdDev(uint32_t num, double sum, double sqsum, double *sigma)
 {
     double var;
 
@@ -198,8 +272,8 @@ JS_DumpBasicStats(JSBasicStats *bs, const char *title, FILE *fp)
 void
 JS_DumpHistogram(JSBasicStats *bs, FILE *fp)
 {
-    uintN bin;
-    uint32 cnt, max, prev, val, i;
+    unsigned bin;
+    uint32_t cnt, max;
     double sum, mean;
 
     for (bin = 0, max = 0, sum = 0; bin <= 10; bin++) {
@@ -209,20 +283,23 @@ JS_DumpHistogram(JSBasicStats *bs, FILE *fp)
         sum += cnt;
     }
     mean = sum / cnt;
-    for (bin = 0, prev = 0; bin <= 10; bin++, prev = val) {
-        val = BinToVal(bs->logscale, bin);
+    for (bin = 0; bin <= 10; bin++) {
+        unsigned val = BinToVal(bs->logscale, bin);
+        unsigned end = (bin == 10) ? 0 : BinToVal(bs->logscale, bin + 1);
         cnt = bs->hist[bin];
-        if (prev + 1 >= val)
+        if (val + 1 == end)
             fprintf(fp, "        [%6u]", val);
+        else if (end != 0)
+            fprintf(fp, "[%6u, %6u]", val, end - 1);
         else
-            fprintf(fp, "[%6u, %6u]", prev + 1, val);
-        fprintf(fp, "%s %8u ", (bin == 10) ? "+" : ":", cnt);
+            fprintf(fp, "[%6u,   +inf]", val);
+        fprintf(fp, ": %8u ", cnt);
         if (cnt != 0) {
             if (max > 1e6 && mean > 1e3)
-                cnt = (uint32) ceil(log10((double) cnt));
+                cnt = uint32_t(ceil(log10((double) cnt)));
             else if (max > 16 && mean > 8)
-                cnt = JS_CeilingLog2(cnt);
-            for (i = 0; i < cnt; i++)
+                cnt = JS_CEILING_LOG2W(cnt);
+            for (unsigned i = 0; i < cnt; i++)
                 putc('*', fp);
         }
         putc('\n', fp);
@@ -230,147 +307,3 @@ JS_DumpHistogram(JSBasicStats *bs, FILE *fp)
 }
 
 #endif /* JS_BASIC_STATS */
-
-#if defined(DEBUG_notme) && defined(XP_UNIX)
-
-#define __USE_GNU 1
-#include <dlfcn.h>
-#include <string.h>
-#include "jshash.h"
-#include "jsprf.h"
-
-JSCallsite js_calltree_root = {0, NULL, NULL, 0, NULL, NULL, NULL, NULL};
-
-static JSCallsite *
-CallTree(void **bp)
-{
-    void **bpup, **bpdown, *pc;
-    JSCallsite *parent, *site, **csp;
-    Dl_info info;
-    int ok, offset;
-    const char *symbol;
-    char *method;
-
-    /* Reverse the stack frame list to avoid recursion. */
-    bpup = NULL;
-    for (;;) {
-        bpdown = (void**) bp[0];
-        bp[0] = (void*) bpup;
-        if ((void**) bpdown[0] < bpdown)
-            break;
-        bpup = bp;
-        bp = bpdown;
-    }
-
-    /* Reverse the stack again, finding and building a path in the tree. */
-    parent = &js_calltree_root;
-    do {
-        bpup = (void**) bp[0];
-        bp[0] = (void*) bpdown;
-        pc = bp[1];
-
-        csp = &parent->kids;
-        while ((site = *csp) != NULL) {
-            if (site->pc == (uint32)pc) {
-                /* Put the most recently used site at the front of siblings. */
-                *csp = site->siblings;
-                site->siblings = parent->kids;
-                parent->kids = site;
-
-                /* Site already built -- go up the stack. */
-                goto upward;
-            }
-            csp = &site->siblings;
-        }
-
-        /* Check for recursion: see if pc is on our ancestor line. */
-        for (site = parent; site; site = site->parent) {
-            if (site->pc == (uint32)pc)
-                goto upward;
-        }
-
-        /*
-         * Not in tree at all: let's find our symbolic callsite info.
-         * XXX static syms are masked by nearest lower global
-         */
-        info.dli_fname = info.dli_sname = NULL;
-        ok = dladdr(pc, &info);
-        if (ok < 0) {
-            fprintf(stderr, "dladdr failed!\n");
-            return NULL;
-        }
-
-/* XXXbe sub 0x08040000? or something, see dbaron bug with tenthumbs comment */
-        symbol = info.dli_sname;
-        offset = (char*)pc - (char*)info.dli_fbase;
-        method = symbol
-                 ? strdup(symbol)
-                 : JS_smprintf("%s+%X",
-                               info.dli_fname ? info.dli_fname : "main",
-                               offset);
-        if (!method)
-            return NULL;
-
-        /* Create a new callsite record. */
-        site = (JSCallsite *) js_malloc(sizeof(JSCallsite));
-        if (!site)
-            return NULL;
-
-        /* Insert the new site into the tree. */
-        site->pc = (uint32)pc;
-        site->name = method;
-        site->library = info.dli_fname;
-        site->offset = offset;
-        site->parent = parent;
-        site->siblings = parent->kids;
-        parent->kids = site;
-        site->kids = NULL;
-
-      upward:
-        parent = site;
-        bpdown = bp;
-        bp = bpup;
-    } while (bp);
-
-    return site;
-}
-
-JS_FRIEND_API(JSCallsite *)
-JS_Backtrace(int skip)
-{
-    void **bp, **bpdown;
-
-    /* Stack walking code adapted from Kipp's "leaky". */
-#if defined(__i386)
-    __asm__( "movl %%ebp, %0" : "=g"(bp));
-#elif defined(__x86_64__)
-    __asm__( "movq %%rbp, %0" : "=g"(bp));
-#else
-    /*
-     * It would be nice if this worked uniformly, but at least on i386 and
-     * x86_64, it stopped working with gcc 4.1, because it points to the
-     * end of the saved registers instead of the start.
-     */
-    bp = (void**) __builtin_frame_address(0);
-#endif
-    while (--skip >= 0) {
-        bpdown = (void**) *bp++;
-        if (bpdown < bp)
-            break;
-        bp = bpdown;
-    }
-
-    return CallTree(bp);
-}
-
-JS_FRIEND_API(void)
-JS_DumpBacktrace(JSCallsite *trace)
-{
-    while (trace) {
-        fprintf(stdout, "%s [%s +0x%X]\n", trace->name, trace->library,
-                trace->offset);
-        trace = trace->parent;
-    }
-}
-
-#endif /* defined(DEBUG_notme) && defined(XP_UNIX) */

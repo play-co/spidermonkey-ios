@@ -1,45 +1,11 @@
 /* -*- Mode: C++; tab-width: 8; indent-tabs-mode: nil; c-basic-offset: 4 -*-
  * vim: set ts=8 sw=4 et tw=80:
  *
- * ***** BEGIN LICENSE BLOCK *****
- * Version: MPL 1.1/GPL 2.0/LGPL 2.1
- *
- * The contents of this file are subject to the Mozilla Public License Version
- * 1.1 (the "License"); you may not use this file except in compliance with
- * the License. You may obtain a copy of the License at
- * http://www.mozilla.org/MPL/
- *
- * Software distributed under the License is distributed on an "AS IS" basis,
- * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
- * for the specific language governing rights and limitations under the
- * License.
- *
- * The Original Code is mozilla.org code.
- *
- * The Initial Developer of the Original Code is
- * The Mozilla Foundation.
- * Portions created by the Initial Developer are Copyright (C) 2010
- * the Initial Developer. All Rights Reserved.
- *
- * Contributor(s):
- *   Ben Newman <b{enjam,newma}n@mozilla.com> (original author)
- *
- * Alternatively, the contents of this file may be used under the terms of
- * either of the GNU General Public License Version 2 or later (the "GPL"),
- * or the GNU Lesser General Public License Version 2.1 or later (the "LGPL"),
- * in which case the provisions of the GPL or the LGPL are applicable instead
- * of those above. If you wish to allow use of your version of this file only
- * under the terms of either the GPL or the LGPL, and not to allow others to
- * use your version of this file under the terms of the MPL, indicate your
- * decision by deleting the provisions above and replace them with the notice
- * and other provisions required by the GPL or the LGPL. If you do not delete
- * the provisions above, a recipient may use your version of this file under
- * the terms of any one of the MPL, the GPL or the LGPL.
- *
- * ***** END LICENSE BLOCK ***** */
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 #include "base/basictypes.h"
-#include "jscntxt.h"
 
 #include "mozilla/jsipc/ContextWrapperChild.h"
 #include "mozilla/jsipc/ObjectWrapperChild.h"
@@ -49,7 +15,7 @@
 #include "nsAutoPtr.h"
 #include "nsTArray.h"
 #include "nsContentUtils.h"
-#include "nsIJSContextStack.h"
+#include "nsJSUtils.h"
 
 using namespace mozilla::jsipc;
 using namespace js;
@@ -61,8 +27,8 @@ namespace {
         nsCxPusher mStack;
         JSAutoRequest mRequest;
         JSContext* const mContext;
-        const uint32 mSavedOptions;
-        JS_DECL_USE_GUARD_OBJECT_NOTIFIER;
+        const uint32_t mSavedOptions;
+        JS_DECL_USE_GUARD_OBJECT_NOTIFIER
 
     public:
 
@@ -74,7 +40,7 @@ namespace {
                                                JSOPTION_DONT_REPORT_UNCAUGHT)))
         {
             JS_GUARD_OBJECT_NOTIFIER_INIT;
-            mStack.Push(cx, PR_FALSE);
+            mStack.Push(cx, false);
         }
 
         ~AutoContextPusher() {
@@ -110,7 +76,7 @@ namespace {
 
     class AutoCheckOperation : public ACOBase
     {
-        JS_DECL_USE_GUARD_OBJECT_NOTIFIER;
+        JS_DECL_USE_GUARD_OBJECT_NOTIFIER
     public:
         AutoCheckOperation(ObjectWrapperChild* owc,
                            OperationStatus* statusPtr
@@ -188,8 +154,12 @@ ObjectWrapperChild::jsval_to_JSVariant(JSContext* cx, jsval from, JSVariant* to)
     case JSTYPE_OBJECT:
         return JSObject_to_JSVariant(cx, JSVAL_TO_OBJECT(from), to);
     case JSTYPE_STRING:
-        *to = nsDependentString((PRUnichar*)JS_GetStringChars(JSVAL_TO_STRING(from)),
-                                JS_GetStringLength(JSVAL_TO_STRING(from)));
+        {
+            nsDependentJSString depStr;
+            if (!depStr.init(cx, from))
+                return false;
+            *to = depStr;
+        }
         return true;
     case JSTYPE_NUMBER:
         if (JSVAL_IS_INT(from))
@@ -263,7 +233,8 @@ ObjectWrapperChild::jsval_from_JSVariant(JSContext* cx, const JSVariant& from,
         *to = INT_TO_JSVAL(from.get_int());
         return true;
     case JSVariant::Tdouble:
-        return !!JS_NewNumberValue(cx, from.get_double(), to);
+        *to = JS_NumberValue(from.get_double());
+        return true;
     case JSVariant::Tbool:
         *to = BOOLEAN_TO_JSVAL(from.get_bool());
         return true;
@@ -282,10 +253,10 @@ ObjectWrapperChild::Manager()
 static bool
 jsid_to_nsString(JSContext* cx, jsid from, nsString* to)
 {
-    jsval v;
-    if (JS_IdToValue(cx, from, &v) && JSVAL_IS_STRING(v)) {
-        *to = nsDependentString((PRUnichar*)JS_GetStringChars(JSVAL_TO_STRING(v)),
-                                JS_GetStringLength(JSVAL_TO_STRING(v)));
+    if (JSID_IS_STRING(from)) {
+        size_t length;
+        const jschar* chars = JS_GetInternedStringCharsAndLength(JSID_TO_STRING(from), &length);
+        *to = nsDependentString(chars, length);
         return true;
     }
     return false;
@@ -403,19 +374,25 @@ ObjectWrapperChild::AnswerDelProperty(const nsString& id,
     return jsval_to_JSVariant(cx, aco.Ok() ? val : JSVAL_VOID, vp);
 }
 
-static const PRUint32 sNextIdIndexSlot = 0;
-static const PRUint32 sNumNewEnumerateStateSlots = 1;
+static const uint32_t sNextIdIndexSlot = 0;
+static const uint32_t sNumNewEnumerateStateSlots = 1;
 
 static void
-CPOW_NewEnumerateState_Finalize(JSContext* cx, JSObject* state)
+CPOW_NewEnumerateState_FreeIds(JSObject* state)
 {
     nsTArray<nsString>* strIds =
-        static_cast<nsTArray<nsString>*>(JS_GetPrivate(cx, state));
+        static_cast<nsTArray<nsString>*>(JS_GetPrivate(state));
 
     if (strIds) {
         delete strIds;
-        JS_SetPrivate(cx, state, NULL);
+        JS_SetPrivate(state, NULL);
     }
+}
+
+static void
+CPOW_NewEnumerateState_Finalize(JSFreeOp* fop, JSObject* state)
+{
+    CPOW_NewEnumerateState_FreeIds(state);
 }
 
 // Similar to IteratorClass in XPCWrapper.cpp
@@ -424,10 +401,9 @@ static const JSClass sCPOW_NewEnumerateState_JSClass = {
     JSCLASS_HAS_PRIVATE |
     JSCLASS_HAS_RESERVED_SLOTS(sNumNewEnumerateStateSlots),
     JS_PropertyStub,  JS_PropertyStub,
-    JS_PropertyStub,  JS_PropertyStub,
+    JS_PropertyStub,  JS_StrictPropertyStub,
     JS_EnumerateStub, JS_ResolveStub,
-    JS_ConvertStub,   CPOW_NewEnumerateState_Finalize,
-    JSCLASS_NO_OPTIONAL_MEMBERS
+    JS_ConvertStub,   CPOW_NewEnumerateState_Finalize
 };
 
 bool
@@ -446,23 +422,23 @@ ObjectWrapperChild::AnswerNewEnumerateInit(/* no in-parameters */
         return false;
     AutoObjectRooter tvr(cx, state);
 
-    for (JSObject* proto = mObj;
-         proto;
-         proto = JS_GetPrototype(cx, proto))
-    {
+    for (JSObject* proto = mObj; proto; ) {
         AutoIdArray ids(cx, JS_Enumerate(cx, proto));
-        for (uint i = 0; i < ids.length(); ++i)
+        for (size_t i = 0; i < ids.length(); ++i)
             JS_DefinePropertyById(cx, state, ids[i], JSVAL_VOID,
                                   NULL, NULL, JSPROP_ENUMERATE | JSPROP_SHARED);
+
+        if (!JS_GetPrototype(cx, proto, &proto))
+            return false;
     }
 
-    nsTArray<nsString>* strIds;
+    InfallibleTArray<nsString>* strIds;
     {
         AutoIdArray ids(cx, JS_Enumerate(cx, state));
         if (!ids)
             return false;
-        strIds = new nsTArray<nsString>(ids.length());
-        for (uint i = 0; i < ids.length(); ++i)
+        strIds = new InfallibleTArray<nsString>(ids.length());
+        for (size_t i = 0; i < ids.length(); ++i)
             if (!jsid_to_nsString(cx, ids[i], strIds->AppendElement())) {
                 delete strIds;
                 return false;
@@ -470,10 +446,10 @@ ObjectWrapperChild::AnswerNewEnumerateInit(/* no in-parameters */
     }
     *idp = strIds->Length();
 
-    *status = (JS_SetPrivate(cx, state, strIds) &&
-               JS_SetReservedSlot(cx, state, sNextIdIndexSlot,
-                                  JSVAL_ZERO) &&
-               JSObject_to_JSVariant(cx, state, statep));
+    JS_SetPrivate(state, strIds);
+    JS_SetReservedSlot(state, sNextIdIndexSlot, JSVAL_ZERO);
+               
+    *status = JSObject_to_JSVariant(cx, state, statep);
 
     return true;
 }
@@ -483,7 +459,6 @@ ObjectWrapperChild::AnswerNewEnumerateNext(const JSVariant& in_state,
                                            OperationStatus* status, JSVariant* statep, nsString* idp)
 {
     JSObject* state;
-    jsval v;
 
     *statep = in_state;
     idp->Truncate();
@@ -495,24 +470,26 @@ ObjectWrapperChild::AnswerNewEnumerateNext(const JSVariant& in_state,
     if (!JSObject_from_JSVariant(cx, in_state, &state))
         return false;
 
-    nsTArray<nsString>* strIds =
-        static_cast<nsTArray<nsString>*>(JS_GetPrivate(cx, state));
+    InfallibleTArray<nsString>* strIds =
+        static_cast<InfallibleTArray<nsString>*>(JS_GetPrivate(state));
 
-    if (!strIds || !JS_GetReservedSlot(cx, state, sNextIdIndexSlot, &v))
+    if (!strIds)
         return false;
 
-    jsuint i = JSVAL_TO_INT(v);
+    jsval v = JS_GetReservedSlot(state, sNextIdIndexSlot);
+
+    int32_t i = JSVAL_TO_INT(v);
     NS_ASSERTION(i >= 0, "Index of next jsid negative?");
     NS_ASSERTION(i <= strIds->Length(), "Index of next jsid too large?");
 
-    if (jsuint(i) == strIds->Length()) {
+    if (size_t(i) == strIds->Length()) {
         *status = JS_TRUE;
         return JSObject_to_JSVariant(cx, NULL, statep);
     }
 
     *idp = strIds->ElementAt(i);
-    *status = JS_SetReservedSlot(cx, state, sNextIdIndexSlot,
-                                 INT_TO_JSVAL(i + 1));
+    JS_SetReservedSlot(state, sNextIdIndexSlot, INT_TO_JSVAL(i + 1));
+    *status = JS_TRUE;
     return true;
 }
     
@@ -527,7 +504,7 @@ ObjectWrapperChild::RecvNewEnumerateDestroy(const JSVariant& in_state)
     if (!JSObject_from_JSVariant(cx, in_state, &state))
         return false;
 
-    CPOW_NewEnumerateState_Finalize(cx, state);
+    CPOW_NewEnumerateState_FreeIds(state);
 
     return true;
 }
@@ -580,7 +557,7 @@ namespace {
 }
 
 bool
-ObjectWrapperChild::AnswerCall(PObjectWrapperChild* receiver, const nsTArray<JSVariant>& argv,
+ObjectWrapperChild::AnswerCall(PObjectWrapperChild* receiver, const InfallibleTArray<JSVariant>& argv,
                                OperationStatus* status, JSVariant* rval)
 {
     JSContext* cx = Manager()->GetContext();
@@ -592,13 +569,13 @@ ObjectWrapperChild::AnswerCall(PObjectWrapperChild* receiver, const nsTArray<JSV
         return false;
 
     AutoJSArgs args;
-    PRUint32 argc = argv.Length();
+    uint32_t argc = argv.Length();
     jsval *jsargs = args.AppendElements(argc);
     if (!jsargs)
         return false;
     AutoArrayRooter tvr(cx, argc, jsargs);
 
-    for (PRUint32 i = 0; i < argc; ++i)
+    for (uint32_t i = 0; i < argc; ++i)
         if (!jsval_from_JSVariant(cx, argv.ElementAt(i), jsargs + i))
             return false;
 
@@ -610,7 +587,7 @@ ObjectWrapperChild::AnswerCall(PObjectWrapperChild* receiver, const nsTArray<JSV
 }
 
 bool
-ObjectWrapperChild::AnswerConstruct(const nsTArray<JSVariant>& argv,
+ObjectWrapperChild::AnswerConstruct(const InfallibleTArray<JSVariant>& argv,
                                     OperationStatus* status, PObjectWrapperChild** rval)
 {
     JSContext* cx = Manager()->GetContext();
@@ -618,13 +595,13 @@ ObjectWrapperChild::AnswerConstruct(const nsTArray<JSVariant>& argv,
     AutoCheckOperation aco(this, status);
 
     AutoJSArgs args;
-    PRUint32 argc = argv.Length();
+    uint32_t argc = argv.Length();
     jsval* jsargs = args.AppendElements(argc);
     if (!jsargs)
         return false;
     AutoArrayRooter tvr(cx, argc, jsargs);
 
-    for (PRUint32 i = 0; i < argc; ++i)
+    for (uint32_t i = 0; i < argc; ++i)
         if (!jsval_from_JSVariant(cx, argv.ElementAt(i), jsargs + i))
             return false;
 

@@ -1,4 +1,7 @@
-/*
+/* -*- Mode: C++; tab-width: 8; indent-tabs-mode: nil; c-basic-offset: 4 -*-
+ * vim: set ts=8 sw=4 et tw=79:
+ *
+ * ***** BEGIN LICENSE BLOCK *****
  * Copyright (C) 2009 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -21,7 +24,8 @@
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
- */
+ * 
+ * ***** END LICENSE BLOCK ***** */
 
 #ifndef RepatchBuffer_h
 #define RepatchBuffer_h
@@ -45,15 +49,18 @@ class RepatchBuffer {
     typedef MacroAssemblerCodePtr CodePtr;
 
 public:
-    RepatchBuffer(void *start, size_t size, bool mprot = true)
-    : m_start(start), m_size(size), mprot(mprot)
+    RepatchBuffer(const MacroAssemblerCodeRef &ref)
     {
-        ExecutableAllocator::makeWritable(m_start, m_size);
+        m_start = ref.m_code.executableAddress();
+        m_size = ref.m_size;
+        mprot = true;
+
+        if (mprot)
+            ExecutableAllocator::makeWritable(m_start, m_size);
     }
 
-    RepatchBuffer(CodeBlock* codeBlock)
+    RepatchBuffer(const JITCode &code)
     {
-        JITCode& code = codeBlock->getJITCode();
         m_start = code.start();
         m_size = code.size();
         mprot = true;
@@ -71,6 +78,11 @@ public:
     void relink(CodeLocationJump jump, CodeLocationLabel destination)
     {
         MacroAssembler::repatchJump(jump, destination);
+    }
+
+    bool canRelink(CodeLocationJump jump, CodeLocationLabel destination)
+    {
+        return MacroAssembler::canRepatchJump(jump, destination);
     }
 
     void relink(CodeLocationCall call, CodeLocationLabel destination)
@@ -98,9 +110,9 @@ public:
         MacroAssembler::repatchInt32(dataLabel32, value);
     }
 
-    void repatch(CodeLocationDataLabelPtr dataLabelPtr, void* value)
+    void repatch(CodeLocationDataLabelPtr dataLabelPtr, const void* value)
     {
-        MacroAssembler::repatchPointer(dataLabelPtr, value);
+        MacroAssembler::repatchPointer(dataLabelPtr, (void*) value);
     }
 
     void repatchLoadPtrToLEA(CodeLocationInstruction instruction)

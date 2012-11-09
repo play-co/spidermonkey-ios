@@ -1,348 +1,330 @@
-# Test harness for JSTests, controlled by manifest files.
+#!/usr/bin/env python
+"""
+The JS Shell Test Harness.
 
-import datetime, os, sys, subprocess
-from subprocess import *
+See the adjacent README.txt for more details.
+"""
 
-from tests import TestResult, NullTestOutput
-from workers import Source
-from progressbar import ProgressBar
+import os, sys, textwrap
+from copy import copy
+from subprocess import list2cmdline, call
 
-def exclude_tests(test_list, exclude_files):
-    exclude_paths = []
-    for filename in exclude_files:
-        for line in open(filename):
-            if line.startswith('#'): continue
-            line = line.strip('\n')
-            if not line: continue
-            exclude_paths.append(line)
-    return [ _ for _ in test_list if _.path not in exclude_paths ]
+from lib.results import NullTestOutput
+from lib.tests import TestCase
+from lib.results import ResultsSink
+from lib.progressbar import ProgressBar
 
-def check_manifest(test_list):
-    test_set = set([ _.path for _ in test_list ])
+if (sys.platform.startswith('linux') or
+    sys.platform.startswith('darwin')
+   ):
+    from lib.tasks_unix import run_all_tests
+else:
+    from lib.tasks_win import run_all_tests
 
-    missing = []
-
-    for dirpath, dirnames, filenames in os.walk('.'):
-        for filename in filenames:
-            if dirpath == '.': continue
-            if not filename.endswith('.js'): continue
-            if filename in ('browser.js', 'shell.js', 'jsref.js', 'template.js'): continue
-
-            path = os.path.join(dirpath, filename)
-            if path.startswith('./'):
-                path = path[2:]
-            if path not in test_set:
-                missing.append(path)
-
-    if missing:
-        print "Test files not contained in any manifest:"
-        for path in missing:
-            print path
-    else:
-        print 'All test files are listed in manifests'
-
-class TestTask:
-    js_cmd_prefix = None
-
-    def __init__(self, test):
-        self.test = test
-
-    def __call__(self):
-        if self.test.enable or OPTIONS.run_skipped:
-            return self.test.run(self.js_cmd_prefix, OPTIONS.timeout)
-        else:
-            return NullTestOutput(self.test)
-
-    def __str__(self):
-        return str(self.test)
-
-    @classmethod
-    def set_js_cmd_prefix(self, js_path, js_args, debugger_prefix):
-        parts = []
-        if debugger_prefix:
-            parts += debugger_prefix
-        parts.append(js_path)
-        if js_args:
-            parts.append(js_args)
-        self.js_cmd_prefix = parts
-
-class ResultsSink:
-    output_file = None
-
-    def __init__(self):
-        self.groups = {}
-        self.counts = [ 0, 0, 0 ]
-        self.n = 0
-
-        self.finished = False
-        self.pb = None
-
-    def push(self, output):
-        if isinstance(output, NullTestOutput):
-            if OPTIONS.tinderbox:
-                print '%s | %s (SKIP)' % ('TEST-KNOWN-FAIL', output.test.path)
-            self.counts[2] += 1
-            self.n += 1
-        else:
-            if OPTIONS.show_cmd:
-                print >> self.output_file, subprocess.list2cmdline(output.cmd)
-
-            if OPTIONS.show_output:
-                print >> self.output_file, '    rc = %d, run time = %f' % (output.rc, output.dt)
-                self.output_file.write(output.out)
-                self.output_file.write(output.err)
-
-            result = TestResult.from_output(output)
-            tup = (result.result, result.test.expect, result.test.random)
-            dev_label = self.LABELS[tup][1]
-            self.groups.setdefault(dev_label, []).append(result.test.path)
-
-            self.n += 1
-
-            if result.result == TestResult.PASS and not result.test.random:
-                self.counts[0] += 1
-            elif result.test.expect and not result.test.random:
-                self.counts[1] += 1
-            else:
-                self.counts[2] += 1
-
-            if OPTIONS.tinderbox:
-                if len(result.results) > 1:
-                    for sub_ok, msg in result.results:
-                        label = self.LABELS[(sub_ok, result.test.expect, result.test.random)][0]
-                        if label == 'TEST-UNEXPECTED-PASS':
-                            label = 'TEST-PASS (EXPECTED RANDOM)'
-                        print '%s | %s | %s' % (label, result.test.path, msg)
-                print '%s | %s' % (self.LABELS[(result.result, 
-                                              result.test.expect, result.test.random)][0],
-                                 result.test.path)
-           
-        if self.pb:
-            self.pb.label = '[%4d|%4d|%4d]'%tuple(self.counts)
-            self.pb.update(self.n)
-
-    # Conceptually, this maps (test result x test expection) to text labels.
-    #      key   is (result, expect, random)
-    #      value is (tinderbox label, dev test category)
-    LABELS = {
-        (TestResult.CRASH, False, False): ('TEST-UNEXPECTED-FAIL',               'REGRESSIONS'),
-        (TestResult.CRASH, False, True):  ('TEST-UNEXPECTED-FAIL',               'REGRESSIONS'),
-        (TestResult.CRASH, True,  False): ('TEST-UNEXPECTED-FAIL',               'REGRESSIONS'),
-        (TestResult.CRASH, True,  True):  ('TEST-UNEXPECTED-FAIL',               'REGRESSIONS'),
-
-        (TestResult.FAIL,  False, False): ('TEST-KNOWN-FAIL',                    ''),
-        (TestResult.FAIL,  False, True):  ('TEST-KNOWN-FAIL (EXPECTED RANDOM)',  ''),
-        (TestResult.FAIL,  True,  False): ('TEST-UNEXPECTED-FAIL',               'REGRESSIONS'),
-        (TestResult.FAIL,  True,  True):  ('TEST-KNOWN-FAIL (EXPECTED RANDOM)',  ''),
-
-        (TestResult.PASS,  False, False): ('TEST-UNEXPECTED-PASS',               'FIXES'),
-        (TestResult.PASS,  False, True):  ('TEST-PASS (EXPECTED RANDOM)',        ''),
-        (TestResult.PASS,  True,  False): ('TEST-PASS',                          ''),
-        (TestResult.PASS,  True,  True):  ('TEST-PASS (EXPECTED RANDOM)',        ''),
-        }
-
-    def list(self):
-        for label, paths in sorted(self.groups.items()):
-            if label == '': continue
-
-            print label
-            for path in paths:
-                print '    %s'%path
-
-        if OPTIONS.failure_file:
-              failure_file = open(OPTIONS.failure_file, 'w')
-              if not self.all_passed():
-                  for path in self.groups['REGRESSIONS']:
-                      print >> failure_file, path
-              failure_file.close()
-
-        suffix = '' if self.finished else ' (partial run -- interrupted by user)'
-        if self.all_passed():
-            print 'PASS' + suffix
-        else:
-            print 'FAIL' + suffix
-
-    def all_passed(self):
-        return 'REGRESSIONS' not in self.groups
-
-def run_tests(tests, results):
+def run_tests(options, tests, results):
     """Run the given tests, sending raw results to the given results accumulator."""
-    pb = None
-    if not OPTIONS.hide_progress:
-        try:
-            from progressbar import ProgressBar
-            pb = ProgressBar('', len(tests), 16)
-        except ImportError:
-            pass
-    results.pb = pb
+    try:
+        completed = run_all_tests(tests, results, options)
+    except KeyboardInterrupt:
+        completed = False
 
-    test_list = [ TestTask(test) for test in tests ]
-    pipeline = Source(test_list, results, False)
-    results.finished = pipeline.start(OPTIONS.worker_count)
+    results.finish(completed)
 
-    if pb: 
-        pb.finish()
+def get_cpu_count():
+    """
+    Guess at a reasonable parallelism count to set as the default for the
+    current machine and run.
+    """
+    # Python 2.6+
+    try:
+        import multiprocessing
+        return multiprocessing.cpu_count()
+    except (ImportError,NotImplementedError):
+        pass
 
-    if not OPTIONS.tinderbox:
-        results.list()
+    # POSIX
+    try:
+        res = int(os.sysconf('SC_NPROCESSORS_ONLN'))
+        if res > 0:
+            return res
+    except (AttributeError,ValueError):
+        pass
 
-if __name__ == '__main__':        
-    from optparse import OptionParser
-    op = OptionParser(usage='%prog JS_SHELL [TEST-SPECS]')
-    op.add_option('-s', '--show-cmd', dest='show_cmd', action='store_true',
-                  help='show js shell command run')
-    op.add_option('-o', '--show-output', dest='show_output', action='store_true',
-                  help='show output from js shell')
-    op.add_option('-O', '--output-file', dest='output_file',
-                  help='write command output to the given file')
-    op.add_option('-f', '--file', dest='test_file', action='append',
-                  help='get tests from the given file')
-    op.add_option('-x', '--exclude-file', dest='exclude_file', action='append',
-                  help='exclude tests from the given file')
-    op.add_option('--no-progress', dest='hide_progress', action='store_true',
-                  help='hide progress bar')
-    op.add_option('-j', '--worker-count', dest='worker_count', type=int, default=2,
-                  help='number of worker threads to run tests on (default 2)')
-    op.add_option('-m', '--manifest', dest='manifest',
-                  help='select manifest file')
-    op.add_option('-t', '--timeout', dest='timeout', type=float, default=150.0,
-                  help='set test timeout in seconds')
-    op.add_option('-d', '--exclude-random', dest='random', action='store_false',
-                  help='exclude tests marked random', default=True)
-    op.add_option('--run-skipped', dest='run_skipped', action='store_true',
-                  help='run skipped tests')
-    op.add_option('--run-only-skipped', dest='run_only_skipped', action='store_true',
-                  help='run only skipped tests')
-    op.add_option('--tinderbox', dest='tinderbox', action='store_true',
-                  help='Tinderbox-parseable output format')
-    op.add_option('--args', dest='shell_args',
-                  help='extra args to pass to the JS shell')
-    op.add_option('-g', '--debug', dest='debug', action='store_true',
-                  help='run test in debugger')
-    op.add_option('--valgrind', dest='valgrind', action='store_true',
-                  help='run tests in valgrind')
-    op.add_option('--valgrind-args', dest='valgrind_args',
-                  help='extra args to pass to valgrind')
-    op.add_option('-c', '--check-manifest', dest='check_manifest', action='store_true',
-                  help='check for test files not listed in the manifest')
-    op.add_option('--failure-file', dest='failure_file',
-                  help='write tests that have not passed to the given file')
-    op.add_option('--run-slow-tests', dest='run_slow_tests', action='store_true',
-                  help='run particularly slow tests as well as average-speed tests')
-    (OPTIONS, args) = op.parse_args()
-    if len(args) < 1:
-        if not OPTIONS.check_manifest:
-            op.error('missing JS_SHELL argument')
-        JS, args = None, []
-    else:
-        JS, args = args[0], args[1:]
-    # Convert to an absolute path so we can run JS from a different directory.
-    if JS is not None:
-        JS = os.path.abspath(JS)
+    # Windows
+    try:
+        res = int(os.environ['NUMBER_OF_PROCESSORS'])
+        if res > 0:
+            return res
+    except (KeyError, ValueError):
+        pass
 
-    if OPTIONS.debug:
-        if OPTIONS.valgrind:
-            print >> sys.stderr, "--debug and --valgrind options are mutually exclusive"
-            sys.exit(2)
-        debugger_prefix = ['gdb', '-q', '--args']
-    elif OPTIONS.valgrind:
-        debugger_prefix = ['valgrind']
+    return 1
+
+def parse_args():
+    """
+    Parse command line arguments.
+    Returns a tuple of: (options, js_shell, requested_paths, excluded_paths)
+        options :object: The raw OptionParser output.
+        js_shell :str: The absolute location of the shell to test with.
+        requested_paths :set<str>: Test paths specially requested on the CLI.
+        excluded_paths :set<str>: Test paths specifically excluded by the CLI.
+    """
+    from optparse import OptionParser, OptionGroup
+    op = OptionParser(usage=textwrap.dedent("""
+        %prog [OPTIONS] JS_SHELL [TESTS]
+
+        Shell output format: [ pass | fail | timeout | skip ] progress | time
+        """).strip())
+    op.add_option('--xul-info', dest='xul_info_src',
+                  help='config data for xulRuntime (avoids search for config/autoconf.mk)')
+
+    harness_og = OptionGroup(op, "Harness Controls", "Control how tests are run.")
+    harness_og.add_option('-j', '--worker-count', type=int, default=max(1, get_cpu_count()),
+                          help='Number of tests to run in parallel (default %default)')
+    harness_og.add_option('-t', '--timeout', type=float, default=150.0,
+                          help='Set maximum time a test is allows to run (in seconds).')
+    harness_og.add_option('-a', '--args', dest='shell_args', default='',
+                          help='Extra args to pass to the JS shell.')
+    harness_og.add_option('--jitflags', default='',
+                          help='Example: --jitflags=m,amd to run each test with -m, -a -m -d [default=%default]')
+    harness_og.add_option('-g', '--debug', action='store_true', help='Run a test in debugger.')
+    harness_og.add_option('--debugger', default='gdb -q --args', help='Debugger command.')
+    harness_og.add_option('--valgrind', action='store_true', help='Run tests in valgrind.')
+    harness_og.add_option('--valgrind-args', default='', help='Extra args to pass to valgrind.')
+    op.add_option_group(harness_og)
+
+    input_og = OptionGroup(op, "Inputs", "Change what tests are run.")
+    input_og.add_option('-f', '--file', dest='test_file', action='append',
+                        help='Get tests from the given file.')
+    input_og.add_option('-x', '--exclude-file', action='append',
+                        help='Exclude tests from the given file.')
+    input_og.add_option('-d', '--exclude-random', dest='random', action='store_false',
+                        help='Exclude tests marked as "random."')
+    input_og.add_option('--run-skipped', action='store_true', help='Run tests marked as "skip."')
+    input_og.add_option('--run-only-skipped', action='store_true', help='Run only tests marked as "skip."')
+    input_og.add_option('--run-slow-tests', action='store_true',
+                        help='Do not skip tests marked as "slow."')
+    input_og.add_option('--no-extensions', action='store_true',
+                        help='Run only tests conforming to the ECMAScript 5 standard.')
+    op.add_option_group(input_og)
+
+    output_og = OptionGroup(op, "Output", "Modify the harness and tests output.")
+    output_og.add_option('-s', '--show-cmd', action='store_true',
+                         help='Show exact commandline used to run each test.')
+    output_og.add_option('-o', '--show-output', action='store_true',
+                         help="Print each test's output to the file given by --output-file.")
+    output_og.add_option('-F', '--failed-only', action='store_true',
+                         help="If a --show-* option is given, only print output for failed tests.")
+    output_og.add_option('-O', '--output-file',
+                         help='Write all output to the given file (default: stdout).')
+    output_og.add_option('--failure-file',
+                         help='Write all not-passed tests to the given file.')
+    output_og.add_option('--no-progress', dest='hide_progress', action='store_true',
+                         help='Do not show the progress bar.')
+    output_og.add_option('--tinderbox', action='store_true',
+                         help='Use tinderbox-parseable output format.')
+    op.add_option_group(output_og)
+
+    special_og = OptionGroup(op, "Special", "Special modes that do not run tests.")
+    special_og.add_option('--make-manifests', metavar='BASE_TEST_PATH',
+                          help='Generate reftest manifest files.')
+    op.add_option_group(special_og)
+    options, args = op.parse_args()
+
+    # Acquire the JS shell given on the command line.
+    options.js_shell = None
+    requested_paths = set()
+    if len(args) > 0:
+        options.js_shell = os.path.abspath(args[0])
+        requested_paths |= set(args[1:])
+
+    # If we do not have a shell, we must be in a special mode.
+    if options.js_shell is None and not options.make_manifests:
+        op.error('missing JS_SHELL argument')
+
+    # Valgrind and gdb are mutually exclusive.
+    if options.valgrind and options.debug:
+        op.error("--valgrind and --debug are mutually exclusive.")
+
+    # Fill the debugger field, as needed.
+    prefix = options.debugger.split() if options.debug else []
+    if options.valgrind:
+        prefix = ['valgrind'] + options.valgrind_args.split()
         if os.uname()[0] == 'Darwin':
-            debugger_prefix.append('--dsymutil=yes')
-        if OPTIONS.valgrind_args:
-            debugger_prefix.append(OPTIONS.valgrind_args)
-        # Running under valgrind is not very useful if we don't show results.
-        OPTIONS.show_output = True 
-    else:
-        debugger_prefix = []
-    
-    TestTask.set_js_cmd_prefix(JS, OPTIONS.shell_args, debugger_prefix)
+            prefix.append('--dsymutil=yes')
+        options.show_output = True
+    TestCase.set_js_cmd_prefix(options.js_shell, options.shell_args.split(), prefix)
 
-    output_file = sys.stdout
-    if OPTIONS.output_file and (OPTIONS.show_cmd or OPTIONS.show_output):
-        output_file = open(OPTIONS.output_file, 'w')
-    ResultsSink.output_file = output_file
+    # If files with lists of tests to run were specified, add them to the
+    # requested tests set.
+    if options.test_file:
+        for test_file in options.test_file:
+            requested_paths |= set([line.strip() for line in open(test_file).readlines()])
 
-    if ((OPTIONS.show_cmd or OPTIONS.show_output) and 
-        output_file == sys.stdout or OPTIONS.tinderbox):
-        OPTIONS.hide_progress = True
+    # If files with lists of tests to exclude were specified, add them to the
+    # excluded tests set.
+    excluded_paths = set()
+    if options.exclude_file:
+        for filename in options.exclude_file:
+            try:
+                fp = open(filename, 'r')
+                for line in fp:
+                    if line.startswith('#'): continue
+                    line = line.strip()
+                    if not line: continue
+                    excluded_paths |= set((line,))
+            finally:
+                fp.close()
 
-    if OPTIONS.manifest is None:
-        filename = os.path.join(os.path.dirname(__file__), 'jstests.list')
-        if os.path.isfile(filename):
-            OPTIONS.manifest = filename
-        else:
-            print >> sys.stderr, 'no manifest file given and defaults not found'
-            sys.exit(2)
+    # Handle output redirection, if requested and relevant.
+    options.output_fp = sys.stdout
+    if options.output_file:
+        if not options.show_cmd:
+            options.show_output = True
+        try:
+            options.output_fp = open(options.output_file, 'w')
+        except IOError, ex:
+            raise SystemExit("Failed to open output file: " + str(ex))
 
-    import manifest
-    if JS is None:
+    options.show = options.show_cmd or options.show_output
+
+    # Hide the progress bar if it will get in the way of other output.
+    options.hide_progress = ((options.show and
+                              options.output_fp == sys.stdout) or
+                             options.tinderbox or
+                             ProgressBar.conservative_isatty() or
+                             options.hide_progress)
+
+    return (options, requested_paths, excluded_paths)
+
+def parse_jitflags(op_jitflags):
+    jitflags = [ [ '-' + flag for flag in flags ]
+                 for flags in op_jitflags.split(',') ]
+    for flags in jitflags:
+        for flag in flags:
+            if flag not in ('-m', '-a', '-p', '-d', '-n'):
+                print('Invalid jit flag: "%s"'%flag)
+                sys.exit(1)
+    return jitflags
+
+def load_tests(options, requested_paths, excluded_paths):
+    """
+    Returns a tuple: (skipped_tests, test_list)
+        skip_list: [iterable<Test>] Tests found but skipped.
+        test_list: [iterable<Test>] Tests found that should be run.
+    """
+    import lib.manifest as manifest
+
+    if options.js_shell is None:
         xul_tester = manifest.NullXULInfoTester()
     else:
-        xul_info = manifest.XULInfo.create(JS)
-        xul_tester = manifest.XULInfoTester(xul_info, JS)
-    test_list = manifest.parse(OPTIONS.manifest, xul_tester)
+        if options.xul_info_src is None:
+            xul_info = manifest.XULInfo.create(options.js_shell)
+        else:
+            xul_abi, xul_os, xul_debug = options.xul_info_src.split(r':')
+            xul_debug = xul_debug.lower() is 'true'
+            xul_info = manifest.XULInfo(xul_abi, xul_os, xul_debug)
+        xul_tester = manifest.XULInfoTester(xul_info, options.js_shell)
 
-    if OPTIONS.check_manifest:
-        check_manifest(test_list)
-        if JS is None:
-            sys.exit()
+    test_dir = os.path.dirname(os.path.abspath(__file__))
+    test_list = manifest.load(test_dir, xul_tester)
+    skip_list = []
 
-    if OPTIONS.test_file:
+    if options.make_manifests:
+        manifest.make_manifests(options.make_manifests, test_list)
+        sys.exit()
+
+    # Create a new test list. Apply each JIT configuration to every test.
+    if options.jitflags:
+        new_test_list = []
+        jitflags_list = parse_jitflags(options.jitflags)
+        for test in test_list:
+            for jitflags in jitflags_list:
+                tmp_test = copy(test)
+                tmp_test.options = copy(test.options)
+                tmp_test.options.extend(jitflags)
+                new_test_list.append(tmp_test)
+        test_list = new_test_list
+
+    if options.test_file:
         paths = set()
-        for test_file in OPTIONS.test_file:
+        for test_file in options.test_file:
             paths |= set([ line.strip() for line in open(test_file).readlines()])
         test_list = [ _ for _ in test_list if _.path in paths ]
 
-    if args:
+    if requested_paths:
         def p(path):
-            for arg in args:
+            for arg in requested_paths:
                 if path.find(arg) != -1:
                     return True
             return False
         test_list = [ _ for _ in test_list if p(_.path) ]
 
-    if OPTIONS.exclude_file:
-        test_list = exclude_tests(test_list, OPTIONS.exclude_file)
+    if options.exclude_file:
+        test_list = [_ for _ in test_list if _.path not in excluded_paths]
 
-    if not OPTIONS.random:
+    if options.no_extensions:
+        pattern = os.sep + 'extensions' + os.sep
+        test_list = [_ for _ in test_list if pattern not in _.path]
+
+    if not options.random:
         test_list = [ _ for _ in test_list if not _.random ]
 
-    if OPTIONS.run_only_skipped:
-        OPTIONS.run_skipped = True
+    if options.run_only_skipped:
+        options.run_skipped = True
         test_list = [ _ for _ in test_list if not _.enable ]
 
-    if not OPTIONS.run_slow_tests:
+    if not options.run_slow_tests:
         test_list = [ _ for _ in test_list if not _.slow ]
 
-    if OPTIONS.debug and test_list:
+    if not options.run_skipped:
+        skip_list = [ _ for _ in test_list if not _.enable ]
+        test_list = [ _ for _ in test_list if _.enable ]
+
+    return skip_list, test_list
+
+def main():
+    options, requested_paths, excluded_paths = parse_args()
+    skip_list, test_list = load_tests(options, requested_paths, excluded_paths)
+
+    if not test_list:
+        print 'no tests selected'
+        return 1
+
+    test_dir = os.path.dirname(os.path.abspath(__file__))
+
+    if options.debug:
         if len(test_list) > 1:
             print('Multiple tests match command line arguments, debugger can only run one')
             for tc in test_list:
                 print('    %s'%tc.path)
-            sys.exit(2)
+            return 2
 
-        cmd = test_list[0].get_command(TestTask.js_cmd_prefix)
-        if OPTIONS.show_cmd:
-            print subprocess.list2cmdline(cmd)
+        cmd = test_list[0].get_command(TestCase.js_cmd_prefix)
+        if options.show_cmd:
+            print list2cmdline(cmd)
+        if test_dir not in ('', '.'):
+            os.chdir(test_dir)
         call(cmd)
-        sys.exit()
+        return 0
 
-    if not test_list:
-        print 'no tests selected'
-    else:
-        curdir = os.getcwd()
-        manifest_dir = os.path.dirname(OPTIONS.manifest)
-        if manifest_dir not in ('', '.'):
-            os.chdir(os.path.dirname(OPTIONS.manifest))
-        try:
-            results = ResultsSink()
-            run_tests(test_list, results)
-        finally:
-            os.chdir(curdir)
+    curdir = os.getcwd()
+    if test_dir not in ('', '.'):
+        os.chdir(test_dir)
 
-    if output_file != sys.stdout:
-        output_file.close()
+    results = None
+    try:
+        results = ResultsSink(options, len(skip_list) + len(test_list))
+        for t in skip_list:
+            results.push(NullTestOutput(t))
+        run_tests(options, test_list, results)
+    finally:
+        os.chdir(curdir)
 
-    if not results.all_passed():
-        sys.exit(1)
+    if results is None or not results.all_passed():
+        return 1
+
+    return 0
+
+if __name__ == '__main__':
+    sys.exit(main())

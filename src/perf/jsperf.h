@@ -1,40 +1,7 @@
 /* -*- Mode: C++; tab-width: 4; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
-/* ***** BEGIN LICENSE BLOCK *****
- * Version: MPL 1.1/GPL 2.0/LGPL 2.1
- *
- * The contents of this file are subject to the Mozilla Public License Version
- * 1.1 (the "License"); you may not use this file except in compliance with
- * the License. You may obtain a copy of the License at
- * http://www.mozilla.org/MPL/
- *
- * Software distributed under the License is distributed on an "AS IS" basis,
- * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
- * for the specific language governing rights and limitations under the
- * License.
- *
- * The Original Code is mozilla.org code.
- *
- * The Initial Developer of the Original Code is
- * the Mozilla Foundation.
- * Portions created by the Initial Developer are Copyright (C) 2010
- * the Initial Developer. All Rights Reserved.
- *
- * Contributor(s):
- *   Zack Weinberg <zweinberg@mozilla.com>  (original author)
- *
- * Alternatively, the contents of this file may be used under the terms of
- * either the GNU General Public License Version 2 or later (the "GPL"), or
- * the GNU Lesser General Public License Version 2.1 or later (the "LGPL"),
- * in which case the provisions of the GPL or the LGPL are applicable instead
- * of those above. If you wish to allow use of your version of this file only
- * under the terms of either the GPL or the LGPL, and not to allow others to
- * use your version of this file under the terms of the MPL, indicate your
- * decision by deleting the provisions above and replace them with the notice
- * and other provisions required by the GPL or the LGPL. If you do not delete
- * the provisions above, a recipient may use your version of this file under
- * the terms of any one of the MPL, the GPL or the LGPL.
- *
- * ***** END LICENSE BLOCK ***** */
+/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 #ifndef jsperf_h___
 #define jsperf_h___
@@ -98,19 +65,19 @@ class JS_FRIEND_API(PerfMeasurement)
      * Counters for each measurable event.
      * Immediately after one of these objects is created, all of the
      * counters for enabled events will be zero, and all of the
-     * counters for disabled events will be uint64(-1).
+     * counters for disabled events will be uint64_t(-1).
      */
-    uint64 cpu_cycles;
-    uint64 instructions;
-    uint64 cache_references;
-    uint64 cache_misses;
-    uint64 branch_instructions;
-    uint64 branch_misses;
-    uint64 bus_cycles;
-    uint64 page_faults;
-    uint64 major_page_faults;
-    uint64 context_switches;
-    uint64 cpu_migrations;
+    uint64_t cpu_cycles;
+    uint64_t instructions;
+    uint64_t cache_references;
+    uint64_t cache_misses;
+    uint64_t branch_instructions;
+    uint64_t branch_misses;
+    uint64_t bus_cycles;
+    uint64_t page_faults;
+    uint64_t major_page_faults;
+    uint64_t context_switches;
+    uint64_t cpu_migrations;
 
     /*
      * Prepare to measure the indicated set of events.  If not all of
@@ -148,7 +115,7 @@ class JS_FRIEND_API(PerfMeasurement)
  * global object).  The JS-visible API is identical to the C++ API.
  */
 extern JS_FRIEND_API(JSObject*)
-    RegisterPerfMeasurement(JSContext *cx, JSObject *global);
+    RegisterPerfMeasurement(JSContext *cx, JSRawObject global);
 
 /*
  * Given a jsval which contains an instance of the aforementioned

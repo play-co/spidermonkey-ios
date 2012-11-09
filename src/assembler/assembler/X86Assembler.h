@@ -1,4 +1,7 @@
-/*
+/* -*- Mode: C++; tab-width: 8; indent-tabs-mode: nil; c-basic-offset: 4 -*-
+ * vim: set ts=8 sw=4 et tw=79:
+ *
+ * ***** BEGIN LICENSE BLOCK *****
  * Copyright (C) 2008 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -21,7 +24,8 @@
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
- */
+ * 
+ * ***** END LICENSE BLOCK ***** */
 
 #ifndef X86Assembler_h
 #define X86Assembler_h
@@ -31,9 +35,8 @@
 #if ENABLE_ASSEMBLER && (WTF_CPU_X86 || WTF_CPU_X86_64)
 
 #include "AssemblerBuffer.h"
-#include "jsstdint.h"
 #include "assembler/wtf/Assertions.h"
-#include "jsvector.h"
+#include "js/Vector.h"
 
 #include "methodjit/Logging.h"
 #define IPFX  "        %s"
@@ -79,6 +82,7 @@ namespace X86Registers {
         r14,
         r15
 #endif
+        ,invalid_reg
     } RegisterID;
 
     typedef enum {
@@ -90,15 +94,28 @@ namespace X86Registers {
         xmm5,
         xmm6,
         xmm7
+#if WTF_CPU_X86_64
+       ,xmm8,
+        xmm9,
+        xmm10,
+        xmm11,
+        xmm12,
+        xmm13,
+        xmm14,
+        xmm15
+#endif
+       ,invalid_xmm
     } XMMRegisterID;
 
     static const char* nameFPReg(XMMRegisterID fpreg)
     {
-        static const char* xmmnames[8]
+        static const char* xmmnames[16]
           = { "%xmm0", "%xmm1", "%xmm2", "%xmm3",
-              "%xmm4", "%xmm5", "%xmm6", "%xmm7" };
+              "%xmm4", "%xmm5", "%xmm6", "%xmm7",
+              "%xmm8", "%xmm9", "%xmm10", "%xmm11",
+              "%xmm12", "%xmm13", "%xmm14", "%xmm15" };
         int off = (XMMRegisterID)fpreg - (XMMRegisterID)xmm0;
-        return (off < 0 || off > 7) ? "%xmm?" : xmmnames[off];
+        return (off < 0 || off > 15) ? "%xmm?" : xmmnames[off];
     }
 
     static const char* nameIReg(int szB, RegisterID reg)
@@ -174,6 +191,14 @@ public:
         return (ix < 0 || ix > 15) ? "??" : names[ix];
     }
 
+    // Rounding modes for ROUNDSD.
+    typedef enum {
+        RoundToNearest = 0x0,
+        RoundDown      = 0x1,
+        RoundUp        = 0x2,
+        RoundToZero    = 0x3
+    } RoundingMode;
+
 private:
     typedef enum {
         OP_ADD_EvGv                     = 0x01,
@@ -190,6 +215,7 @@ private:
         OP_XOR_GvEv                     = 0x33,
         OP_CMP_EvGv                     = 0x39,
         OP_CMP_GvEv                     = 0x3B,
+        OP_CMP_EAXIv                    = 0x3D,
 #if WTF_CPU_X86_64
         PRE_REX                         = 0x40,
 #endif
@@ -209,25 +235,32 @@ private:
         OP_GROUP1_EbIb                  = 0x80,
         OP_GROUP1_EvIz                  = 0x81,
         OP_GROUP1_EvIb                  = 0x83,
+        OP_TEST_EbGb                    = 0x84,
         OP_TEST_EvGv                    = 0x85,
         OP_XCHG_EvGv                    = 0x87,
+        OP_MOV_EbGv                     = 0x88,
         OP_MOV_EvGv                     = 0x89,
         OP_MOV_GvEv                     = 0x8B,
         OP_LEA                          = 0x8D,
         OP_GROUP1A_Ev                   = 0x8F,
+        OP_NOP                          = 0x90,
         OP_CDQ                          = 0x99,
         OP_MOV_EAXOv                    = 0xA1,
         OP_MOV_OvEAX                    = 0xA3,
         OP_MOV_EAXIv                    = 0xB8,
         OP_GROUP2_EvIb                  = 0xC1,
+        OP_RET_Iz                       = 0xC2,
         OP_RET                          = 0xC3,
+        OP_GROUP11_EvIb                 = 0xC6,
         OP_GROUP11_EvIz                 = 0xC7,
         OP_INT3                         = 0xCC,
         OP_GROUP2_Ev1                   = 0xD1,
         OP_GROUP2_EvCL                  = 0xD3,
+	OP_FPU6				= 0xDD,
         OP_CALL_rel32                   = 0xE8,
         OP_JMP_rel32                    = 0xE9,
         PRE_SSE_F2                      = 0xF2,
+        PRE_SSE_F3                      = 0xF3,
         OP_HLT                          = 0xF4,
         OP_GROUP3_EbIb                  = 0xF6,
         OP_GROUP3_Ev                    = 0xF7,
@@ -242,21 +275,44 @@ private:
         OP2_CVTSI2SD_VsdEd  = 0x2A,
         OP2_CVTTSD2SI_GdWsd = 0x2C,
         OP2_UCOMISD_VsdWsd  = 0x2E,
+        OP2_MOVMSKPD_EdVd   = 0x50,
         OP2_ADDSD_VsdWsd    = 0x58,
         OP2_MULSD_VsdWsd    = 0x59,
+        OP2_CVTSS2SD_VsdEd  = 0x5A,
+        OP2_CVTSD2SS_VsdEd  = 0x5A,
         OP2_SUBSD_VsdWsd    = 0x5C,
         OP2_DIVSD_VsdWsd    = 0x5E,
         OP2_SQRTSD_VsdWsd   = 0x51,
+        OP2_ANDPD_VpdWpd    = 0x54,
+        OP2_ORPD_VpdWpd     = 0x56,
         OP2_XORPD_VpdWpd    = 0x57,
         OP2_MOVD_VdEd       = 0x6E,
+        OP2_MOVDQA_VsdWsd   = 0x6F,
+        OP2_PSRLDQ_Vd       = 0x73,
+        OP2_PCMPEQW         = 0x75,
         OP2_MOVD_EdVd       = 0x7E,
+        OP2_MOVDQA_WsdVsd   = 0x7F,
         OP2_JCC_rel32       = 0x80,
         OP_SETCC            = 0x90,
         OP2_IMUL_GvEv       = 0xAF,
+        OP2_MOVSX_GvEb      = 0xBE,
+        OP2_MOVSX_GvEw      = 0xBF,
         OP2_MOVZX_GvEb      = 0xB6,
         OP2_MOVZX_GvEw      = 0xB7,
         OP2_PEXTRW_GdUdIb   = 0xC5
     } TwoByteOpcodeID;
+
+    typedef enum {
+        OP3_ROUNDSD_VsdWsd  = 0x0B,
+        OP3_PTEST_VdVd      = 0x17,
+        OP3_PINSRD_VsdWsd   = 0x22
+    } ThreeByteOpcodeID;
+
+    typedef enum {
+        ESCAPE_PTEST        = 0x38,
+        ESCAPE_PINSRD       = 0x3A,
+        ESCAPE_ROUNDSD      = 0x3A 
+    } ThreeByteEscape;
 
     TwoByteOpcodeID jccRel32(Condition cond)
     {
@@ -292,13 +348,15 @@ private:
         GROUP5_OP_JMPN  = 4,
         GROUP5_OP_PUSH  = 6,
 
+        FPU6_OP_FSTP = 3,
+
         GROUP11_MOV = 0
     } GroupOpcodeID;
     
     class X86InstructionFormatter;
 public:
 
-#ifdef DEBUG
+#ifdef JS_METHODJIT_SPEW
     bool isOOLPath;
 #endif
 
@@ -311,12 +369,20 @@ public:
         {
         }
 
-    private:
         JmpSrc(int offset)
             : m_offset(offset)
         {
         }
 
+        int offset() const {
+            return m_offset;
+        }
+
+        bool isSet() const {
+            return m_offset != -1;
+        }
+
+    private:
         int m_offset;
     };
     
@@ -333,20 +399,23 @@ public:
         bool isUsed() const { return m_used; }
         void used() { m_used = true; }
         bool isValid() const { return m_offset != -1; }
-    private:
+
         JmpDst(int offset)
             : m_offset(offset)
             , m_used(false)
         {
             ASSERT(m_offset == offset);
         }
-
+        int offset() const {
+            return m_offset;
+        }
+    private:
         signed int m_offset : 31;
         bool m_used : 1;
     };
 
     X86Assembler()
-#ifdef DEBUG
+#ifdef JS_METHODJIT_SPEW
       : isOOLPath(false)
 #endif
     {
@@ -354,6 +423,14 @@ public:
 
     size_t size() const { return m_formatter.size(); }
     unsigned char *buffer() const { return m_formatter.buffer(); }
+    bool oom() const { return m_formatter.oom(); }
+
+    void nop()
+    {
+        js::JaegerSpew(js::JSpew_Insns,
+                       IPFX "nop\n", MAYBE_PAD);
+        m_formatter.oneByteOp(OP_NOP);
+    }
 
     // Stack operations:
 
@@ -373,7 +450,9 @@ public:
 
     void push_i32(int imm)
     {
-        FIXME_INSN_PRINTING;
+        js::JaegerSpew(js::JSpew_Insns,
+                       IPFX "pushl      %s$0x%x\n", MAYBE_PAD,
+                       PRETTY_PRINT_OFFSET(imm));
         m_formatter.oneByteOp(OP_PUSH_Iz);
         m_formatter.immediate32(imm);
     }
@@ -418,7 +497,9 @@ public:
 
     void addl_mr(int offset, RegisterID base, RegisterID dst)
     {
-        FIXME_INSN_PRINTING;
+        js::JaegerSpew(js::JSpew_Insns,
+                       IPFX "addl       %s0x%x(%s), %s\n", MAYBE_PAD,
+                       PRETTY_PRINT_OFFSET(offset), nameIReg(4,base), nameIReg(4,dst));
         m_formatter.oneByteOp(OP_ADD_GvEv, dst, base, offset);
     }
 
@@ -512,7 +593,9 @@ public:
 
     void andl_mr(int offset, RegisterID base, RegisterID dst)
     {
-        FIXME_INSN_PRINTING;
+        js::JaegerSpew(js::JSpew_Insns,
+                       IPFX "andl       %s0x%x(%s), %s\n", MAYBE_PAD,
+                       PRETTY_PRINT_OFFSET(offset), nameIReg(4,base), nameIReg(4,dst));
         m_formatter.oneByteOp(OP_AND_GvEv, dst, base, offset);
     }
 
@@ -598,6 +681,11 @@ public:
     }
 #endif
 
+    void fstp_m(int offset, RegisterID base)
+    {
+	   m_formatter.oneByteOp(OP_FPU6, FPU6_OP_FSTP, base, offset);
+    }
+
     void negl_r(RegisterID dst)
     {
         js::JaegerSpew(js::JSpew_Insns,
@@ -670,6 +758,13 @@ public:
     }
 
 #if WTF_CPU_X86_64
+    void negq_r(RegisterID dst)
+    {
+        js::JaegerSpew(js::JSpew_Insns,
+                       IPFX "negq       %s\n", MAYBE_PAD, nameIReg(8,dst));
+        m_formatter.oneByteOp64(OP_GROUP3_Ev, GROUP3_OP_NEG, dst);
+    }
+
     void orq_rr(RegisterID src, RegisterID dst)
     {
         js::JaegerSpew(js::JSpew_Insns,
@@ -721,7 +816,9 @@ public:
 
     void subl_mr(int offset, RegisterID base, RegisterID dst)
     {
-        FIXME_INSN_PRINTING;
+        js::JaegerSpew(js::JSpew_Insns,
+                       IPFX "subl        %s0x%x(%s), %s\n", MAYBE_PAD,
+                       PRETTY_PRINT_OFFSET(offset), nameIReg(4,base), nameIReg(4,dst));
         m_formatter.oneByteOp(OP_SUB_GvEv, dst, base, offset);
     }
 
@@ -840,7 +937,9 @@ public:
 #if WTF_CPU_X86_64
     void xorq_rr(RegisterID src, RegisterID dst)
     {
-        FIXME_INSN_PRINTING;
+        js::JaegerSpew(js::JSpew_Insns,
+                       IPFX "xorq       %s, %s\n", MAYBE_PAD,
+                       nameIReg(8,src), nameIReg(8, dst));
         m_formatter.oneByteOp64(OP_XOR_EvGv, src, dst);
     }
 
@@ -880,6 +979,8 @@ public:
     
     void shrl_i8r(int imm, RegisterID dst)
     {
+        js::JaegerSpew(js::JSpew_Insns,
+                       IPFX "shrl       $%d, %s\n", MAYBE_PAD, imm, nameIReg(4, dst));
         if (imm == 1)
             m_formatter.oneByteOp(OP_GROUP2_Ev1, GROUP2_OP_SHR, dst);
         else {
@@ -890,6 +991,8 @@ public:
     
     void shrl_CLr(RegisterID dst)
     {
+        js::JaegerSpew(js::JSpew_Insns,
+                       IPFX "shrl       %%cl, %s\n", MAYBE_PAD, nameIReg(4, dst));
         m_formatter.oneByteOp(OP_GROUP2_EvCL, GROUP2_OP_SHR, dst);
     }
 
@@ -942,6 +1045,18 @@ public:
             m_formatter.immediate8(imm);
         }
     }
+
+    void shrq_i8r(int imm, RegisterID dst)
+    {
+        js::JaegerSpew(js::JSpew_Insns,
+                       IPFX "shrq       $%d, %s\n", MAYBE_PAD, imm, nameIReg(8, dst));
+        if (imm == 1)
+            m_formatter.oneByteOp64(OP_GROUP2_Ev1, GROUP2_OP_SHR, dst);
+        else {
+            m_formatter.oneByteOp64(OP_GROUP2_EvIb, GROUP2_OP_SHR, dst);
+            m_formatter.immediate8(imm);
+        }
+    }
 #endif
 
     void imull_rr(RegisterID src, RegisterID dst)
@@ -959,7 +1074,9 @@ public:
 
     void imull_i32r(RegisterID src, int32_t value, RegisterID dst)
     {
-        FIXME_INSN_PRINTING;
+        js::JaegerSpew(js::JSpew_Insns,
+                       IPFX "imull      %d, %s, %s\n",
+                       MAYBE_PAD, value, nameIReg(4, src), nameIReg(4, dst));
         m_formatter.oneByteOp(OP_IMUL_GvEvIz, dst, src);
         m_formatter.immediate32(value);
     }
@@ -1061,7 +1178,9 @@ public:
 
     void cmpl_im_force32(int imm, int offset, RegisterID base)
     {
-        FIXME_INSN_PRINTING;
+        js::JaegerSpew(js::JSpew_Insns,
+                       IPFX "cmpl       $0x%x, %s0x%x(%s)\n", MAYBE_PAD,
+                       imm, PRETTY_PRINT_OFFSET(offset), nameIReg(4,base));
         m_formatter.oneByteOp(OP_GROUP1_EvIz, GROUP1_OP_CMP, base, offset);
         m_formatter.immediate32(imm);
     }
@@ -1175,6 +1294,14 @@ public:
                        IPFX "testl      %s, %s\n", MAYBE_PAD,
                        nameIReg(4,src), nameIReg(4,dst));
         m_formatter.oneByteOp(OP_TEST_EvGv, src, dst);
+    }
+
+    void testb_rr(RegisterID src, RegisterID dst)
+    {
+        js::JaegerSpew(js::JSpew_Insns,
+                       IPFX "testb      %s, %s\n", MAYBE_PAD,
+                       nameIReg(1,src), nameIReg(1,dst));
+        m_formatter.oneByteOp(OP_TEST_EbGb, src, dst);
     }
     
     void testl_i32r(int imm, RegisterID dst)
@@ -1329,6 +1456,15 @@ public:
                        nameIReg(4,src), nameIReg(4,dst));
         m_formatter.oneByteOp(OP_MOV_EvGv, src, dst);
     }
+
+    void movw_rm(RegisterID src, int offset, RegisterID base)
+    {
+        js::JaegerSpew(js::JSpew_Insns,
+                       IPFX "movw       %s, %s0x%x(%s)\n", MAYBE_PAD,
+                       nameIReg(2,src), PRETTY_PRINT_OFFSET(offset), nameIReg(base));
+        m_formatter.prefix(PRE_OPERAND_SIZE);
+        m_formatter.oneByteOp(OP_MOV_EvGv, src, base, offset);
+    }
     
     void movl_rm(RegisterID src, int offset, RegisterID base)
     {
@@ -1342,6 +1478,15 @@ public:
     {
         FIXME_INSN_PRINTING;
         m_formatter.oneByteOp_disp32(OP_MOV_EvGv, src, base, offset);
+    }
+
+    void movw_rm(RegisterID src, int offset, RegisterID base, RegisterID index, int scale)
+    {
+        js::JaegerSpew(js::JSpew_Insns,
+                       IPFX "movw       %s, %d(%s,%s,%d)\n", MAYBE_PAD, 
+                       nameIReg(2, src), offset, nameIReg(base), nameIReg(index), scale);
+        m_formatter.prefix(PRE_OPERAND_SIZE);
+        m_formatter.oneByteOp(OP_MOV_EvGv, src, base, index, scale, offset);
     }
 
     void movl_rm(RegisterID src, int offset, RegisterID base, RegisterID index, int scale)
@@ -1394,6 +1539,34 @@ public:
         m_formatter.immediate32(imm);
     }
 
+    void movb_i8m(int imm, int offset, RegisterID base)
+    {
+        js::JaegerSpew(js::JSpew_Insns,
+                       IPFX "movb       $0x%x, %s0x%x(%s)\n", MAYBE_PAD,
+                       imm, PRETTY_PRINT_OFFSET(offset), nameIReg(base));
+        m_formatter.oneByteOp(OP_GROUP11_EvIb, GROUP11_MOV, base, offset);
+        m_formatter.immediate8(imm);
+    }
+
+    void movb_i8m(int imm, int offset, RegisterID base, RegisterID index, int scale)
+    {
+        js::JaegerSpew(js::JSpew_Insns,
+                       IPFX "movb       $0x%x, %d(%s,%s,%d)\n", MAYBE_PAD,
+                       imm, offset, nameIReg(base), nameIReg(index), scale);
+        m_formatter.oneByteOp(OP_GROUP11_EvIb, GROUP11_MOV, base, index, scale, offset);
+        m_formatter.immediate8(imm);
+    }
+
+    void movw_i16m(int imm, int offset, RegisterID base)
+    {
+        js::JaegerSpew(js::JSpew_Insns,
+                       IPFX "movw       $0x%x, %s0x%x(%s)\n", MAYBE_PAD,
+                       imm, PRETTY_PRINT_OFFSET(offset), nameIReg(base));
+        m_formatter.prefix(PRE_OPERAND_SIZE);
+        m_formatter.oneByteOp(OP_GROUP11_EvIz, GROUP11_MOV, base, offset);
+        m_formatter.immediate16(imm);
+    }
+
     void movl_i32m(int imm, int offset, RegisterID base)
     {
         js::JaegerSpew(js::JSpew_Insns,
@@ -1401,6 +1574,16 @@ public:
                        imm, PRETTY_PRINT_OFFSET(offset), nameIReg(base));
         m_formatter.oneByteOp(OP_GROUP11_EvIz, GROUP11_MOV, base, offset);
         m_formatter.immediate32(imm);
+    }
+
+    void movw_i16m(int imm, int offset, RegisterID base, RegisterID index, int scale)
+    {
+        js::JaegerSpew(js::JSpew_Insns,
+                       IPFX "movw       $0x%x, %d(%s,%s,%d)\n", MAYBE_PAD,
+                       imm, offset, nameIReg(base), nameIReg(index), scale);
+        m_formatter.prefix(PRE_OPERAND_SIZE);
+        m_formatter.oneByteOp(OP_GROUP11_EvIz, GROUP11_MOV, base, index, scale, offset);
+        m_formatter.immediate16(imm);
     }
 
     void movl_i32m(int imm, int offset, RegisterID base, RegisterID index, int scale)
@@ -1485,8 +1668,8 @@ public:
     void movq_mr(int offset, RegisterID base, RegisterID index, int scale, RegisterID dst)
     {
         js::JaegerSpew(js::JSpew_Insns,
-                       IPFX "movq       %s0x%x(%s), %s\n", MAYBE_PAD,
-                       PRETTY_PRINT_OFFSET(offset), nameIReg(base), nameIReg(8,dst));
+                       IPFX "movq       %d(%s,%s,%d), %s\n", MAYBE_PAD,
+                       offset, nameIReg(base), nameIReg(index), scale, nameIReg(8,dst));
         m_formatter.oneByteOp64(OP_MOV_GvEv, dst, base, index, scale, offset);
     }
 
@@ -1537,7 +1720,9 @@ public:
 #else
     void movl_rm(RegisterID src, void* addr)
     {
-        FIXME_INSN_PRINTING;
+        js::JaegerSpew(js::JSpew_Insns,
+                       IPFX "movl       %s, 0(%p)\n", MAYBE_PAD,
+                       nameIReg(4, src), addr);
         if (src == X86Registers::eax)
             movl_EAXm(addr);
         else 
@@ -1563,6 +1748,54 @@ public:
     }
 #endif
 
+    void movb_rm(RegisterID src, int offset, RegisterID base)
+    {
+        js::JaegerSpew(js::JSpew_Insns,
+                       IPFX "movb       %s, %s0x%x(%s)\n", MAYBE_PAD,
+                       nameIReg(1, src), PRETTY_PRINT_OFFSET(offset), nameIReg(base));
+        m_formatter.oneByteOp8(OP_MOV_EbGv, src, base, offset);
+    }
+
+    void movb_rm(RegisterID src, int offset, RegisterID base, RegisterID index, int scale)
+    {
+        js::JaegerSpew(js::JSpew_Insns,
+                       IPFX "movb       %s, %d(%s,%s,%d)\n", MAYBE_PAD,
+                       nameIReg(1, src), offset, nameIReg(base), nameIReg(index), scale);
+        m_formatter.oneByteOp8(OP_MOV_EbGv, src, base, index, scale, offset);
+    }
+
+    void movzbl_mr(int offset, RegisterID base, RegisterID dst)
+    {
+        js::JaegerSpew(js::JSpew_Insns,
+                       IPFX "movzbl     %s0x%x(%s), %s\n", MAYBE_PAD,
+                       PRETTY_PRINT_OFFSET(offset), nameIReg(base), nameIReg(4, dst));
+        m_formatter.twoByteOp(OP2_MOVZX_GvEb, dst, base, offset);
+    }
+
+    void movzbl_mr(int offset, RegisterID base, RegisterID index, int scale, RegisterID dst)
+    {
+        js::JaegerSpew(js::JSpew_Insns,
+                       IPFX "movzbl     %d(%s,%s,%d), %s\n", MAYBE_PAD,
+                       offset, nameIReg(base), nameIReg(index), scale, nameIReg(dst));
+        m_formatter.twoByteOp(OP2_MOVZX_GvEb, dst, base, index, scale, offset);
+    }
+
+    void movxbl_mr(int offset, RegisterID base, RegisterID dst)
+    {
+        js::JaegerSpew(js::JSpew_Insns,
+                       IPFX "movxbl     %s0x%x(%s), %s\n", MAYBE_PAD,
+                       PRETTY_PRINT_OFFSET(offset), nameIReg(base), nameIReg(4, dst));
+        m_formatter.twoByteOp(OP2_MOVSX_GvEb, dst, base, offset);
+    }
+
+    void movxbl_mr(int offset, RegisterID base, RegisterID index, int scale, RegisterID dst)
+    {
+        js::JaegerSpew(js::JSpew_Insns,
+                       IPFX "movxbl     %d(%s,%s,%d), %s\n", MAYBE_PAD,
+                       offset, nameIReg(base), nameIReg(index), scale, nameIReg(dst));
+        m_formatter.twoByteOp(OP2_MOVSX_GvEb, dst, base, index, scale, offset);
+    }
+
     void movzwl_mr(int offset, RegisterID base, RegisterID dst)
     {
         js::JaegerSpew(js::JSpew_Insns,
@@ -1573,8 +1806,26 @@ public:
 
     void movzwl_mr(int offset, RegisterID base, RegisterID index, int scale, RegisterID dst)
     {
-        FIXME_INSN_PRINTING;
+        js::JaegerSpew(js::JSpew_Insns,
+                       IPFX "movzwl     %d(%s,%s,%d), %s\n", MAYBE_PAD,
+                       offset, nameIReg(base), nameIReg(index), scale, nameIReg(dst));
         m_formatter.twoByteOp(OP2_MOVZX_GvEw, dst, base, index, scale, offset);
+    }
+
+    void movxwl_mr(int offset, RegisterID base, RegisterID dst)
+    {
+        js::JaegerSpew(js::JSpew_Insns,
+                       IPFX "movxwl     %s0x%x(%s), %s\n", MAYBE_PAD,
+                       PRETTY_PRINT_OFFSET(offset), nameIReg(base), nameIReg(4, dst));
+        m_formatter.twoByteOp(OP2_MOVSX_GvEw, dst, base, offset);
+    }
+
+    void movxwl_mr(int offset, RegisterID base, RegisterID index, int scale, RegisterID dst)
+    {
+        js::JaegerSpew(js::JSpew_Insns,
+                       IPFX "movxwl     %d(%s,%s,%d), %s\n", MAYBE_PAD,
+                       offset, nameIReg(base), nameIReg(index), scale, nameIReg(dst));
+        m_formatter.twoByteOp(OP2_MOVSX_GvEw, dst, base, index, scale, offset);
     }
 
     void movzbl_rr(RegisterID src, RegisterID dst)
@@ -1635,8 +1886,22 @@ public:
     
     void call_m(int offset, RegisterID base)
     {
-        FIXME_INSN_PRINTING;
+        js::JaegerSpew(js::JSpew_Insns,
+                       IPFX "call       %s0x%x(%s)\n", MAYBE_PAD,
+                       PRETTY_PRINT_OFFSET(offset), nameIReg(base));
         m_formatter.oneByteOp(OP_GROUP5_Ev, GROUP5_OP_CALLN, base, offset);
+    }
+
+    // Comparison of EAX against a 32-bit immediate. The immediate is patched
+    // in as if it were a jump target. The intention is to toggle the first
+    // byte of the instruction between a CMP and a JMP to produce a pseudo-NOP.
+    JmpSrc cmp_eax()
+    {
+        m_formatter.oneByteOp(OP_CMP_EAXIv);
+        JmpSrc r = m_formatter.immediateRel32();
+        js::JaegerSpew(js::JSpew_Insns,
+                       IPFX "cmp        eax, ((%d))\n", MAYBE_PAD, r.m_offset);
+        return r;
     }
 
     JmpSrc jmp()
@@ -1665,6 +1930,25 @@ public:
         FIXME_INSN_PRINTING;
         m_formatter.oneByteOp(OP_GROUP5_Ev, GROUP5_OP_JMPN, base, offset);
     }
+
+    void jmp_m(int offset, RegisterID base, RegisterID index, int scale) {
+        js::JaegerSpew(js::JSpew_Insns,
+                       IPFX "jmp       ((%d(%s,%s,%d)))\n", MAYBE_PAD,
+                       offset, nameIReg(base), nameIReg(index), scale);
+        m_formatter.oneByteOp(OP_GROUP5_Ev, GROUP5_OP_JMPN, base, index, scale, offset);
+    }
+
+#if WTF_CPU_X86_64
+    void jmp_rip(int ripOffset) {
+        // rip-relative addressing.
+        m_formatter.oneByteRipOp(OP_GROUP5_Ev, GROUP5_OP_JMPN, ripOffset);
+    }
+
+    void immediate64(int64_t imm)
+    {
+        m_formatter.immediate64(imm);
+    }
+#endif
 
     JmpSrc jne()
     {
@@ -1777,6 +2061,15 @@ public:
 
     // SSE operations:
 
+    void pcmpeqw_rr(XMMRegisterID src, XMMRegisterID dst)
+    {
+        js::JaegerSpew(js::JSpew_Insns,
+                       IPFX "pcmpeqw    %s, %s\n", MAYBE_PAD,
+                       nameFPReg(src), nameFPReg(dst));
+        m_formatter.prefix(PRE_SSE_66);
+        m_formatter.twoByteOp(OP2_PCMPEQW, (RegisterID)dst, (RegisterID)src); /* right order ? */
+    }
+
     void addsd_rr(XMMRegisterID src, XMMRegisterID dst)
     {
         js::JaegerSpew(js::JSpew_Insns,
@@ -1795,6 +2088,35 @@ public:
         m_formatter.twoByteOp(OP2_ADDSD_VsdWsd, (RegisterID)dst, base, offset);
     }
 
+#if !WTF_CPU_X86_64
+    void addsd_mr(const void* address, XMMRegisterID dst)
+    {
+        js::JaegerSpew(js::JSpew_Insns,
+                       IPFX "addsd      %p, %s\n", MAYBE_PAD,
+                       address, nameFPReg(dst));
+        m_formatter.prefix(PRE_SSE_F2);
+        m_formatter.twoByteOp(OP2_ADDSD_VsdWsd, (RegisterID)dst, address);
+    }
+#endif
+
+    void cvtss2sd_rr(XMMRegisterID src, XMMRegisterID dst)
+    {
+        js::JaegerSpew(js::JSpew_Insns,
+                       IPFX "cvtps2pd   %s, %s\n", MAYBE_PAD,
+                       nameFPReg(src), nameFPReg(dst));
+        m_formatter.prefix(PRE_SSE_F3);
+        m_formatter.twoByteOp(OP2_CVTSS2SD_VsdEd, (RegisterID)dst, (RegisterID)src);
+    }
+
+    void cvtsd2ss_rr(XMMRegisterID src, XMMRegisterID dst)
+    {
+        js::JaegerSpew(js::JSpew_Insns,
+                       IPFX "cvtps2pd   %s, %s\n", MAYBE_PAD,
+                       nameFPReg(src), nameFPReg(dst));
+        m_formatter.prefix(PRE_SSE_F2);
+        m_formatter.twoByteOp(OP2_CVTSD2SS_VsdEd, (RegisterID)dst, (RegisterID)src);
+    }
+
     void cvtsi2sd_rr(RegisterID src, XMMRegisterID dst)
     {
         js::JaegerSpew(js::JSpew_Insns,
@@ -1804,6 +2126,17 @@ public:
         m_formatter.twoByteOp(OP2_CVTSI2SD_VsdEd, (RegisterID)dst, src);
     }
 
+#if WTF_CPU_X86_64
+    void cvtsq2sd_rr(RegisterID src, XMMRegisterID dst)
+    {
+        js::JaegerSpew(js::JSpew_Insns,
+                       IPFX "cvtsq2sd   %s, %s\n", MAYBE_PAD,
+                       nameIReg(src), nameFPReg(dst));
+        m_formatter.prefix(PRE_SSE_F2);
+        m_formatter.twoByteOp64(OP2_CVTSI2SD_VsdEd, (RegisterID)dst, src);
+    }
+#endif
+
     void cvtsi2sd_mr(int offset, RegisterID base, XMMRegisterID dst)
     {
         js::JaegerSpew(js::JSpew_Insns,
@@ -1811,6 +2144,15 @@ public:
                        PRETTY_PRINT_OFFSET(offset), nameIReg(base), nameFPReg(dst));
         m_formatter.prefix(PRE_SSE_F2);
         m_formatter.twoByteOp(OP2_CVTSI2SD_VsdEd, (RegisterID)dst, base, offset);
+    }
+
+    void cvtsi2sd_mr(int offset, RegisterID base, RegisterID index, int scale, XMMRegisterID dst)
+    {
+        js::JaegerSpew(js::JSpew_Insns,
+                       IPFX "cvtsi2sd   %d(%s,%s,%d), %s\n", MAYBE_PAD,
+                       offset, nameIReg(base), nameIReg(index), scale, nameFPReg(dst));
+        m_formatter.prefix(PRE_SSE_F2);
+        m_formatter.twoByteOp(OP2_CVTSI2SD_VsdEd, (RegisterID)dst, base, index, scale, offset);
     }
 
 #if !WTF_CPU_X86_64
@@ -1833,6 +2175,17 @@ public:
         m_formatter.twoByteOp(OP2_CVTTSD2SI_GdWsd, dst, (RegisterID)src);
     }
 
+#if WTF_CPU_X86_64
+    void cvttsd2sq_rr(XMMRegisterID src, RegisterID dst)
+    {
+        js::JaegerSpew(js::JSpew_Insns,
+                       IPFX "cvttsd2sq  %s, %s\n", MAYBE_PAD,
+                       nameFPReg(src), nameIReg(dst));
+        m_formatter.prefix(PRE_SSE_F2);
+        m_formatter.twoByteOp64(OP2_CVTTSD2SI_GdWsd, dst, (RegisterID)src);
+    }
+#endif
+
     void unpcklps_rr(XMMRegisterID src, XMMRegisterID dst)
     {
         js::JaegerSpew(js::JSpew_Insns,
@@ -1848,6 +2201,62 @@ public:
                        nameIReg(src), nameFPReg(dst));
         m_formatter.prefix(PRE_SSE_66);
         m_formatter.twoByteOp(OP2_MOVD_VdEd, (RegisterID)dst, src);
+    }
+
+    void psrldq_rr(XMMRegisterID dest, int shift)
+    {
+        js::JaegerSpew(js::JSpew_Insns,
+                       IPFX "psrldq     %s, %d\n", MAYBE_PAD,
+                       nameFPReg(dest), shift);
+        m_formatter.prefix(PRE_SSE_66);
+        m_formatter.twoByteOp(OP2_PSRLDQ_Vd, (RegisterID)3, (RegisterID)dest);
+        m_formatter.immediate8(shift);
+    }
+
+    void psllq_rr(XMMRegisterID dest, int shift)
+    {
+        js::JaegerSpew(js::JSpew_Insns,
+                       IPFX "psllq     %s, %d\n", MAYBE_PAD,
+                       nameFPReg(dest), shift);
+        m_formatter.prefix(PRE_SSE_66);
+        m_formatter.twoByteOp(OP2_PSRLDQ_Vd, (RegisterID)6, (RegisterID)dest);
+        m_formatter.immediate8(shift);
+    }
+
+    void psrlq_rr(XMMRegisterID dest, int shift)
+    {
+        js::JaegerSpew(js::JSpew_Insns,
+                       IPFX "psrlq     %s, %d\n", MAYBE_PAD,
+                       nameFPReg(dest), shift);
+        m_formatter.prefix(PRE_SSE_66);
+        m_formatter.twoByteOp(OP2_PSRLDQ_Vd, (RegisterID)2, (RegisterID)dest);
+        m_formatter.immediate8(shift);
+    }
+
+    void movmskpd_rr(XMMRegisterID src, RegisterID dst)
+    {
+        js::JaegerSpew(js::JSpew_Insns,
+                       IPFX "movmskpd   %s, %s\n", MAYBE_PAD,
+                       nameFPReg(src), nameIReg(dst));
+        m_formatter.prefix(PRE_SSE_66);
+        m_formatter.twoByteOp(OP2_MOVMSKPD_EdVd, dst, (RegisterID)src);
+    }
+
+    void ptest_rr(XMMRegisterID lhs, XMMRegisterID rhs) {
+        js::JaegerSpew(js::JSpew_Insns,
+                       IPFX "ptest      %s, %s\n", MAYBE_PAD,
+                       nameFPReg(lhs), nameFPReg(rhs));
+        m_formatter.prefix(PRE_SSE_66);
+        m_formatter.threeByteOp(OP3_PTEST_VdVd, ESCAPE_PTEST, (RegisterID)rhs, (RegisterID)lhs);
+    }
+
+    void movd_rr(XMMRegisterID src, RegisterID dst)
+    {
+        js::JaegerSpew(js::JSpew_Insns,
+                       IPFX "movd       %s, %s\n", MAYBE_PAD,
+                       nameFPReg(src), nameIReg(dst));
+        m_formatter.prefix(PRE_SSE_66);
+        m_formatter.twoByteOp(OP2_MOVD_EdVd, (RegisterID)src, dst);
     }
 
 #if WTF_CPU_X86_64
@@ -1879,6 +2288,51 @@ public:
         m_formatter.twoByteOp(OP2_MOVSD_WsdVsd, (RegisterID)src, base, offset);
     }
 
+    void movss_rm(XMMRegisterID src, int offset, RegisterID base)
+    {
+        js::JaegerSpew(js::JSpew_Insns,
+                       IPFX "movss      %s, %s0x%x(%s)\n", MAYBE_PAD,
+                       nameFPReg(src), PRETTY_PRINT_OFFSET(offset), nameIReg(base));
+        m_formatter.prefix(PRE_SSE_F3);
+        m_formatter.twoByteOp(OP2_MOVSD_WsdVsd, (RegisterID)src, base, offset);
+    }
+
+    void movss_mr(int offset, RegisterID base, XMMRegisterID dst)
+    {
+        js::JaegerSpew(js::JSpew_Insns,
+                       IPFX "movss      %s0x%x(%s), %s\n", MAYBE_PAD,
+                       PRETTY_PRINT_OFFSET(offset), nameIReg(base), nameFPReg(dst));
+        m_formatter.prefix(PRE_SSE_F3);
+        m_formatter.twoByteOp(OP2_MOVSD_VsdWsd, (RegisterID)dst, base, offset);
+    }
+
+    void movsd_rm(XMMRegisterID src, int offset, RegisterID base, RegisterID index, int scale)
+    {
+        js::JaegerSpew(js::JSpew_Insns,
+                       IPFX "movsd       %s, %d(%s,%s,%d)\n", MAYBE_PAD, 
+                       nameFPReg(src), offset, nameIReg(base), nameIReg(index), scale);
+        m_formatter.prefix(PRE_SSE_F2);
+        m_formatter.twoByteOp(OP2_MOVSD_WsdVsd, (RegisterID)src, base, index, scale, offset);
+    }
+
+    void movss_rm(XMMRegisterID src, int offset, RegisterID base, RegisterID index, int scale)
+    {
+        js::JaegerSpew(js::JSpew_Insns,
+                       IPFX "movss       %s, %d(%s,%s,%d)\n", MAYBE_PAD, 
+                       nameFPReg(src), offset, nameIReg(base), nameIReg(index), scale);
+        m_formatter.prefix(PRE_SSE_F3);
+        m_formatter.twoByteOp(OP2_MOVSD_WsdVsd, (RegisterID)src, base, index, scale, offset);
+    }
+
+    void movss_mr(int offset, RegisterID base, RegisterID index, int scale, XMMRegisterID dst)
+    {
+        js::JaegerSpew(js::JSpew_Insns,
+                       IPFX "movss      %d(%s,%s,%d), %s\n", MAYBE_PAD,
+                       offset, nameIReg(base), nameIReg(index), scale, nameFPReg(dst));
+        m_formatter.prefix(PRE_SSE_F3);
+        m_formatter.twoByteOp(OP2_MOVSD_VsdWsd, (RegisterID)dst, base, index, scale, offset);
+    }
+
     void movsd_mr(int offset, RegisterID base, XMMRegisterID dst)
     {
         js::JaegerSpew(js::JSpew_Insns,
@@ -1886,6 +2340,15 @@ public:
                        PRETTY_PRINT_OFFSET(offset), nameIReg(base), nameFPReg(dst));
         m_formatter.prefix(PRE_SSE_F2);
         m_formatter.twoByteOp(OP2_MOVSD_VsdWsd, (RegisterID)dst, base, offset);
+    }
+
+    void movsd_mr(int offset, RegisterID base, RegisterID index, int scale, XMMRegisterID dst)
+    {
+        js::JaegerSpew(js::JSpew_Insns,
+                       IPFX "movsd      %d(%s,%s,%d), %s\n", MAYBE_PAD,
+                       offset, nameIReg(base), nameIReg(index), scale, nameFPReg(dst));
+        m_formatter.prefix(PRE_SSE_F2);
+        m_formatter.twoByteOp(OP2_MOVSD_VsdWsd, (RegisterID)dst, base, index, scale, offset);
     }
 
     void movsd_rr(XMMRegisterID src, XMMRegisterID dst)
@@ -1907,6 +2370,42 @@ public:
         m_formatter.twoByteOp(OP2_MOVSD_VsdWsd, (RegisterID)dst, address);
     }
 #endif
+
+    void movdqa_rm(XMMRegisterID src, int offset, RegisterID base)
+    {
+        js::JaegerSpew(js::JSpew_Insns,
+                       IPFX "movdqa     %s, %s0x%x(%s)\n", MAYBE_PAD,
+                       nameFPReg(src), PRETTY_PRINT_OFFSET(offset), nameIReg(base));
+        m_formatter.prefix(PRE_SSE_66);
+        m_formatter.twoByteOp(OP2_MOVDQA_WsdVsd, (RegisterID)src, base, offset);
+    }
+
+    void movdqa_rm(XMMRegisterID src, int offset, RegisterID base, RegisterID index, int scale)
+    {
+        js::JaegerSpew(js::JSpew_Insns,
+                       IPFX "movdqa      %s, %d(%s,%s,%d)\n", MAYBE_PAD, 
+                       nameFPReg(src), offset, nameIReg(base), nameIReg(index), scale);
+        m_formatter.prefix(PRE_SSE_66);
+        m_formatter.twoByteOp(OP2_MOVDQA_WsdVsd, (RegisterID)src, base, index, scale, offset);
+    }
+
+    void movdqa_mr(int offset, RegisterID base, XMMRegisterID dst)
+    {
+        js::JaegerSpew(js::JSpew_Insns,
+                       IPFX "movdqa     %s0x%x(%s), %s\n", MAYBE_PAD,
+                       PRETTY_PRINT_OFFSET(offset), nameIReg(base), nameFPReg(dst));
+        m_formatter.prefix(PRE_SSE_66);
+        m_formatter.twoByteOp(OP2_MOVDQA_VsdWsd, (RegisterID)dst, base, offset);
+    }
+
+    void movdqa_mr(int offset, RegisterID base, RegisterID index, int scale, XMMRegisterID dst)
+    {
+        js::JaegerSpew(js::JSpew_Insns,
+                       IPFX "movdqa     %d(%s,%s,%d), %s\n", MAYBE_PAD,
+                       offset, nameIReg(base), nameIReg(index), scale, nameFPReg(dst));
+        m_formatter.prefix(PRE_SSE_66);
+        m_formatter.twoByteOp(OP2_MOVDQA_VsdWsd, (RegisterID)dst, base, index, scale, offset);
+    }
 
     void mulsd_rr(XMMRegisterID src, XMMRegisterID dst)
     {
@@ -1997,6 +2496,24 @@ public:
         m_formatter.twoByteOp(OP2_XORPD_VpdWpd, (RegisterID)dst, (RegisterID)src);
     }
 
+    void orpd_rr(XMMRegisterID src, XMMRegisterID dst)
+    {
+        js::JaegerSpew(js::JSpew_Insns,
+                       IPFX "orpd       %s, %s\n", MAYBE_PAD,
+                       nameFPReg(src), nameFPReg(dst));
+        m_formatter.prefix(PRE_SSE_66);
+        m_formatter.twoByteOp(OP2_ORPD_VpdWpd, (RegisterID)dst, (RegisterID)src);
+    }
+
+    void andpd_rr(XMMRegisterID src, XMMRegisterID dst)
+    {
+        js::JaegerSpew(js::JSpew_Insns,
+                       IPFX "andpd      %s, %s\n", MAYBE_PAD,
+                       nameFPReg(src), nameFPReg(dst));
+        m_formatter.prefix(PRE_SSE_66);
+        m_formatter.twoByteOp(OP2_ANDPD_VpdWpd, (RegisterID)dst, (RegisterID)src);
+    }
+
     void sqrtsd_rr(XMMRegisterID src, XMMRegisterID dst)
     {
         js::JaegerSpew(js::JSpew_Insns,
@@ -2006,6 +2523,37 @@ public:
         m_formatter.twoByteOp(OP2_SQRTSD_VsdWsd, (RegisterID)dst, (RegisterID)src);
     }
 
+    void roundsd_rr(XMMRegisterID src, XMMRegisterID dst, RoundingMode mode)
+    {
+        js::JaegerSpew(js::JSpew_Insns,
+                       IPFX "roundsd     %s, %s, %d\n", MAYBE_PAD,
+                       nameFPReg(src), nameFPReg(dst), (int)mode);
+        m_formatter.prefix(PRE_SSE_66);
+        m_formatter.threeByteOp(OP3_ROUNDSD_VsdWsd, ESCAPE_ROUNDSD, (RegisterID)dst, (RegisterID)src);
+        m_formatter.immediate8(mode);
+    }
+
+    void pinsrd_rr(RegisterID src, XMMRegisterID dst)
+    {
+        js::JaegerSpew(js::JSpew_Insns,
+                       IPFX "pinsrd     $1, %s, %s\n", MAYBE_PAD,
+                       nameIReg(src), nameFPReg(dst));
+        m_formatter.prefix(PRE_SSE_66);
+        m_formatter.threeByteOp(OP3_PINSRD_VsdWsd, ESCAPE_PINSRD, (RegisterID)dst, (RegisterID)src);
+        m_formatter.immediate8(0x01); // the $1
+    }
+
+    void pinsrd_mr(int offset, RegisterID base, XMMRegisterID dst)
+    {
+        js::JaegerSpew(js::JSpew_Insns,
+                       IPFX "pinsrd     $1, %s0x%x(%s), %s\n", MAYBE_PAD,
+                       PRETTY_PRINT_OFFSET(offset),
+                       nameIReg(base), nameFPReg(dst));
+        m_formatter.prefix(PRE_SSE_66);
+        m_formatter.threeByteOp(OP3_PINSRD_VsdWsd, ESCAPE_PINSRD, (RegisterID)dst, base, offset);
+        m_formatter.immediate8(0x01); // the $1
+    }
+
     // Misc instructions:
 
     void int3()
@@ -2013,11 +2561,20 @@ public:
         js::JaegerSpew(js::JSpew_Insns, IPFX "int3\n", MAYBE_PAD);
         m_formatter.oneByteOp(OP_INT3);
     }
-    
+
     void ret()
     {
         js::JaegerSpew(js::JSpew_Insns, IPFX "ret\n", MAYBE_PAD);
         m_formatter.oneByteOp(OP_RET);
+    }
+
+    void ret(int imm)
+    {
+        js::JaegerSpew(js::JSpew_Insns,
+                       IPFX "ret        %d\n", MAYBE_PAD,
+                       imm);
+        m_formatter.oneByteOp(OP_RET_Iz);
+        m_formatter.immediate16(imm);
     }
 
     void predictNotTaken()
@@ -2049,6 +2606,10 @@ public:
                        IPFX "#label     ((%d))\n", MAYBE_PAD, r.m_offset);
         return r;
     }
+
+    size_t currentOffset() const {
+        return m_formatter.size();
+    }
     
     static JmpDst labelFor(JmpSrc jump, intptr_t offset = 0)
     {
@@ -2072,11 +2633,39 @@ public:
     // code has been finalized it is (platform support permitting) within a non-
     // writable region of memory; to modify the code in an execute-only execuable
     // pool the 'repatch' and 'relink' methods should be used.
+    
+    // Like Lua's emitter, we thread jump lists through the unpatched target
+    // field, which will get fixed up when the label (which has a pointer to
+    // the head of the jump list) is bound.
+    bool nextJump(const JmpSrc& from, JmpSrc* next)
+    {
+        char* code = reinterpret_cast<char*>(m_formatter.data());
+        int32_t offset = getInt32(code + from.m_offset);
+        if (offset == -1)
+            return false;
+        *next = JmpSrc(offset);
+        return true;
+    }
+    void setNextJump(const JmpSrc& from, const JmpSrc &to)
+    {
+        // Sanity check - if the assembler has OOM'd, it will start overwriting
+        // its internal buffer and thus our links could be garbage.
+        if (oom())
+            return;
+
+        char* code = reinterpret_cast<char*>(m_formatter.data());
+        setInt32(code + from.m_offset, to.m_offset);
+    }
 
     void linkJump(JmpSrc from, JmpDst to)
     {
         ASSERT(from.m_offset != -1);
         ASSERT(to.m_offset != -1);
+
+        // Sanity check - if the assembler has OOM'd, it will start overwriting
+        // its internal buffer and thus our links could be garbage.
+        if (oom())
+            return;
 
         js::JaegerSpew(js::JSpew_Insns,
                        IPFX "##link     ((%d)) jumps to ((%d))\n", MAYBE_PAD,
@@ -2113,8 +2702,16 @@ public:
 
     static void relinkJump(void* from, void* to)
     {
-        FIXME_INSN_PRINTING;
+        js::JaegerSpew(js::JSpew_Insns,
+                       ISPFX "##relinkJump ((from=%p)) ((to=%p))\n",
+                       from, to);
         setRel32(from, to);
+    }
+
+    static bool canRelinkJump(void* from, void* to)
+    {
+        intptr_t offset = reinterpret_cast<intptr_t>(to) - reinterpret_cast<intptr_t>(from);
+        return (offset == static_cast<int32_t>(offset));
     }
     
     static void relinkCall(void* from, void* to)
@@ -2143,7 +2740,10 @@ public:
 
     static void repatchLoadPtrToLEA(void* where)
     {
-        FIXME_INSN_PRINTING;
+        js::JaegerSpew(js::JSpew_Insns,
+                       ISPFX "##repatchLoadPtrToLEA ((where=%p))\n",
+                       where);
+
 #if WTF_CPU_X86_64
         // On x86-64 pointer memory accesses require a 64-bit operand, and as such a REX prefix.
         // Skip over the prefix byte.
@@ -2154,7 +2754,9 @@ public:
     
     static void repatchLEAToLoadPtr(void* where)
     {
-        FIXME_INSN_PRINTING;
+        js::JaegerSpew(js::JSpew_Insns,
+                       ISPFX "##repatchLEAToLoadPtr ((where=%p))\n",
+                       where);
 #if WTF_CPU_X86_64
         // On x86-64 pointer memory accesses require a 64-bit operand, and as such a REX prefix.
         // Skip over the prefix byte.
@@ -2198,40 +2800,62 @@ public:
         return dst.m_offset - src.m_offset;
     }
     
-    void* executableCopy(ExecutablePool* allocator)
+    void* executableAllocAndCopy(ExecutableAllocator* allocator, ExecutablePool **poolp, CodeKind kind)
     {
-        void* copy = m_formatter.executableCopy(allocator);
-        ASSERT(copy);
-        return copy;
+        return m_formatter.executableAllocAndCopy(allocator, poolp, kind);
     }
 
-    void* executableCopy(void* buffer)
+    void executableCopy(void* buffer)
     {
-        return memcpy(buffer, m_formatter.buffer(), size());
-    }
-
-private:
-
-    static void setPointer(void* where, void* value)
-    {
-        js::JaegerSpew(js::JSpew_Insns,
-                       ISPFX "##setPtr     ((where=%p)) ((value=%p))\n", where, value);
-        reinterpret_cast<void**>(where)[-1] = value;
-    }
-
-    static void setInt32(void* where, int32_t value)
-    {
-        reinterpret_cast<int32_t*>(where)[-1] = value;
+        memcpy(buffer, m_formatter.buffer(), size());
     }
 
     static void setRel32(void* from, void* to)
     {
         intptr_t offset = reinterpret_cast<intptr_t>(to) - reinterpret_cast<intptr_t>(from);
         ASSERT(offset == static_cast<int32_t>(offset));
+#define JS_CRASH(x) *(int *)x = 0
+        if (offset != static_cast<int32_t>(offset))
+            JS_CRASH(0xC0DE);
+#undef JS_CRASH
 
         js::JaegerSpew(js::JSpew_Insns,
                        ISPFX "##setRel32 ((from=%p)) ((to=%p))\n", from, to);
         setInt32(from, offset);
+    }
+
+    static void *getRel32Target(void* where)
+    {
+        int32_t rel = getInt32(where);
+        return (char *)where + rel;
+    }
+
+    static void *getPointer(void* where)
+    {
+        return reinterpret_cast<void **>(where)[-1];
+    }
+
+    static void **getPointerRef(void* where)
+    {
+        return &reinterpret_cast<void **>(where)[-1];
+    }
+
+    static void setPointer(void* where, const void* value)
+    {
+        js::JaegerSpew(js::JSpew_Insns,
+                       ISPFX "##setPtr     ((where=%p)) ((value=%p))\n", where, value);
+        reinterpret_cast<const void**>(where)[-1] = value;
+    }
+
+private:
+
+    static int32_t getInt32(void* where)
+    {
+        return reinterpret_cast<int32_t*>(where)[-1];
+    }
+    static void setInt32(void* where, int32_t value)
+    {
+        reinterpret_cast<int32_t*>(where)[-1] = value;
     }
 
     class X86InstructionFormatter {
@@ -2315,6 +2939,14 @@ private:
             m_buffer.putByteUnchecked(opcode);
             memoryModRM(reg, address);
         }
+#else
+        void oneByteRipOp(OneByteOpcodeID opcode, int reg, int ripOffset)
+        {
+            m_buffer.ensureSpace(maxInstructionSize);
+            m_buffer.putByteUnchecked(opcode);
+            putModRm(ModRmMemoryNoDisp, reg, noBase);
+            m_buffer.putIntUnchecked(ripOffset);
+        }
 #endif
 
         void twoByteOp(TwoByteOpcodeID opcode)
@@ -2360,6 +2992,26 @@ private:
             memoryModRM(reg, address);
         }
 #endif
+
+        void threeByteOp(ThreeByteOpcodeID opcode, ThreeByteEscape escape, int reg, RegisterID rm)
+        {
+            m_buffer.ensureSpace(maxInstructionSize);
+            emitRexIfNeeded(reg, 0, rm);
+            m_buffer.putByteUnchecked(OP_2BYTE_ESCAPE);
+            m_buffer.putByteUnchecked(escape);
+            m_buffer.putByteUnchecked(opcode);
+            registerModRM(reg, rm);
+        }
+
+        void threeByteOp(ThreeByteOpcodeID opcode, ThreeByteEscape escape, int reg, RegisterID base, int offset)
+        {
+            m_buffer.ensureSpace(maxInstructionSize);
+            emitRexIfNeeded(reg, 0, base);
+            m_buffer.putByteUnchecked(OP_2BYTE_ESCAPE);
+            m_buffer.putByteUnchecked(escape);
+            m_buffer.putByteUnchecked(opcode);
+            memoryModRM(reg, base, offset);
+        }
 
 #if WTF_CPU_X86_64
         // Quad-word-sized operands:
@@ -2451,10 +3103,35 @@ private:
 
         void oneByteOp8(OneByteOpcodeID opcode, GroupOpcodeID groupOp, RegisterID rm)
         {
+#if !WTF_CPU_X86_64
+            ASSERT(!byteRegRequiresRex(rm));
+#endif
             m_buffer.ensureSpace(maxInstructionSize);
             emitRexIf(byteRegRequiresRex(rm), 0, 0, rm);
             m_buffer.putByteUnchecked(opcode);
             registerModRM(groupOp, rm);
+        }
+
+        void oneByteOp8(OneByteOpcodeID opcode, int reg, RegisterID base, int offset)
+        {
+#if !WTF_CPU_X86_64
+            ASSERT(!byteRegRequiresRex(reg));
+#endif
+            m_buffer.ensureSpace(maxInstructionSize);
+            emitRexIf(byteRegRequiresRex(reg), reg, 0, base);
+            m_buffer.putByteUnchecked(opcode);
+            memoryModRM(reg, base, offset);
+        }
+
+        void oneByteOp8(OneByteOpcodeID opcode, int reg, RegisterID base, RegisterID index, int scale, int offset)
+        {
+#if !WTF_CPU_X86_64
+            ASSERT(!byteRegRequiresRex(reg));
+#endif
+            m_buffer.ensureSpace(maxInstructionSize);
+            emitRexIf(byteRegRequiresRex(reg), reg, index, base);
+            m_buffer.putByteUnchecked(opcode);
+            memoryModRM(reg, base, index, scale, offset);
         }
 
         void twoByteOp8(TwoByteOpcodeID opcode, RegisterID reg, RegisterID rm)
@@ -2510,13 +3187,22 @@ private:
 
         size_t size() const { return m_buffer.size(); }
         unsigned char *buffer() const { return m_buffer.buffer(); }
+        bool oom() const { return m_buffer.oom(); }
         bool isAligned(int alignment) const { return m_buffer.isAligned(alignment); }
         void* data() const { return m_buffer.data(); }
-        void* executableCopy(ExecutablePool* allocator) { return m_buffer.executableCopy(allocator); }
+        void* executableAllocAndCopy(ExecutableAllocator* allocator, ExecutablePool** poolp, CodeKind kind) {
+            return m_buffer.executableAllocAndCopy(allocator, poolp, kind);
+        }
 
     private:
 
         // Internals; ModRm and REX formatters.
+
+        // Byte operand register spl & above require a REX prefix (to prevent the 'H' registers be accessed).
+        inline bool byteRegRequiresRex(int reg)
+        {
+            return (reg >= X86Registers::esp);
+        }
 
         static const RegisterID noBase = X86Registers::ebp;
         static const RegisterID hasSib = X86Registers::esp;
@@ -2529,12 +3215,6 @@ private:
         inline bool regRequiresRex(int reg)
         {
             return (reg >= X86Registers::r8);
-        }
-
-        // Byte operand register spl & above require a REX prefix (to prevent the 'H' registers be accessed).
-        inline bool byteRegRequiresRex(int reg)
-        {
-            return (reg >= X86Registers::esp);
         }
 
         // Format a REX prefix byte.
@@ -2551,9 +3231,14 @@ private:
 
         // Used for operations with byte operands - use byteRegRequiresRex() to check register operands,
         // regRequiresRex() to check other registers (i.e. address base & index).
+        // 
+        // NB: WebKit's use of emitRexIf() is limited such that the reqRequiresRex() checks are
+        // not needed. SpiderMonkey extends oneByteOp8 functionality such that r, x, and b can
+        // all be used.
         inline void emitRexIf(bool condition, int r, int x, int b)
         {
-            if (condition) emitRex(false, r, x, b);
+            if (condition || regRequiresRex(r) || regRequiresRex(x) || regRequiresRex(b))
+                emitRex(false, r, x, b);
         }
 
         // Used for word sized operations, will plant a REX prefix if necessary (if any register is r8 or above).
@@ -2564,7 +3249,6 @@ private:
 #else
         // No REX prefix bytes on 32-bit x86.
         inline bool regRequiresRex(int) { return false; }
-        inline bool byteRegRequiresRex(int) { return false; }
         inline void emitRexIf(bool, int, int, int) {}
         inline void emitRexIfNeeded(int, int, int) {}
 #endif
@@ -2598,10 +3282,11 @@ private:
         {
             // A base of esp or r12 would be interpreted as a sib, so force a sib with no index & put the base in there.
 #if WTF_CPU_X86_64
-            if ((base == hasSib) || (base == hasSib2)) {
+            if ((base == hasSib) || (base == hasSib2))
 #else
-            if (base == hasSib) {
+            if (base == hasSib)
 #endif
+            {
                 if (!offset) // No need to check if the base is noBase, since we know it is hasSib!
                     putModRmSib(ModRmMemoryNoDisp, reg, base, noIndex, 0);
                 else if (CAN_SIGN_EXTEND_8_32(offset)) {
@@ -2632,10 +3317,11 @@ private:
         {
             // A base of esp or r12 would be interpreted as a sib, so force a sib with no index & put the base in there.
 #if WTF_CPU_X86_64
-            if ((base == hasSib) || (base == hasSib2)) {
+            if ((base == hasSib) || (base == hasSib2))
 #else
-            if (base == hasSib) {
+            if (base == hasSib)
 #endif
+            {
                 putModRmSib(ModRmMemoryDisp32, reg, base, noIndex, 0);
                 m_buffer.putIntUnchecked(offset);
             } else {

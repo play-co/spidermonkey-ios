@@ -1,3 +1,4 @@
+// |reftest| skip-if(Android)
 /*
  * Any copyright is dedicated to the Public Domain.
  * http://creativecommons.org/licenses/publicdomain/
@@ -17,6 +18,11 @@ if (typeof gczeal != 'undefined' && typeof gc != 'undefined') {
     {
     }
 }
+
+// Reset gczeal.
+if (typeof gczeal !== 'undefined')
+    gczeal(0)
+
 reportCompare("no assertion failure", "no assertion failure", "bug 563210");
 
 

@@ -1,6 +1,10 @@
 /* -*- Mode: C++; tab-width: 8; indent-tabs-mode: nil; c-basic-offset: 4 -*-
  * vim: set ts=8 sw=4 et tw=99:
  */
+/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+
 
 #include "tests.h"
 #include "jsstr.h"
@@ -8,17 +12,17 @@
 static JSGCCallback oldGCCallback;
 
 static void **checkPointers;
-static jsuint checkPointersLength;
+static unsigned checkPointersLength;
 static size_t checkPointersStaticStrings;
 
 static JSBool
 TestAboutToBeFinalizedCallback(JSContext *cx, JSGCStatus status)
 {
     if (status == JSGC_MARK_END && checkPointers) {
-        for (jsuint i = 0; i != checkPointersLength; ++i) {
+        for (unsigned i = 0; i != checkPointersLength; ++i) {
             void *p = checkPointers[i];
             JS_ASSERT(p);
-            if (JS_IsAboutToBeFinalized(cx, p))
+            if (JS_IsAboutToBeFinalized(p))
                 checkPointers[i] = NULL;
         }
     }
@@ -37,7 +41,7 @@ NativeFrameCleaner()
 {
     char buffer[1 << 16];
     memset(buffer, 0, sizeof buffer);
-    ptrSink = buffer; 
+    ptrSink = buffer;
 }
 
 BEGIN_TEST(testIsAboutToBeFinalized_bug528645)
@@ -52,7 +56,7 @@ BEGIN_TEST(testIsAboutToBeFinalized_bug528645)
     JS_GC(cx);
 
     /* Everything is unrooted except unit strings. */
-    for (jsuint i = 0; i != checkPointersLength; ++i) {
+    for (unsigned i = 0; i != checkPointersLength; ++i) {
         void *p = checkPointers[i];
         if (p) {
             CHECK(JSString::isStatic(p));
@@ -60,7 +64,7 @@ BEGIN_TEST(testIsAboutToBeFinalized_bug528645)
             --checkPointersStaticStrings;
         }
     }
-    CHECK(checkPointersStaticStrings == 0);
+    CHECK_EQUAL(checkPointersStaticStrings, 0);
 
     free(checkPointers);
     checkPointers = NULL;
@@ -83,7 +87,7 @@ cls_testIsAboutToBeFinalized_bug528645::createAndTestRooted()
      * Make sure to include unit and numeric strings to the set.
      */
     EVAL("var x = 1.1; "
-         "[''+x, 'a', '42', 'something'.substring(1), "
+         "[''+x, 'a', '123456789', 'something'.substring(1), "
          "{}, [], new Function('return 10;'), <xml/>];",
          root.addr());
 
@@ -97,7 +101,7 @@ cls_testIsAboutToBeFinalized_bug528645::createAndTestRooted()
     CHECK(checkPointers);
 
     checkPointersStaticStrings = 0;
-    for (jsuint i = 0; i != checkPointersLength; ++i) {
+    for (unsigned i = 0; i != checkPointersLength; ++i) {
         jsval v;
         ok = JS_GetElement(cx, array, i, &v);
         CHECK(ok);
@@ -115,8 +119,22 @@ cls_testIsAboutToBeFinalized_bug528645::createAndTestRooted()
      * All GC things are rooted via the root holding the array containing them
      * and TestAboutToBeFinalizedCallback must keep them as is.
      */
-    for (jsuint i = 0; i != checkPointersLength; ++i)
+    for (unsigned i = 0; i != checkPointersLength; ++i)
         CHECK(checkPointers[i]);
+
+    /*
+     * Overwrite the registers and stack with new GC things to avoid false
+     * positives with the finalization test.
+     */
+    EVAL("[]", root.addr());
+
+    array = JSVAL_TO_OBJECT(root.value());
+    JS_ASSERT(JS_IsArrayObject(cx, array));
+
+    uint32_t tmp;
+    CHECK(JS_GetArrayLength(cx, array, &tmp));
+    CHECK(ok);
+
     return true;
 }
 

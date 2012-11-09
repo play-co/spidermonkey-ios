@@ -1,171 +1,170 @@
 This file contains any messages produced by compilers while
 running configure, to aid debugging if configure makes a mistake.
 
-configure:734: checking host system type
-configure:755: checking target system type
-configure:773: checking build system type
-configure:833: checking for mawk
-configure:833: checking for gawk
-configure:2016: checking for gcc
-configure:2129: checking whether the C compiler (/Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//usr/bin/i686-apple-darwin11-llvm-gcc-4.2 -isysroot /Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk -mmacosx-version-min=10.6 -L/Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk/usr/lib -no-cpp-precomp -pipe -O3  -L/Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk/usr/lib) works
-configure:2145: /Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//usr/bin/i686-apple-darwin11-llvm-gcc-4.2 -isysroot /Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk -mmacosx-version-min=10.6 -L/Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk/usr/lib -no-cpp-precomp -pipe -O3 -o conftest   -L/Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk/usr/lib conftest.c  1>&5
-configure:2171: checking whether the C compiler (/Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//usr/bin/i686-apple-darwin11-llvm-gcc-4.2 -isysroot /Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk -mmacosx-version-min=10.6 -L/Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk/usr/lib -no-cpp-precomp -pipe -O3  -L/Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk/usr/lib) is a cross-compiler
-configure:2176: checking whether we are using GNU C
-configure:2185: /Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//usr/bin/i686-apple-darwin11-llvm-gcc-4.2 -isysroot /Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk -mmacosx-version-min=10.6 -L/Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk/usr/lib -no-cpp-precomp -pipe -O3 -E conftest.c
-configure:2204: checking whether /Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//usr/bin/i686-apple-darwin11-llvm-gcc-4.2 -isysroot /Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk -mmacosx-version-min=10.6 -L/Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk/usr/lib -no-cpp-precomp -pipe -O3 accepts -g
-configure:2240: checking for c++
-configure:2272: checking whether the C++ compiler (/Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//usr/bin/i686-apple-darwin11-llvm-g++-4.2 -isysroot /Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk -mmacosx-version-min=10.6 -L/Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk/usr/lib -no-cpp-precomp -pipe -O3  -L/Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk/usr/lib) works
-configure:2288: /Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//usr/bin/i686-apple-darwin11-llvm-g++-4.2 -isysroot /Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk -mmacosx-version-min=10.6 -L/Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk/usr/lib -no-cpp-precomp -pipe -O3 -o conftest   -L/Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk/usr/lib conftest.C  1>&5
-configure:2314: checking whether the C++ compiler (/Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//usr/bin/i686-apple-darwin11-llvm-g++-4.2 -isysroot /Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk -mmacosx-version-min=10.6 -L/Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk/usr/lib -no-cpp-precomp -pipe -O3  -L/Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk/usr/lib) is a cross-compiler
-configure:2319: checking whether we are using GNU C++
-configure:2328: /Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//usr/bin/i686-apple-darwin11-llvm-g++-4.2 -isysroot /Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk -mmacosx-version-min=10.6 -L/Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk/usr/lib -no-cpp-precomp -pipe -O3 -E conftest.C
-configure:2347: checking whether /Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//usr/bin/i686-apple-darwin11-llvm-g++-4.2 -isysroot /Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk -mmacosx-version-min=10.6 -L/Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk/usr/lib -no-cpp-precomp -pipe -O3 accepts -g
-configure:2381: checking for ranlib
-configure:2413: checking for /Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//usr/bin/as
-configure:2467: checking for ar
-configure:2502: checking for ld
-configure:2537: checking for strip
-configure:2572: checking for windres
-configure:2928: checking whether /Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//usr/bin/i686-apple-darwin11-llvm-gcc-4.2 -isysroot /Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk -mmacosx-version-min=10.6 -L/Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk/usr/lib -no-cpp-precomp -pipe -O3 and cc understand -c and -o together
-configure:2943: /Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//usr/bin/i686-apple-darwin11-llvm-gcc-4.2 -isysroot /Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk -mmacosx-version-min=10.6 -L/Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk/usr/lib -no-cpp-precomp -pipe -O3 -c conftest.c -o conftest.o 1>&5
-configure:2944: /Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//usr/bin/i686-apple-darwin11-llvm-gcc-4.2 -isysroot /Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk -mmacosx-version-min=10.6 -L/Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk/usr/lib -no-cpp-precomp -pipe -O3 -c conftest.c -o conftest.o 1>&5
-configure:2949: cc -c conftest.c 1>&5
-conftest.c:1:1: warning: type specifier missing, defaults to 'int' [-Wimplicit-int]
-foo(){}
-^~~
-conftest.c:1:7: warning: control reaches end of non-void function [-Wreturn-type]
-foo(){}
-      ^
-2 warnings generated.
-configure:2951: cc -c conftest.c -o conftest.o 1>&5
-conftest.c:1:1: warning: type specifier missing, defaults to 'int' [-Wimplicit-int]
-foo(){}
-^~~
-conftest.c:1:7: warning: control reaches end of non-void function [-Wreturn-type]
-foo(){}
-      ^
-2 warnings generated.
-configure:2952: cc -c conftest.c -o conftest.o 1>&5
-conftest.c:1:1: warning: type specifier missing, defaults to 'int' [-Wimplicit-int]
-foo(){}
-^~~
-conftest.c:1:7: warning: control reaches end of non-void function [-Wreturn-type]
-foo(){}
-      ^
-2 warnings generated.
-configure:2988: checking how to run the C preprocessor
-configure:3009: /Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//usr/bin/i686-apple-darwin11-llvm-gcc-4.2 -isysroot /Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk -mmacosx-version-min=10.6 -L/Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk/usr/lib -no-cpp-precomp -pipe -O3 -E  conftest.c >/dev/null 2>conftest.out
-configure:3068: checking how to run the C++ preprocessor
-configure:3086: /Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//usr/bin/i686-apple-darwin11-llvm-g++-4.2 -isysroot /Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk -mmacosx-version-min=10.6 -L/Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk/usr/lib -no-cpp-precomp -pipe -O3 -E  conftest.C >/dev/null 2>conftest.out
-configure:3176: checking for sb-conf
-configure:3176: checking for ve
-configure:3238: checking for a BSD compatible install
-configure:3291: checking whether ln -s works
-configure:3316: checking for perl5
-configure:3316: checking for perl
-configure:3370: checking for minimum required perl version >= 5.006
-configure:3381: checking for full perl installation
-configure:3396: checking for python
-configure:3456: checking for doxygen
-configure:3505: checking for autoconf
-configure:3554: checking for unzip
-configure:3605: checking for zip
-configure:3659: checking for makedepend
-configure:3707: checking for xargs
-configure:3781: checking for pbbuild
-configure:3781: checking for xcodebuild
-configure:3844: checking for sdp
-configure:4065: checking for gmake
-configure:4065: checking for make
-configure:4125: checking for X
-configure:4192: /Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//usr/bin/i686-apple-darwin11-llvm-gcc-4.2 -isysroot /Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk -mmacosx-version-min=10.6 -L/Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk/usr/lib -no-cpp-precomp -pipe -O3 -E  conftest.c >/dev/null 2>conftest.out
-configure:4188:27: error: X11/Intrinsic.h: No such file or directory
+configure:856: checking host system type
+configure:877: checking target system type
+configure:895: checking build system type
+configure:956: checking for mawk
+configure:1066: checking for clang
+configure:1119: checking for clang++
+configure:1199: checking for perl5
+configure:1546: checking for host c compiler
+configure:1552: checking for gcc
+configure:1587: checking for host c++ compiler
+configure:1593: checking for c++
+configure:1645: checking for ranlib
+configure:1680: checking for ar
+configure:1715: checking whether the host c compiler (gcc    ) works
+configure:1724: gcc -c    conftest.c 1>&5
+configure:1739: checking whether the host c++ compiler (c++    ) works
+configure:1748: c++ -c    conftest.c 1>&5
+clang: warning: treating 'c' input as 'c++' when in C++ mode, this behavior is deprecated
+configure:1768: checking for /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang
+configure:1802: checking for gcc
+configure:1915: checking whether the C compiler (/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator6.0.sdk -arch i386 -miphoneos-version-min=4.3 -I/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator6.0.sdk/usr/include -pipe -Wno-implicit-int -Wno-return-type -integrated-as -mvectorize-with-neon-quad -mfpu=neon -fprefetch-loop-arrays -mfloat-abi=softfp -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator6.0.sdk -arch i386 -v) works
+configure:1931: /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -o conftest -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator6.0.sdk -arch i386 -miphoneos-version-min=4.3 -I/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator6.0.sdk/usr/include -pipe -Wno-implicit-int -Wno-return-type -integrated-as -mvectorize-with-neon-quad -mfpu=neon -fprefetch-loop-arrays -mfloat-abi=softfp  -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator6.0.sdk -arch i386 -v conftest.c  1>&5
+Apple clang version 4.1 (tags/Apple/clang-421.11.65) (based on LLVM 3.1svn)
+Target: i386-apple-darwin11.4.2
+Thread model: posix
+clang: warning: argument unused during compilation: '-mvectorize-with-neon-quad'
+clang: warning: argument unused during compilation: '-mfpu=neon'
+clang: warning: argument unused during compilation: '-fprefetch-loop-arrays'
+clang: warning: argument unused during compilation: '-mfloat-abi=softfp'
+ "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang" -cc1 -triple i386-apple-ios4.3.0 -emit-obj -mrelax-all -disable-free -disable-llvm-verifier -main-file-name conftest.c -pic-level 1 -mdisable-fp-elim -relaxed-aliasing -masm-verbose -target-cpu yonah -target-linker-version 134.9 -v -resource-dir /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../lib/clang/4.1 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator6.0.sdk -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator6.0.sdk -I /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator6.0.sdk/usr/include -fmodule-cache-path /var/folders/mk/4zlmqk1d6z1b7wjr52177fz80000gn/T/clang-module-cache -Wno-implicit-int -Wno-return-type -fdebug-compilation-dir /Users/cat/Downloads/newsm/js/src -ferror-limit 19 -fmessage-length 0 -stack-protector 1 -mstackrealign -fblocks -fobjc-fragile-abi -fobjc-default-synthesize-properties -fdiagnostics-show-option -o /var/folders/mk/4zlmqk1d6z1b7wjr52177fz80000gn/T/conftest-AjcJ6H.o -x c conftest.c
+clang -cc1 version 4.1 based upon LLVM 3.1svn default target x86_64-apple-darwin11.4.2
+ignoring nonexistent directory "/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator6.0.sdk/usr/local/include"
+ignoring nonexistent directory "/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator6.0.sdk/Library/Frameworks"
+ignoring duplicate directory "/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator6.0.sdk/usr/include"
+  as it is a non-system directory that duplicates a system directory
+#include "..." search starts here:
+#include <...> search starts here:
+ /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../lib/clang/4.1/include
+ /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator6.0.sdk/usr/include
+ /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator6.0.sdk/System/Library/Frameworks (framework directory)
+End of search list.
+ "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/ld" -demangle -dynamic -arch i386 -iphoneos_version_min 4.3.0 -syslibroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator6.0.sdk -o conftest -lcrt1.o /var/folders/mk/4zlmqk1d6z1b7wjr52177fz80000gn/T/conftest-AjcJ6H.o -lSystem /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../lib/clang/4.1/lib/darwin/libclang_rt.ios.a
+configure:1957: checking whether the C compiler (/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator6.0.sdk -arch i386 -miphoneos-version-min=4.3 -I/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator6.0.sdk/usr/include -pipe -Wno-implicit-int -Wno-return-type -integrated-as -mvectorize-with-neon-quad -mfpu=neon -fprefetch-loop-arrays -mfloat-abi=softfp -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator6.0.sdk -arch i386 -v) is a cross-compiler
+configure:1962: checking whether we are using GNU C
+configure:1990: checking whether /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang accepts -g
+configure:2026: checking for /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang++
+configure:2062: checking for c++
+configure:2094: checking whether the C++ compiler (/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang++ -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator6.0.sdk -arch i386 -miphoneos-version-min=4.3 -I/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator6.0.sdk/usr/include -pipe -Wno-implicit-int -Wno-return-type -integrated-as -mvectorize-with-neon-quad -mfpu=neon -fprefetch-loop-arrays -mfloat-abi=softfp -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator6.0.sdk -arch i386 -v) works
+configure:2110: /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang++ -o conftest -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator6.0.sdk -arch i386 -miphoneos-version-min=4.3 -I/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator6.0.sdk/usr/include -pipe -Wno-implicit-int -Wno-return-type -integrated-as -mvectorize-with-neon-quad -mfpu=neon -fprefetch-loop-arrays -mfloat-abi=softfp  -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator6.0.sdk -arch i386 -v conftest.C  1>&5
+Apple clang version 4.1 (tags/Apple/clang-421.11.65) (based on LLVM 3.1svn)
+Target: i386-apple-darwin11.4.2
+Thread model: posix
+clang: warning: argument unused during compilation: '-mvectorize-with-neon-quad'
+clang: warning: argument unused during compilation: '-mfpu=neon'
+clang: warning: argument unused during compilation: '-fprefetch-loop-arrays'
+clang: warning: argument unused during compilation: '-mfloat-abi=softfp'
+ "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang" -cc1 -triple i386-apple-ios4.3.0 -emit-obj -mrelax-all -disable-free -disable-llvm-verifier -main-file-name conftest.C -pic-level 1 -mdisable-fp-elim -relaxed-aliasing -masm-verbose -target-cpu yonah -target-linker-version 134.9 -v -resource-dir /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../lib/clang/4.1 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator6.0.sdk -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator6.0.sdk -I /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator6.0.sdk/usr/include -fmodule-cache-path /var/folders/mk/4zlmqk1d6z1b7wjr52177fz80000gn/T/clang-module-cache -Wno-implicit-int -Wno-return-type -fdeprecated-macro -fdebug-compilation-dir /Users/cat/Downloads/newsm/js/src -ferror-limit 19 -fmessage-length 0 -stack-protector 1 -mstackrealign -fblocks -fobjc-fragile-abi -fobjc-default-synthesize-properties -fcxx-exceptions -fexceptions -fdiagnostics-show-option -o /var/folders/mk/4zlmqk1d6z1b7wjr52177fz80000gn/T/conftest-YoyED4.o -x c++ conftest.C
+clang -cc1 version 4.1 based upon LLVM 3.1svn default target x86_64-apple-darwin11.4.2
+ignoring nonexistent directory "/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator6.0.sdk/usr/include/c++/4.2.1/i686-apple-darwin10/"
+ignoring nonexistent directory "/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator6.0.sdk/usr/include/c++/4.0.0"
+ignoring nonexistent directory "/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator6.0.sdk/usr/include/c++/4.0.0/i686-apple-darwin8/"
+ignoring nonexistent directory "/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator6.0.sdk/usr/include/c++/4.0.0/backward"
+ignoring nonexistent directory "/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator6.0.sdk/usr/local/include"
+ignoring nonexistent directory "/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator6.0.sdk/Library/Frameworks"
+ignoring duplicate directory "/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator6.0.sdk/usr/include"
+  as it is a non-system directory that duplicates a system directory
+#include "..." search starts here:
+#include <...> search starts here:
+ /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator6.0.sdk/usr/include/c++/4.2.1
+ /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator6.0.sdk/usr/include/c++/4.2.1/backward
+ /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../lib/clang/4.1/include
+ /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator6.0.sdk/usr/include
+ /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator6.0.sdk/System/Library/Frameworks (framework directory)
+End of search list.
+ "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/ld" -demangle -dynamic -arch i386 -iphoneos_version_min 4.3.0 -syslibroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator6.0.sdk -o conftest -lcrt1.o /var/folders/mk/4zlmqk1d6z1b7wjr52177fz80000gn/T/conftest-YoyED4.o -lstdc++ -lSystem /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../lib/clang/4.1/lib/darwin/libclang_rt.ios.a
+configure:2136: checking whether the C++ compiler (/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang++ -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator6.0.sdk -arch i386 -miphoneos-version-min=4.3 -I/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator6.0.sdk/usr/include -pipe -Wno-implicit-int -Wno-return-type -integrated-as -mvectorize-with-neon-quad -mfpu=neon -fprefetch-loop-arrays -mfloat-abi=softfp -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator6.0.sdk -arch i386 -v) is a cross-compiler
+configure:2141: checking whether we are using GNU C++
+configure:2169: checking whether /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang++ accepts -g
+configure:2206: checking for /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/ranlib
+configure:2241: checking for /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/ar
+configure:2276: checking for /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/as
+configure:2330: checking for /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/ld
+configure:2365: checking for /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/strip
+configure:2400: checking for x86_64-apple-darwin11.4.2-windres
+configure:2400: checking for i386-darwin-windres
+configure:3560: checking how to run the C preprocessor
+configure:3640: checking how to run the C++ preprocessor
+configure:3736: checking for sb-conf
+configure:3736: checking for ve
+configure:3798: checking for a BSD compatible install
+configure:3851: checking whether ln -s works
+configure:3874: checking for minimum required perl version >= 5.006
+configure:3885: checking for full perl installation
+configure:3900: checking for python2.7
+configure:3960: checking for doxygen
+configure:4009: checking for autoconf
+configure:4058: checking for xargs
+configure:4132: checking for pbbuild
+configure:4184: checking for sdp
+configure:4407: checking for gmake
+configure:4474: checking for X
+configure:5674: /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -c   conftest.c 1>&5
+configure:5670:15: error: use of undeclared identifier '__thumb2__'
+return sizeof(__thumb2__);
+              ^
+1 error generated.
 configure: failed program was:
-#line 4187 "configure"
-#include "confdefs.h"
-#include <X11/Intrinsic.h>
-configure:4268: /Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//usr/bin/i686-apple-darwin11-llvm-gcc-4.2 -isysroot /Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk -mmacosx-version-min=10.6 -L/Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk/usr/lib -no-cpp-precomp -pipe -O3 -o conftest   -L/Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk/usr/lib conftest.c -lXt  1>&5
-ld: library not found for -lXt
-collect2: ld returned 1 exit status
-configure: failed program was:
-#line 4261 "configure"
-#include "confdefs.h"
-
-int main() {
-XtMalloc()
-; return 0; }
-configure:5373: checking whether the compiler supports -Wno-invalid-offsetof
-configure:5396: /Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//usr/bin/i686-apple-darwin11-llvm-g++-4.2 -isysroot /Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk -mmacosx-version-min=10.6 -L/Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk/usr/lib -no-cpp-precomp -pipe -O3 -c  -fno-strict-aliasing -Wno-invalid-offsetof  conftest.C 1>&5
-configure:5423: checking whether the compiler supports -Wno-variadic-macros
-configure:5446: /Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//usr/bin/i686-apple-darwin11-llvm-g++-4.2 -isysroot /Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk -mmacosx-version-min=10.6 -L/Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk/usr/lib -no-cpp-precomp -pipe -O3 -c  -fno-strict-aliasing -Wno-variadic-macros  conftest.C 1>&5
-configure:5481: checking whether ld has archive extraction flags
-configure:5505: /Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//usr/bin/i686-apple-darwin11-llvm-gcc-4.2 -isysroot /Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk -mmacosx-version-min=10.6 -L/Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk/usr/lib -no-cpp-precomp -pipe -O3 -o conftest  -fno-strict-aliasing  -Wl,--whole-archive conftest.c -Wl,--no-whole-archive 1>&5
-ld: unknown option: --whole-archive
-collect2: ld returned 1 exit status
-configure: failed program was:
-#line 5498 "configure"
-#include "confdefs.h"
-
-int main() {
-
-; return 0; }
-configure:5505: /Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//usr/bin/i686-apple-darwin11-llvm-gcc-4.2 -isysroot /Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk -mmacosx-version-min=10.6 -L/Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk/usr/lib -no-cpp-precomp -pipe -O3 -o conftest  -fno-strict-aliasing  -Wl,-z -Wl,allextract conftest.c -Wl,-z -Wl,defaultextract 1>&5
-ld: unknown option: -z
-collect2: ld returned 1 exit status
-configure: failed program was:
-#line 5498 "configure"
+#line 5667 "configure"
 #include "confdefs.h"
 
 int main() {
-
+return sizeof(__thumb2__);
 ; return 0; }
-configure:5505: /Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//usr/bin/i686-apple-darwin11-llvm-gcc-4.2 -isysroot /Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk -mmacosx-version-min=10.6 -L/Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk/usr/lib -no-cpp-precomp -pipe -O3 -o conftest  -fno-strict-aliasing  -Wl,-all conftest.c -Wl,-none 1>&5
-ld: unknown option: -all
-collect2: ld returned 1 exit status
+configure:5868: checking that static assertion macros used in autoconf tests work
+configure:6093: checking whether the C compiler supports -Werror=return-type
+configure:6116: /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -c -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator6.0.sdk -arch i386 -miphoneos-version-min=4.3 -I/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator6.0.sdk/usr/include -pipe -Wno-implicit-int -Wno-return-type -integrated-as -mvectorize-with-neon-quad -mfpu=neon -fprefetch-loop-arrays -mfloat-abi=softfp -Werror -Werror=return-type -Qunused-arguments  conftest.c 1>&5
+configure:6144: checking whether the C compiler supports -Wtype-limits
+configure:6167: /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -c -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator6.0.sdk -arch i386 -miphoneos-version-min=4.3 -I/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator6.0.sdk/usr/include -pipe -Wno-implicit-int -Wno-return-type -integrated-as -mvectorize-with-neon-quad -mfpu=neon -fprefetch-loop-arrays -mfloat-abi=softfp -Werror -Wtype-limits -Qunused-arguments  conftest.c 1>&5
+configure:6195: checking whether the C compiler supports -Wempty-body
+configure:6218: /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -c -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator6.0.sdk -arch i386 -miphoneos-version-min=4.3 -I/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator6.0.sdk/usr/include -pipe -Wno-implicit-int -Wno-return-type -integrated-as -mvectorize-with-neon-quad -mfpu=neon -fprefetch-loop-arrays -mfloat-abi=softfp -Werror -Wempty-body -Qunused-arguments  conftest.c 1>&5
+configure:6252: checking whether the C compiler supports -Wno-overlength-strings
+configure:6275: /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -c -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator6.0.sdk -arch i386 -miphoneos-version-min=4.3 -I/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator6.0.sdk/usr/include -pipe -Wno-implicit-int -Wno-return-type -integrated-as -mvectorize-with-neon-quad -mfpu=neon -fprefetch-loop-arrays -mfloat-abi=softfp -Werror -Woverlength-strings -Qunused-arguments  conftest.c 1>&5
+configure:6357: checking whether the C++ compiler supports -Werror=return-type
+configure:6380: /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang++ -c -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator6.0.sdk -arch i386 -miphoneos-version-min=4.3 -I/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator6.0.sdk/usr/include -pipe -Wno-implicit-int -Wno-return-type -integrated-as -mvectorize-with-neon-quad -mfpu=neon -fprefetch-loop-arrays -mfloat-abi=softfp -Werror -Werror=return-type -Qunused-arguments  conftest.C 1>&5
+configure:6408: checking whether the C++ compiler supports -Wtype-limits
+configure:6431: /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang++ -c -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator6.0.sdk -arch i386 -miphoneos-version-min=4.3 -I/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator6.0.sdk/usr/include -pipe -Wno-implicit-int -Wno-return-type -integrated-as -mvectorize-with-neon-quad -mfpu=neon -fprefetch-loop-arrays -mfloat-abi=softfp -Werror -Wtype-limits -Qunused-arguments  conftest.C 1>&5
+configure:6459: checking whether the C++ compiler supports -Wempty-body
+configure:6482: /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang++ -c -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator6.0.sdk -arch i386 -miphoneos-version-min=4.3 -I/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator6.0.sdk/usr/include -pipe -Wno-implicit-int -Wno-return-type -integrated-as -mvectorize-with-neon-quad -mfpu=neon -fprefetch-loop-arrays -mfloat-abi=softfp -Werror -Wempty-body -Qunused-arguments  conftest.C 1>&5
+configure:6510: checking whether the C++ compiler supports -Werror=conversion-null
+configure:6533: /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang++ -c -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator6.0.sdk -arch i386 -miphoneos-version-min=4.3 -I/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator6.0.sdk/usr/include -pipe -Wno-implicit-int -Wno-return-type -integrated-as -mvectorize-with-neon-quad -mfpu=neon -fprefetch-loop-arrays -mfloat-abi=softfp -Werror -Werror=conversion-null -Qunused-arguments  conftest.C 1>&5
+clang: error: unknown warning option '-Werror=conversion-null'; did you mean '-Werror=conversion'?
 configure: failed program was:
-#line 5498 "configure"
+#line 6526 "configure"
 #include "confdefs.h"
 
 int main() {
-
+return(0);
 ; return 0; }
-configure:5538: checking that static assertion macros used in autoconf tests work
-configure:5559: /Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//usr/bin/i686-apple-darwin11-llvm-gcc-4.2 -isysroot /Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk -mmacosx-version-min=10.6 -L/Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk/usr/lib -no-cpp-precomp -pipe -O3 -c  -fno-strict-aliasing  conftest.c 1>&5
-configure:5576: /Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//usr/bin/i686-apple-darwin11-llvm-gcc-4.2 -isysroot /Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk -mmacosx-version-min=10.6 -L/Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk/usr/lib -no-cpp-precomp -pipe -O3 -c  -fno-strict-aliasing  conftest.c 1>&5
-configure: In function 'main':
-configure:5577: error: size of array 'static_assert_line_5576' is negative
-configure: failed program was:
-#line 5569 "configure"
-#include "confdefs.h"
-
+configure:6569: checking whether the C++ compiler supports -Wno-overlength-strings
+configure:6592: /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang++ -c -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator6.0.sdk -arch i386 -miphoneos-version-min=4.3 -I/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator6.0.sdk/usr/include -pipe -Wno-implicit-int -Wno-return-type -integrated-as -mvectorize-with-neon-quad -mfpu=neon -fprefetch-loop-arrays -mfloat-abi=softfp -Werror -Woverlength-strings -Qunused-arguments  conftest.C 1>&5
+configure:6620: checking whether the C++ compiler supports -Wno-invalid-offsetof
+configure:6643: /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang++ -c -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator6.0.sdk -arch i386 -miphoneos-version-min=4.3 -I/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator6.0.sdk/usr/include -pipe -Wno-implicit-int -Wno-return-type -integrated-as -mvectorize-with-neon-quad -mfpu=neon -fprefetch-loop-arrays -mfloat-abi=softfp -Werror -Winvalid-offsetof -Qunused-arguments  conftest.C 1>&5
+configure:6671: checking whether the C++ compiler supports -Wno-variadic-macros
+configure:6694: /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang++ -c -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator6.0.sdk -arch i386 -miphoneos-version-min=4.3 -I/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator6.0.sdk/usr/include -pipe -Wno-implicit-int -Wno-return-type -integrated-as -mvectorize-with-neon-quad -mfpu=neon -fprefetch-loop-arrays -mfloat-abi=softfp -Werror -Wvariadic-macros -Qunused-arguments  conftest.C 1>&5
+configure:6746: checking whether the C++ compiler supports -Wno-extended-offsetof
+configure:6769: /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang++ -c -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator6.0.sdk -arch i386 -miphoneos-version-min=4.3 -I/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator6.0.sdk/usr/include -pipe -Wno-implicit-int -Wno-return-type -integrated-as -mvectorize-with-neon-quad -mfpu=neon -fprefetch-loop-arrays -mfloat-abi=softfp -Werror -Wextended-offsetof -Qunused-arguments  conftest.C 1>&5
+configure:6807: checking whether ld has archive extraction flags
+configure:6866: checking for 64-bit OS
+configure:6875: /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -c -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator6.0.sdk -arch i386 -miphoneos-version-min=4.3 -I/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator6.0.sdk/usr/include -pipe -Wno-implicit-int -Wno-return-type -integrated-as -mvectorize-with-neon-quad -mfpu=neon -fprefetch-loop-arrays -mfloat-abi=softfp -Qunused-arguments  conftest.c 1>&5
+configure:6875:1: error: 'static_assert_line_6875' declared as an array with a negative size
+CONFIGURE_STATIC_ASSERT(sizeof(void*) == 8)
+^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+configure:6870:44: note: expanded from macro 'CONFIGURE_STATIC_ASSERT'
 #define CONFIGURE_STATIC_ASSERT(condition) CONFIGURE_STATIC_ASSERT_IMPL(condition, __LINE__)
+                                           ^
+configure:6871:55: note: expanded from macro 'CONFIGURE_STATIC_ASSERT_IMPL'
 #define CONFIGURE_STATIC_ASSERT_IMPL(condition, line) CONFIGURE_STATIC_ASSERT_IMPL2(condition, line)
+                                                      ^
+configure:6872:94: note: expanded from macro 'CONFIGURE_STATIC_ASSERT_IMPL2'
 #define CONFIGURE_STATIC_ASSERT_IMPL2(condition, line) typedef int static_assert_line_##line[(condition) ? 1 : -1]
-
-int main() {
-CONFIGURE_STATIC_ASSERT(0)
-; return 0; }
-configure:5599: /Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//usr/bin/i686-apple-darwin11-llvm-g++-4.2 -isysroot /Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk -mmacosx-version-min=10.6 -L/Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk/usr/lib -no-cpp-precomp -pipe -O3 -c  -fno-strict-aliasing  conftest.C 1>&5
-configure:5616: /Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//usr/bin/i686-apple-darwin11-llvm-g++-4.2 -isysroot /Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk -mmacosx-version-min=10.6 -L/Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk/usr/lib -no-cpp-precomp -pipe -O3 -c  -fno-strict-aliasing  conftest.C 1>&5
-configure: In function 'int main()':
-configure:5616: error: size of array 'static_assert_line_5616' is negative
+                                                                                             ^~~~~~~~~~~~~~~~~~~~
+1 error generated.
 configure: failed program was:
-#line 5609 "configure"
-#include "confdefs.h"
-
-#define CONFIGURE_STATIC_ASSERT(condition) CONFIGURE_STATIC_ASSERT_IMPL(condition, __LINE__)
-#define CONFIGURE_STATIC_ASSERT_IMPL(condition, line) CONFIGURE_STATIC_ASSERT_IMPL2(condition, line)
-#define CONFIGURE_STATIC_ASSERT_IMPL2(condition, line) typedef int static_assert_line_##line[(condition) ? 1 : -1]
-
-int main() {
-CONFIGURE_STATIC_ASSERT(0)
-; return 0; }
-configure:5650: checking for 64-bit OS
-configure:5659: /Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//usr/bin/i686-apple-darwin11-llvm-gcc-4.2 -isysroot /Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk -mmacosx-version-min=10.6 -L/Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk/usr/lib -no-cpp-precomp -pipe -O3 -c  -fno-strict-aliasing  conftest.c 1>&5
-configure: In function 'main':
-configure:5660: error: size of array 'static_assert_line_5659' is negative
-configure: failed program was:
-#line 5652 "configure"
+#line 6868 "configure"
 #include "confdefs.h"
 
 #define CONFIGURE_STATIC_ASSERT(condition) CONFIGURE_STATIC_ASSERT_IMPL(condition, __LINE__)
@@ -175,569 +174,260 @@ configure: failed program was:
 int main() {
 CONFIGURE_STATIC_ASSERT(sizeof(void*) == 8)
 ; return 0; }
-configure:6040: checking for -dead_strip option to ld
-configure:6051: /Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//usr/bin/i686-apple-darwin11-llvm-gcc-4.2 -isysroot /Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk -mmacosx-version-min=10.6 -L/Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk/usr/lib -no-cpp-precomp -pipe -O3 -o conftest  -fno-strict-aliasing -fpascal-strings -fno-common  -L/Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk/usr/lib -lobjc -Wl,-dead_strip conftest.c  1>&5
-configure:7329: checking for ANSI C header files
-configure:7342: /Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//usr/bin/i686-apple-darwin11-llvm-gcc-4.2 -isysroot /Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk -mmacosx-version-min=10.6 -L/Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk/usr/lib -no-cpp-precomp -pipe -O3 -E  conftest.c >/dev/null 2>conftest.out
-configure:7409: /Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//usr/bin/i686-apple-darwin11-llvm-gcc-4.2 -isysroot /Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk -mmacosx-version-min=10.6 -L/Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk/usr/lib -no-cpp-precomp -pipe -O3 -o conftest  -fno-strict-aliasing -fpascal-strings -fno-common  -L/Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk/usr/lib -lobjc conftest.c  1>&5
-configure: In function 'main':
-configure:7404: warning: incompatible implicit declaration of built-in function 'exit'
-configure:7433: checking for working const
-configure:7487: /Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//usr/bin/i686-apple-darwin11-llvm-gcc-4.2 -isysroot /Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk -mmacosx-version-min=10.6 -L/Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk/usr/lib -no-cpp-precomp -pipe -O3 -c  -fno-strict-aliasing -fpascal-strings -fno-common  conftest.c 1>&5
-configure:7508: checking for mode_t
-configure:7541: checking for off_t
-configure:7574: checking for pid_t
-configure:7607: checking for size_t
-configure:7640: checking for ssize_t
-configure:7653: /Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//usr/bin/i686-apple-darwin11-llvm-gcc-4.2 -isysroot /Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk -mmacosx-version-min=10.6 -L/Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk/usr/lib -no-cpp-precomp -pipe -O3 -c  -fno-strict-aliasing -fpascal-strings -fno-common  conftest.c 1>&5
-configure:7675: checking for st_blksize in struct stat
-configure:7688: /Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//usr/bin/i686-apple-darwin11-llvm-gcc-4.2 -isysroot /Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk -mmacosx-version-min=10.6 -L/Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk/usr/lib -no-cpp-precomp -pipe -O3 -c  -fno-strict-aliasing -fpascal-strings -fno-common  conftest.c 1>&5
-configure:7709: checking for siginfo_t
-configure:7722: /Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//usr/bin/i686-apple-darwin11-llvm-gcc-4.2 -isysroot /Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk -mmacosx-version-min=10.6 -L/Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk/usr/lib -no-cpp-precomp -pipe -O3 -c  -fno-strict-aliasing -fpascal-strings -fno-common  conftest.c 1>&5
-configure:7747: checking for stdint.h
-configure:7757: /Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//usr/bin/i686-apple-darwin11-llvm-gcc-4.2 -isysroot /Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk -mmacosx-version-min=10.6 -L/Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk/usr/lib -no-cpp-precomp -pipe -O3 -E  conftest.c >/dev/null 2>conftest.out
-configure:7993: checking for the size of void*
-configure:8011: /Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//usr/bin/i686-apple-darwin11-llvm-gcc-4.2 -isysroot /Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk -mmacosx-version-min=10.6 -L/Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk/usr/lib -no-cpp-precomp -pipe -O3 -c  -fno-strict-aliasing -fpascal-strings -fno-common  conftest.c 1>&5
-configure:8048: checking for the alignment of void*
-configure:8069: /Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//usr/bin/i686-apple-darwin11-llvm-gcc-4.2 -isysroot /Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk -mmacosx-version-min=10.6 -L/Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk/usr/lib -no-cpp-precomp -pipe -O3 -c  -fno-strict-aliasing -fpascal-strings -fno-common  conftest.c 1>&5
-configure: In function 'main':
-configure:8063: error: size of array 'a' is negative
+configure:6998: checking for Python version >= 2.6 but not 3.x
+configure:7009: checking for custom <stdint.h> implementation
+configure:7222: checking for -framework ExceptionHandling
+configure:7232: /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -o conftest -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator6.0.sdk -arch i386 -miphoneos-version-min=4.3 -I/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator6.0.sdk/usr/include -pipe -Wno-implicit-int -Wno-return-type -integrated-as -mvectorize-with-neon-quad -mfpu=neon -fprefetch-loop-arrays -mfloat-abi=softfp -fno-common -Qunused-arguments  -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator6.0.sdk -arch i386 -v -lobjc -framework ExceptionHandling conftest.c  1>&5
+Apple clang version 4.1 (tags/Apple/clang-421.11.65) (based on LLVM 3.1svn)
+Target: i386-apple-darwin11.4.2
+Thread model: posix
+ "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang" -cc1 -triple i386-apple-ios4.3.0 -emit-obj -mrelax-all -disable-free -disable-llvm-verifier -main-file-name conftest.c -pic-level 1 -mdisable-fp-elim -relaxed-aliasing -masm-verbose -target-cpu yonah -target-linker-version 134.9 -v -resource-dir /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../lib/clang/4.1 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator6.0.sdk -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator6.0.sdk -I /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator6.0.sdk/usr/include -fmodule-cache-path /var/folders/mk/4zlmqk1d6z1b7wjr52177fz80000gn/T/clang-module-cache -Wno-implicit-int -Wno-return-type -fdebug-compilation-dir /Users/cat/Downloads/newsm/js/src -ferror-limit 19 -fmessage-length 0 -stack-protector 1 -mstackrealign -fblocks -fobjc-fragile-abi -fobjc-default-synthesize-properties -fno-common -fdiagnostics-show-option -o /var/folders/mk/4zlmqk1d6z1b7wjr52177fz80000gn/T/conftest-AxAIn1.o -x c conftest.c
+clang -cc1 version 4.1 based upon LLVM 3.1svn default target x86_64-apple-darwin11.4.2
+ignoring nonexistent directory "/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator6.0.sdk/usr/local/include"
+ignoring nonexistent directory "/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator6.0.sdk/Library/Frameworks"
+ignoring duplicate directory "/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator6.0.sdk/usr/include"
+  as it is a non-system directory that duplicates a system directory
+#include "..." search starts here:
+#include <...> search starts here:
+ /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../lib/clang/4.1/include
+ /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator6.0.sdk/usr/include
+ /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator6.0.sdk/System/Library/Frameworks (framework directory)
+End of search list.
+ "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/ld" -demangle -dynamic -arch i386 -iphoneos_version_min 4.3.0 -syslibroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator6.0.sdk -o conftest -lcrt1.o -lobjc -framework ExceptionHandling /var/folders/mk/4zlmqk1d6z1b7wjr52177fz80000gn/T/conftest-AxAIn1.o -lSystem /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../lib/clang/4.1/lib/darwin/libclang_rt.ios.a
+ld: framework not found ExceptionHandling
+clang: error: linker command failed with exit code 1 (use -v to see invocation)
 configure: failed program was:
-#line 8056 "configure"
-#include "confdefs.h"
-
-                     #include <stddef.h>
-                     struct aligner { char c; void* a; };
-                   
-int main() {
-
-                     int a[offsetof(struct aligner, a) == 2 ? 1 : -1];
-                     return 0;
-                   
-; return 0; }
-configure:8069: /Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//usr/bin/i686-apple-darwin11-llvm-gcc-4.2 -isysroot /Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk -mmacosx-version-min=10.6 -L/Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk/usr/lib -no-cpp-precomp -pipe -O3 -c  -fno-strict-aliasing -fpascal-strings -fno-common  conftest.c 1>&5
-configure:8092: checking for the size of double
-configure:8110: /Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//usr/bin/i686-apple-darwin11-llvm-gcc-4.2 -isysroot /Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk -mmacosx-version-min=10.6 -L/Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk/usr/lib -no-cpp-precomp -pipe -O3 -c  -fno-strict-aliasing -fpascal-strings -fno-common  conftest.c 1>&5
-configure: In function 'main':
-configure:8104: error: size of array 'a' is negative
-configure: failed program was:
-#line 8100 "configure"
-#include "confdefs.h"
-
-int main() {
-
-                     int a[sizeof (double) == 6 ? 1 : -1];
-                     return 0;
-                   
-; return 0; }
-configure:8110: /Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//usr/bin/i686-apple-darwin11-llvm-gcc-4.2 -isysroot /Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk -mmacosx-version-min=10.6 -L/Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk/usr/lib -no-cpp-precomp -pipe -O3 -c  -fno-strict-aliasing -fpascal-strings -fno-common  conftest.c 1>&5
-configure:8133: checking for int16_t
-configure:8146: /Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//usr/bin/i686-apple-darwin11-llvm-gcc-4.2 -isysroot /Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk -mmacosx-version-min=10.6 -L/Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk/usr/lib -no-cpp-precomp -pipe -O3 -c  -fno-strict-aliasing -fpascal-strings -fno-common  conftest.c 1>&5
-configure:8168: checking for int32_t
-configure:8181: /Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//usr/bin/i686-apple-darwin11-llvm-gcc-4.2 -isysroot /Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk -mmacosx-version-min=10.6 -L/Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk/usr/lib -no-cpp-precomp -pipe -O3 -c  -fno-strict-aliasing -fpascal-strings -fno-common  conftest.c 1>&5
-configure:8203: checking for int64_t
-configure:8216: /Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//usr/bin/i686-apple-darwin11-llvm-gcc-4.2 -isysroot /Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk -mmacosx-version-min=10.6 -L/Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk/usr/lib -no-cpp-precomp -pipe -O3 -c  -fno-strict-aliasing -fpascal-strings -fno-common  conftest.c 1>&5
-configure:8238: checking for int64
-configure:8251: /Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//usr/bin/i686-apple-darwin11-llvm-gcc-4.2 -isysroot /Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk -mmacosx-version-min=10.6 -L/Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk/usr/lib -no-cpp-precomp -pipe -O3 -c  -fno-strict-aliasing -fpascal-strings -fno-common  conftest.c 1>&5
-configure: In function 'main':
-configure:8247: error: 'int64' undeclared (first use in this function)
-configure:8247: error: (Each undeclared identifier is reported only once
-configure:8247: error: for each function it appears in.)
-configure:8247: error: expected ';' before 'foo'
-configure: failed program was:
-#line 8243 "configure"
-#include "confdefs.h"
-#include <stdio.h>
-                  #include <sys/types.h>
-int main() {
-int64 foo = 0;
-; return 0; }
-configure:8273: checking for uint
-configure:8286: /Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//usr/bin/i686-apple-darwin11-llvm-gcc-4.2 -isysroot /Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk -mmacosx-version-min=10.6 -L/Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk/usr/lib -no-cpp-precomp -pipe -O3 -c  -fno-strict-aliasing -fpascal-strings -fno-common  conftest.c 1>&5
-configure:8308: checking for uint_t
-configure:8321: /Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//usr/bin/i686-apple-darwin11-llvm-gcc-4.2 -isysroot /Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk -mmacosx-version-min=10.6 -L/Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk/usr/lib -no-cpp-precomp -pipe -O3 -c  -fno-strict-aliasing -fpascal-strings -fno-common  conftest.c 1>&5
-configure: In function 'main':
-configure:8317: error: 'uint_t' undeclared (first use in this function)
-configure:8317: error: (Each undeclared identifier is reported only once
-configure:8317: error: for each function it appears in.)
-configure:8317: error: expected ';' before 'foo'
-configure: failed program was:
-#line 8313 "configure"
-#include "confdefs.h"
-#include <stdio.h>
-                  #include <sys/types.h>
-int main() {
-uint_t foo = 0;
-; return 0; }
-configure:8343: checking for uint16_t
-configure:8356: /Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//usr/bin/i686-apple-darwin11-llvm-gcc-4.2 -isysroot /Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk -mmacosx-version-min=10.6 -L/Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk/usr/lib -no-cpp-precomp -pipe -O3 -c  -fno-strict-aliasing -fpascal-strings -fno-common  conftest.c 1>&5
-configure: In function 'main':
-configure:8352: error: 'uint16_t' undeclared (first use in this function)
-configure:8352: error: (Each undeclared identifier is reported only once
-configure:8352: error: for each function it appears in.)
-configure:8352: error: expected ';' before 'foo'
-configure: failed program was:
-#line 8348 "configure"
-#include "confdefs.h"
-#include <stdio.h>
-                  #include <sys/types.h>
-int main() {
-uint16_t foo = 0;
-; return 0; }
-configure:8387: checking for uname.domainname
-configure:8400: /Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//usr/bin/i686-apple-darwin11-llvm-g++-4.2 -isysroot /Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk -mmacosx-version-min=10.6 -L/Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk/usr/lib -no-cpp-precomp -pipe -O3 -c  -fno-strict-aliasing -fpascal-strings -fno-common  conftest.C 1>&5
-configure: In function 'int main()':
-configure:8396: error: 'struct utsname' has no member named 'domainname'
-configure: failed program was:
-#line 8392 "configure"
-#include "confdefs.h"
-#include <sys/utsname.h>
-int main() {
- struct utsname *res; char *domain; 
-            (void)uname(res);  if (res != 0) { domain = res->domainname; } 
-; return 0; }
-configure:8424: checking for uname.__domainname
-configure:8437: /Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//usr/bin/i686-apple-darwin11-llvm-g++-4.2 -isysroot /Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk -mmacosx-version-min=10.6 -L/Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk/usr/lib -no-cpp-precomp -pipe -O3 -c  -fno-strict-aliasing -fpascal-strings -fno-common  conftest.C 1>&5
-configure: In function 'int main()':
-configure:8433: error: 'struct utsname' has no member named '__domainname'
-configure: failed program was:
-#line 8429 "configure"
-#include "confdefs.h"
-#include <sys/utsname.h>
-int main() {
- struct utsname *res; char *domain; 
-            (void)uname(res);  if (res != 0) { domain = res->__domainname; } 
-; return 0; }
-configure:8470: checking for visibility(hidden) attribute
-configure:8495: checking for visibility(default) attribute
-configure:8520: checking for visibility pragma support
-configure:8545: checking For gcc visibility bug with class-level attributes (GCC bug 26905)
-configure:8573: checking For x86_64 gcc visibility bug with builtins (GCC bug 20297)
-configure:8626: checking for dirent.h that defines DIR
-configure:8639: /Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//usr/bin/i686-apple-darwin11-llvm-gcc-4.2 -isysroot /Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk -mmacosx-version-min=10.6 -L/Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk/usr/lib -no-cpp-precomp -pipe -O3 -c  -fno-strict-aliasing -fpascal-strings -fno-common  conftest.c 1>&5
-configure:8664: checking for opendir in -ldir
-configure:8683: /Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//usr/bin/i686-apple-darwin11-llvm-gcc-4.2 -isysroot /Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk -mmacosx-version-min=10.6 -L/Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk/usr/lib -no-cpp-precomp -pipe -O3 -o conftest  -fno-strict-aliasing -fpascal-strings -fno-common  -L/Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk/usr/lib -lobjc conftest.c -ldir   1>&5
-ld: library not found for -ldir
-collect2: ld returned 1 exit status
-configure: failed program was:
-#line 8672 "configure"
-#include "confdefs.h"
-/* Override any gcc2 internal prototype to avoid an error.  */
-/* We use char because int might match the return type of a gcc2
-    builtin and then its argument prototype would still apply.  */
-char opendir();
-
-int main() {
-opendir()
-; return 0; }
-configure:8756: checking for sys/byteorder.h
-configure:8766: /Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//usr/bin/i686-apple-darwin11-llvm-gcc-4.2 -isysroot /Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk -mmacosx-version-min=10.6 -L/Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk/usr/lib -no-cpp-precomp -pipe -O3 -E  conftest.c >/dev/null 2>conftest.out
-configure:8762:27: error: sys/byteorder.h: No such file or directory
-configure: failed program was:
-#line 8761 "configure"
-#include "confdefs.h"
-#include <sys/byteorder.h>
-configure:8756: checking for compat.h
-configure:8766: /Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//usr/bin/i686-apple-darwin11-llvm-gcc-4.2 -isysroot /Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk -mmacosx-version-min=10.6 -L/Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk/usr/lib -no-cpp-precomp -pipe -O3 -E  conftest.c >/dev/null 2>conftest.out
-configure:8762:20: error: compat.h: No such file or directory
-configure: failed program was:
-#line 8761 "configure"
-#include "confdefs.h"
-#include <compat.h>
-configure:8756: checking for getopt.h
-configure:8766: /Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//usr/bin/i686-apple-darwin11-llvm-gcc-4.2 -isysroot /Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk -mmacosx-version-min=10.6 -L/Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk/usr/lib -no-cpp-precomp -pipe -O3 -E  conftest.c >/dev/null 2>conftest.out
-configure:8796: checking for sys/bitypes.h
-configure:8806: /Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//usr/bin/i686-apple-darwin11-llvm-gcc-4.2 -isysroot /Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk -mmacosx-version-min=10.6 -L/Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk/usr/lib -no-cpp-precomp -pipe -O3 -E  conftest.c >/dev/null 2>conftest.out
-configure:8802:25: error: sys/bitypes.h: No such file or directory
-configure: failed program was:
-#line 8801 "configure"
-#include "confdefs.h"
-#include <sys/bitypes.h>
-configure:8796: checking for memory.h
-configure:8806: /Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//usr/bin/i686-apple-darwin11-llvm-gcc-4.2 -isysroot /Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk -mmacosx-version-min=10.6 -L/Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk/usr/lib -no-cpp-precomp -pipe -O3 -E  conftest.c >/dev/null 2>conftest.out
-configure:8796: checking for unistd.h
-configure:8806: /Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//usr/bin/i686-apple-darwin11-llvm-gcc-4.2 -isysroot /Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk -mmacosx-version-min=10.6 -L/Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk/usr/lib -no-cpp-precomp -pipe -O3 -E  conftest.c >/dev/null 2>conftest.out
-configure:8836: checking for gnu/libc-version.h
-configure:8846: /Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//usr/bin/i686-apple-darwin11-llvm-gcc-4.2 -isysroot /Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk -mmacosx-version-min=10.6 -L/Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk/usr/lib -no-cpp-precomp -pipe -O3 -E  conftest.c >/dev/null 2>conftest.out
-configure:8842:30: error: gnu/libc-version.h: No such file or directory
-configure: failed program was:
-#line 8841 "configure"
-#include "confdefs.h"
-#include <gnu/libc-version.h>
-configure:8836: checking for nl_types.h
-configure:8846: /Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//usr/bin/i686-apple-darwin11-llvm-gcc-4.2 -isysroot /Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk -mmacosx-version-min=10.6 -L/Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk/usr/lib -no-cpp-precomp -pipe -O3 -E  conftest.c >/dev/null 2>conftest.out
-configure:8876: checking for malloc.h
-configure:8886: /Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//usr/bin/i686-apple-darwin11-llvm-gcc-4.2 -isysroot /Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk -mmacosx-version-min=10.6 -L/Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk/usr/lib -no-cpp-precomp -pipe -O3 -E  conftest.c >/dev/null 2>conftest.out
-configure:8882:20: error: malloc.h: No such file or directory
-configure: failed program was:
-#line 8881 "configure"
-#include "confdefs.h"
-#include <malloc.h>
-configure:8916: checking for X11/XKBlib.h
-configure:8926: /Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//usr/bin/i686-apple-darwin11-llvm-gcc-4.2 -isysroot /Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk -mmacosx-version-min=10.6 -L/Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk/usr/lib -no-cpp-precomp -pipe -O3 -E  conftest.c >/dev/null 2>conftest.out
-configure:8922:24: error: X11/XKBlib.h: No such file or directory
-configure: failed program was:
-#line 8921 "configure"
-#include "confdefs.h"
-#include <X11/XKBlib.h>
-configure:8957: checking for sys/statvfs.h
-configure:8967: /Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//usr/bin/i686-apple-darwin11-llvm-gcc-4.2 -isysroot /Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk -mmacosx-version-min=10.6 -L/Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk/usr/lib -no-cpp-precomp -pipe -O3 -E  conftest.c >/dev/null 2>conftest.out
-configure:8957: checking for sys/statfs.h
-configure:8967: /Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//usr/bin/i686-apple-darwin11-llvm-gcc-4.2 -isysroot /Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk -mmacosx-version-min=10.6 -L/Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk/usr/lib -no-cpp-precomp -pipe -O3 -E  conftest.c >/dev/null 2>conftest.out
-configure:8963:24: error: sys/statfs.h: No such file or directory
-configure: failed program was:
-#line 8962 "configure"
-#include "confdefs.h"
-#include <sys/statfs.h>
-configure:8957: checking for sys/vfs.h
-configure:8967: /Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//usr/bin/i686-apple-darwin11-llvm-gcc-4.2 -isysroot /Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk -mmacosx-version-min=10.6 -L/Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk/usr/lib -no-cpp-precomp -pipe -O3 -E  conftest.c >/dev/null 2>conftest.out
-configure:8963:21: error: sys/vfs.h: No such file or directory
-configure: failed program was:
-#line 8962 "configure"
-#include "confdefs.h"
-#include <sys/vfs.h>
-configure:8957: checking for sys/mount.h
-configure:8967: /Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//usr/bin/i686-apple-darwin11-llvm-gcc-4.2 -isysroot /Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk -mmacosx-version-min=10.6 -L/Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk/usr/lib -no-cpp-precomp -pipe -O3 -E  conftest.c >/dev/null 2>conftest.out
-configure:8998: checking for mmintrin.h
-configure:9008: /Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//usr/bin/i686-apple-darwin11-llvm-gcc-4.2 -isysroot /Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk -mmacosx-version-min=10.6 -L/Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk/usr/lib -no-cpp-precomp -pipe -O3 -E  conftest.c >/dev/null 2>conftest.out
-configure:9045: checking for new
-configure:9055: /Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//usr/bin/i686-apple-darwin11-llvm-g++-4.2 -isysroot /Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk -mmacosx-version-min=10.6 -L/Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk/usr/lib -no-cpp-precomp -pipe -O3 -E  conftest.C >/dev/null 2>conftest.out
-configure:9147: checking for sys/cdefs.h
-configure:9157: /Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//usr/bin/i686-apple-darwin11-llvm-gcc-4.2 -isysroot /Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk -mmacosx-version-min=10.6 -L/Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk/usr/lib -no-cpp-precomp -pipe -O3 -E  conftest.c >/dev/null 2>conftest.out
-configure:9188: checking for linux/perf_event.h
-configure:9198: /Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//usr/bin/i686-apple-darwin11-llvm-gcc-4.2 -isysroot /Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk -mmacosx-version-min=10.6 -L/Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk/usr/lib -no-cpp-precomp -pipe -O3 -E  conftest.c >/dev/null 2>conftest.out
-configure:9194:30: error: linux/perf_event.h: No such file or directory
-configure: failed program was:
-#line 9193 "configure"
-#include "confdefs.h"
-#include <linux/perf_event.h>
-configure:9226: checking for gethostbyname_r in -lc_r
-configure:9245: /Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//usr/bin/i686-apple-darwin11-llvm-gcc-4.2 -isysroot /Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk -mmacosx-version-min=10.6 -L/Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk/usr/lib -no-cpp-precomp -pipe -O3 -o conftest  -fno-strict-aliasing -fpascal-strings -fno-common  -L/Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk/usr/lib -lobjc conftest.c -lc_r   1>&5
-ld: library not found for -lc_r
-collect2: ld returned 1 exit status
-configure: failed program was:
-#line 9234 "configure"
-#include "confdefs.h"
-/* Override any gcc2 internal prototype to avoid an error.  */
-/* We use char because int might match the return type of a gcc2
-    builtin and then its argument prototype would still apply.  */
-char gethostbyname_r();
-
-int main() {
-gethostbyname_r()
-; return 0; }
-configure:9414: checking for dladdr
-configure:9442: /Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//usr/bin/i686-apple-darwin11-llvm-gcc-4.2 -isysroot /Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk -mmacosx-version-min=10.6 -L/Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk/usr/lib -no-cpp-precomp -pipe -O3 -o conftest  -fno-strict-aliasing -fpascal-strings -fno-common -D_GNU_SOURCE  -L/Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk/usr/lib -lobjc conftest.c  1>&5
-configure:9577: checking for socket in -lsocket
-configure:9596: /Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//usr/bin/i686-apple-darwin11-llvm-gcc-4.2 -isysroot /Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk -mmacosx-version-min=10.6 -L/Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk/usr/lib -no-cpp-precomp -pipe -O3 -o conftest  -fno-strict-aliasing -fpascal-strings -fno-common  -L/Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk/usr/lib -lobjc conftest.c -lsocket   1>&5
-ld: library not found for -lsocket
-collect2: ld returned 1 exit status
-configure: failed program was:
-#line 9585 "configure"
-#include "confdefs.h"
-/* Override any gcc2 internal prototype to avoid an error.  */
-/* We use char because int might match the return type of a gcc2
-    builtin and then its argument prototype would still apply.  */
-char socket();
-
-int main() {
-socket()
-; return 0; }
-configure:9760: checking whether /Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//usr/bin/i686-apple-darwin11-llvm-gcc-4.2 -isysroot /Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk -mmacosx-version-min=10.6 -L/Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk/usr/lib -no-cpp-precomp -pipe -O3 accepts -pthread
-configure:9878: checking whether mmap() sees write()s
-configure:9921: /Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//usr/bin/i686-apple-darwin11-llvm-gcc-4.2 -isysroot /Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk -mmacosx-version-min=10.6 -L/Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk/usr/lib -no-cpp-precomp -pipe -O3 -o conftest  -fno-strict-aliasing -fpascal-strings -fno-common -pthread   -L/Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk/usr/lib -lobjc conftest.c  1>&5
-configure:9946: checking whether /Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//usr/bin/i686-apple-darwin11-llvm-gcc-4.2 -isysroot /Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk -mmacosx-version-min=10.6 -L/Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk/usr/lib -no-cpp-precomp -pipe -O3 needs -traditional
-configure:9971:20: error: termio.h: No such file or directory
-configure:9992: checking for 8-bit clean memcmp
-configure:10010: /Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//usr/bin/i686-apple-darwin11-llvm-gcc-4.2 -isysroot /Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk -mmacosx-version-min=10.6 -L/Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk/usr/lib -no-cpp-precomp -pipe -O3 -o conftest  -fno-strict-aliasing -fpascal-strings -fno-common -pthread   -L/Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk/usr/lib -lobjc conftest.c  1>&5
-configure: In function 'main':
-configure:10005: warning: incompatible implicit declaration of built-in function 'exit'
-configure:10033: checking for fchmod
-configure:10061: /Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//usr/bin/i686-apple-darwin11-llvm-gcc-4.2 -isysroot /Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk -mmacosx-version-min=10.6 -L/Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk/usr/lib -no-cpp-precomp -pipe -O3 -o conftest  -fno-strict-aliasing -fpascal-strings -fno-common -pthread   -L/Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk/usr/lib -lobjc conftest.c  1>&5
-configure:10033: checking for flockfile
-configure:10061: /Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//usr/bin/i686-apple-darwin11-llvm-gcc-4.2 -isysroot /Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk -mmacosx-version-min=10.6 -L/Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk/usr/lib -no-cpp-precomp -pipe -O3 -o conftest  -fno-strict-aliasing -fpascal-strings -fno-common -pthread   -L/Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk/usr/lib -lobjc conftest.c  1>&5
-configure:10033: checking for getc_unlocked
-configure:10061: /Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//usr/bin/i686-apple-darwin11-llvm-gcc-4.2 -isysroot /Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk -mmacosx-version-min=10.6 -L/Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk/usr/lib -no-cpp-precomp -pipe -O3 -o conftest  -fno-strict-aliasing -fpascal-strings -fno-common -pthread   -L/Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk/usr/lib -lobjc conftest.c  1>&5
-configure:10033: checking for _getc_nolock
-configure:10061: /Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//usr/bin/i686-apple-darwin11-llvm-gcc-4.2 -isysroot /Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk -mmacosx-version-min=10.6 -L/Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk/usr/lib -no-cpp-precomp -pipe -O3 -o conftest  -fno-strict-aliasing -fpascal-strings -fno-common -pthread   -L/Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk/usr/lib -lobjc conftest.c  1>&5
-Undefined symbols for architecture i386:
-  "__getc_nolock", referenced from:
-      _main in cc2D53M2.o
-ld: symbol(s) not found for architecture i386
-collect2: ld returned 1 exit status
-configure: failed program was:
-#line 10038 "configure"
-#include "confdefs.h"
-/* System header to define __stub macros and hopefully few prototypes,
-    which can conflict with char _getc_nolock(); below.  */
-#include <assert.h>
-/* Override any gcc2 internal prototype to avoid an error.  */
-/* We use char because int might match the return type of a gcc2
-    builtin and then its argument prototype would still apply.  */
-char _getc_nolock();
-
-int main() {
-
-/* The GNU C library defines this for functions which it implements
-    to always fail with ENOSYS.  Some functions are actually named
-    something starting with __ and the normal name is an alias.  */
-#if defined (__stub__getc_nolock) || defined (__stub____getc_nolock)
-choke me
-#else
-_getc_nolock();
-#endif
-
-; return 0; }
-configure:10033: checking for getpagesize
-configure:10061: /Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//usr/bin/i686-apple-darwin11-llvm-gcc-4.2 -isysroot /Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk -mmacosx-version-min=10.6 -L/Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk/usr/lib -no-cpp-precomp -pipe -O3 -o conftest  -fno-strict-aliasing -fpascal-strings -fno-common -pthread   -L/Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk/usr/lib -lobjc conftest.c  1>&5
-configure:10033: checking for lchown
-configure:10061: /Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//usr/bin/i686-apple-darwin11-llvm-gcc-4.2 -isysroot /Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk -mmacosx-version-min=10.6 -L/Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk/usr/lib -no-cpp-precomp -pipe -O3 -o conftest  -fno-strict-aliasing -fpascal-strings -fno-common -pthread   -L/Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk/usr/lib -lobjc conftest.c  1>&5
-configure:10033: checking for localtime_r
-configure:10061: /Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//usr/bin/i686-apple-darwin11-llvm-gcc-4.2 -isysroot /Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk -mmacosx-version-min=10.6 -L/Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk/usr/lib -no-cpp-precomp -pipe -O3 -o conftest  -fno-strict-aliasing -fpascal-strings -fno-common -pthread   -L/Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk/usr/lib -lobjc conftest.c  1>&5
-configure:10033: checking for lstat64
-configure:10061: /Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//usr/bin/i686-apple-darwin11-llvm-gcc-4.2 -isysroot /Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk -mmacosx-version-min=10.6 -L/Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk/usr/lib -no-cpp-precomp -pipe -O3 -o conftest  -fno-strict-aliasing -fpascal-strings -fno-common -pthread   -L/Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk/usr/lib -lobjc conftest.c  1>&5
-configure:10033: checking for memmove
-configure:10061: /Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//usr/bin/i686-apple-darwin11-llvm-gcc-4.2 -isysroot /Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk -mmacosx-version-min=10.6 -L/Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk/usr/lib -no-cpp-precomp -pipe -O3 -o conftest  -fno-strict-aliasing -fpascal-strings -fno-common -pthread   -L/Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk/usr/lib -lobjc conftest.c  1>&5
-configure:10045: warning: conflicting types for built-in function 'memmove'
-configure:10033: checking for random
-configure:10061: /Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//usr/bin/i686-apple-darwin11-llvm-gcc-4.2 -isysroot /Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk -mmacosx-version-min=10.6 -L/Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk/usr/lib -no-cpp-precomp -pipe -O3 -o conftest  -fno-strict-aliasing -fpascal-strings -fno-common -pthread   -L/Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk/usr/lib -lobjc conftest.c  1>&5
-configure:10033: checking for rint
-configure:10061: /Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//usr/bin/i686-apple-darwin11-llvm-gcc-4.2 -isysroot /Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk -mmacosx-version-min=10.6 -L/Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk/usr/lib -no-cpp-precomp -pipe -O3 -o conftest  -fno-strict-aliasing -fpascal-strings -fno-common -pthread   -L/Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk/usr/lib -lobjc conftest.c  1>&5
-configure:10045: warning: conflicting types for built-in function 'rint'
-configure:10033: checking for sbrk
-configure:10061: /Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//usr/bin/i686-apple-darwin11-llvm-gcc-4.2 -isysroot /Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk -mmacosx-version-min=10.6 -L/Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk/usr/lib -no-cpp-precomp -pipe -O3 -o conftest  -fno-strict-aliasing -fpascal-strings -fno-common -pthread   -L/Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk/usr/lib -lobjc conftest.c  1>&5
-configure:10033: checking for snprintf
-configure:10061: /Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//usr/bin/i686-apple-darwin11-llvm-gcc-4.2 -isysroot /Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk -mmacosx-version-min=10.6 -L/Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk/usr/lib -no-cpp-precomp -pipe -O3 -o conftest  -fno-strict-aliasing -fpascal-strings -fno-common -pthread   -L/Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk/usr/lib -lobjc conftest.c  1>&5
-configure:10045: warning: conflicting types for built-in function 'snprintf'
-configure:10033: checking for stat64
-configure:10061: /Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//usr/bin/i686-apple-darwin11-llvm-gcc-4.2 -isysroot /Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk -mmacosx-version-min=10.6 -L/Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk/usr/lib -no-cpp-precomp -pipe -O3 -o conftest  -fno-strict-aliasing -fpascal-strings -fno-common -pthread   -L/Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk/usr/lib -lobjc conftest.c  1>&5
-configure:10033: checking for statvfs
-configure:10061: /Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//usr/bin/i686-apple-darwin11-llvm-gcc-4.2 -isysroot /Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk -mmacosx-version-min=10.6 -L/Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk/usr/lib -no-cpp-precomp -pipe -O3 -o conftest  -fno-strict-aliasing -fpascal-strings -fno-common -pthread   -L/Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk/usr/lib -lobjc conftest.c  1>&5
-configure:10033: checking for statvfs64
-configure:10061: /Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//usr/bin/i686-apple-darwin11-llvm-gcc-4.2 -isysroot /Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk -mmacosx-version-min=10.6 -L/Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk/usr/lib -no-cpp-precomp -pipe -O3 -o conftest  -fno-strict-aliasing -fpascal-strings -fno-common -pthread   -L/Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk/usr/lib -lobjc conftest.c  1>&5
-Undefined symbols for architecture i386:
-  "_statvfs64", referenced from:
-      _main in cc7gCSoq.o
-ld: symbol(s) not found for architecture i386
-collect2: ld returned 1 exit status
-configure: failed program was:
-#line 10038 "configure"
-#include "confdefs.h"
-/* System header to define __stub macros and hopefully few prototypes,
-    which can conflict with char statvfs64(); below.  */
-#include <assert.h>
-/* Override any gcc2 internal prototype to avoid an error.  */
-/* We use char because int might match the return type of a gcc2
-    builtin and then its argument prototype would still apply.  */
-char statvfs64();
-
-int main() {
-
-/* The GNU C library defines this for functions which it implements
-    to always fail with ENOSYS.  Some functions are actually named
-    something starting with __ and the normal name is an alias.  */
-#if defined (__stub_statvfs64) || defined (__stub___statvfs64)
-choke me
-#else
-statvfs64();
-#endif
-
-; return 0; }
-configure:10033: checking for strerror
-configure:10061: /Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//usr/bin/i686-apple-darwin11-llvm-gcc-4.2 -isysroot /Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk -mmacosx-version-min=10.6 -L/Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk/usr/lib -no-cpp-precomp -pipe -O3 -o conftest  -fno-strict-aliasing -fpascal-strings -fno-common -pthread   -L/Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk/usr/lib -lobjc conftest.c  1>&5
-configure:10033: checking for strtok_r
-configure:10061: /Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//usr/bin/i686-apple-darwin11-llvm-gcc-4.2 -isysroot /Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk -mmacosx-version-min=10.6 -L/Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk/usr/lib -no-cpp-precomp -pipe -O3 -o conftest  -fno-strict-aliasing -fpascal-strings -fno-common -pthread   -L/Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk/usr/lib -lobjc conftest.c  1>&5
-configure:10033: checking for truncate64
-configure:10061: /Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//usr/bin/i686-apple-darwin11-llvm-gcc-4.2 -isysroot /Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk -mmacosx-version-min=10.6 -L/Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk/usr/lib -no-cpp-precomp -pipe -O3 -o conftest  -fno-strict-aliasing -fpascal-strings -fno-common -pthread   -L/Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk/usr/lib -lobjc conftest.c  1>&5
-Undefined symbols for architecture i386:
-  "_truncate64", referenced from:
-      _main in ccHPGKoX.o
-ld: symbol(s) not found for architecture i386
-collect2: ld returned 1 exit status
-configure: failed program was:
-#line 10038 "configure"
-#include "confdefs.h"
-/* System header to define __stub macros and hopefully few prototypes,
-    which can conflict with char truncate64(); below.  */
-#include <assert.h>
-/* Override any gcc2 internal prototype to avoid an error.  */
-/* We use char because int might match the return type of a gcc2
-    builtin and then its argument prototype would still apply.  */
-char truncate64();
-
-int main() {
-
-/* The GNU C library defines this for functions which it implements
-    to always fail with ENOSYS.  Some functions are actually named
-    something starting with __ and the normal name is an alias.  */
-#if defined (__stub_truncate64) || defined (__stub___truncate64)
-choke me
-#else
-truncate64();
-#endif
-
-; return 0; }
-configure:10094: /Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//usr/bin/i686-apple-darwin11-llvm-gcc-4.2 -isysroot /Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk -mmacosx-version-min=10.6 -L/Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk/usr/lib -no-cpp-precomp -pipe -O3 -o conftest  -fno-strict-aliasing -fpascal-strings -fno-common -pthread   -L/Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk/usr/lib -lobjc conftest.c  1>&5
-configure:10088:21: error: windows.h: No such file or directory
-configure: In function 'main':
-configure:10090: error: 'SYSTEMTIME' undeclared (first use in this function)
-configure:10090: error: (Each undeclared identifier is reported only once
-configure:10090: error: for each function it appears in.)
-configure:10090: error: expected ';' before 'st'
-configure:10090: error: 'FILETIME' undeclared (first use in this function)
-configure:10090: error: expected ';' before 'ft'
-configure:10090: error: 'st' undeclared (first use in this function)
-configure:10090: error: 'ft' undeclared (first use in this function)
-configure: failed program was:
-#line 10087 "configure"
-#include "confdefs.h"
-#include <windows.h>
-int main() {
-SYSTEMTIME st;FILETIME ft;SystemTimeToFileTime(&st,&ft);
-; return 0; }
-configure:10118: /Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//usr/bin/i686-apple-darwin11-llvm-gcc-4.2 -isysroot /Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk -mmacosx-version-min=10.6 -L/Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk/usr/lib -no-cpp-precomp -pipe -O3 -o conftest  -fno-strict-aliasing -fpascal-strings -fno-common -pthread   -L/Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk/usr/lib -lobjc conftest.c  1>&5
-configure:10112:21: error: windows.h: No such file or directory
-configure: In function 'main':
-configure:10114: error: 'FILETIME' undeclared (first use in this function)
-configure:10114: error: (Each undeclared identifier is reported only once
-configure:10114: error: for each function it appears in.)
-configure:10114: error: expected ';' before 'ft'
-configure:10114: error: 'ft' undeclared (first use in this function)
-configure: failed program was:
-#line 10111 "configure"
-#include "confdefs.h"
-#include <windows.h>
-int main() {
-FILETIME ft;GetSystemTimeAsFileTime(&ft);
-; return 0; }
-configure:10218: checking for res_ninit()
-configure:10235: /Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//usr/bin/i686-apple-darwin11-llvm-gcc-4.2 -isysroot /Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk -mmacosx-version-min=10.6 -L/Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk/usr/lib -no-cpp-precomp -pipe -O3 -o conftest  -fno-strict-aliasing -fpascal-strings -fno-common -pthread   -L/Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk/usr/lib -lobjc conftest.c  1>&5
-Undefined symbols for architecture i386:
-  "_res_9_ninit", referenced from:
-      _main in ccd1bX9z.o
-ld: symbol(s) not found for architecture i386
-collect2: ld returned 1 exit status
-configure: failed program was:
-#line 10223 "configure"
-#include "confdefs.h"
-
-        #ifdef linux
-        #define _BSD_SOURCE 1
-        #endif
-        #include <resolv.h>
-        
-int main() {
-int foo = res_ninit(&_res);
-; return 0; }
-configure:10265: checking for gnu_get_libc_version()
-configure:10281: /Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//usr/bin/i686-apple-darwin11-llvm-g++-4.2 -isysroot /Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk -mmacosx-version-min=10.6 -L/Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk/usr/lib -no-cpp-precomp -pipe -O3 -o conftest  -fno-strict-aliasing -fpascal-strings -fno-common -pthread   -L/Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk/usr/lib -lobjc conftest.C  1>&5
-configure: In function 'int main()':
-configure:10277: error: 'gnu_get_libc_version' was not declared in this scope
-configure: failed program was:
-#line 10270 "configure"
-#include "confdefs.h"
-
-        #ifdef HAVE_GNU_LIBC_VERSION_H
-        #include <gnu/libc-version.h>
-        #endif
-        
-int main() {
-const char *glibc_version = gnu_get_libc_version();
-; return 0; }
-configure:10540: checking for an implementation of va_copy()
-configure:10564: /Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//usr/bin/i686-apple-darwin11-llvm-gcc-4.2 -isysroot /Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk -mmacosx-version-min=10.6 -L/Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk/usr/lib -no-cpp-precomp -pipe -O3 -o conftest  -fno-strict-aliasing -fpascal-strings -fno-common -pthread   -L/Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk/usr/lib -lobjc conftest.c  1>&5
-configure: In function 'f':
-configure:10558: warning: incompatible implicit declaration of built-in function 'exit'
-configure:10581: checking for an implementation of __va_copy()
-configure:10605: /Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//usr/bin/i686-apple-darwin11-llvm-gcc-4.2 -isysroot /Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk -mmacosx-version-min=10.6 -L/Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk/usr/lib -no-cpp-precomp -pipe -O3 -o conftest  -fno-strict-aliasing -fpascal-strings -fno-common -pthread   -L/Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk/usr/lib -lobjc conftest.c  1>&5
-configure: In function 'f':
-configure:10599: warning: incompatible implicit declaration of built-in function 'exit'
-configure:10622: checking whether va_lists can be copied by value
-configure:10646: /Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//usr/bin/i686-apple-darwin11-llvm-gcc-4.2 -isysroot /Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk -mmacosx-version-min=10.6 -L/Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk/usr/lib -no-cpp-precomp -pipe -O3 -o conftest  -fno-strict-aliasing -fpascal-strings -fno-common -pthread   -L/Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk/usr/lib -lobjc conftest.c  1>&5
-configure: In function 'f':
-configure:10640: warning: incompatible implicit declaration of built-in function 'exit'
-configure:10794: checking for gcc 3.0 ABI
-configure:10812: /Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//usr/bin/i686-apple-darwin11-llvm-g++-4.2 -isysroot /Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk -mmacosx-version-min=10.6 -L/Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk/usr/lib -no-cpp-precomp -pipe -O3 -c  -fno-strict-aliasing -fpascal-strings -fno-common -pthread  conftest.C 1>&5
-configure:10836: checking for C++ "explicit" keyword
-configure:10851: /Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//usr/bin/i686-apple-darwin11-llvm-g++-4.2 -isysroot /Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk -mmacosx-version-min=10.6 -L/Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk/usr/lib -no-cpp-precomp -pipe -O3 -c  -fno-strict-aliasing -fpascal-strings -fno-common -pthread  conftest.C 1>&5
-configure:10872: checking for C++ "typename" keyword
-configure:10896: /Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//usr/bin/i686-apple-darwin11-llvm-g++-4.2 -isysroot /Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk -mmacosx-version-min=10.6 -L/Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk/usr/lib -no-cpp-precomp -pipe -O3 -c  -fno-strict-aliasing -fpascal-strings -fno-common -pthread  conftest.C 1>&5
-configure:10917: checking for modern C++ template specialization syntax support
-configure:10932: /Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//usr/bin/i686-apple-darwin11-llvm-g++-4.2 -isysroot /Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk -mmacosx-version-min=10.6 -L/Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk/usr/lib -no-cpp-precomp -pipe -O3 -c  -fno-strict-aliasing -fpascal-strings -fno-common -pthread  conftest.C 1>&5
-configure:10954: checking whether partial template specialization works
-configure:10967: /Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//usr/bin/i686-apple-darwin11-llvm-g++-4.2 -isysroot /Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk -mmacosx-version-min=10.6 -L/Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk/usr/lib -no-cpp-precomp -pipe -O3 -c  -fno-strict-aliasing -fpascal-strings -fno-common -pthread  conftest.C 1>&5
-configure:10988: checking whether operators must be re-defined for templates derived from templates
-configure:11005: /Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//usr/bin/i686-apple-darwin11-llvm-g++-4.2 -isysroot /Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk -mmacosx-version-min=10.6 -L/Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk/usr/lib -no-cpp-precomp -pipe -O3 -c  -fno-strict-aliasing -fpascal-strings -fno-common -pthread  conftest.C 1>&5
-configure:11027: checking whether we need to cast a derived template to pass as its base class
-configure:11041: /Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//usr/bin/i686-apple-darwin11-llvm-g++-4.2 -isysroot /Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk -mmacosx-version-min=10.6 -L/Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk/usr/lib -no-cpp-precomp -pipe -O3 -c  -fno-strict-aliasing -fpascal-strings -fno-common -pthread  conftest.C 1>&5
-configure:11062: checking whether the compiler can resolve const ambiguities for templates
-configure:11088: /Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//usr/bin/i686-apple-darwin11-llvm-g++-4.2 -isysroot /Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk -mmacosx-version-min=10.6 -L/Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk/usr/lib -no-cpp-precomp -pipe -O3 -c  -fno-strict-aliasing -fpascal-strings -fno-common -pthread  conftest.C 1>&5
-configure:11110: checking whether the C++ "using" keyword can change access
-configure:11123: /Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//usr/bin/i686-apple-darwin11-llvm-g++-4.2 -isysroot /Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk -mmacosx-version-min=10.6 -L/Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk/usr/lib -no-cpp-precomp -pipe -O3 -c  -fno-strict-aliasing -fpascal-strings -fno-common -pthread  conftest.C 1>&5
-configure:11134: /Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//usr/bin/i686-apple-darwin11-llvm-g++-4.2 -isysroot /Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk -mmacosx-version-min=10.6 -L/Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk/usr/lib -no-cpp-precomp -pipe -O3 -c  -fno-strict-aliasing -fpascal-strings -fno-common -pthread  conftest.C 1>&5
-configure: In function 'int main()':
-configure:11127: error: 'int A::foo()' is inaccessible
-configure:11130: error: within this context
-configure: failed program was:
-#line 11126 "configure"
-#include "confdefs.h"
-class A { public: int foo() { return 1; } };
-                       class B : public A { private: using A::foo; };
-int main() {
-B b; return b.foo();
-; return 0; }
-configure:11162: checking whether the C++ "using" keyword resolves ambiguity
-configure:11183: /Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//usr/bin/i686-apple-darwin11-llvm-g++-4.2 -isysroot /Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk -mmacosx-version-min=10.6 -L/Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk/usr/lib -no-cpp-precomp -pipe -O3 -c  -fno-strict-aliasing -fpascal-strings -fno-common -pthread  conftest.C 1>&5
-configure:11204: checking for "std::" namespace
-configure:11216: /Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//usr/bin/i686-apple-darwin11-llvm-g++-4.2 -isysroot /Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk -mmacosx-version-min=10.6 -L/Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk/usr/lib -no-cpp-precomp -pipe -O3 -c  -fno-strict-aliasing -fpascal-strings -fno-common -pthread  conftest.C 1>&5
-configure:11237: checking whether standard template operator!=() is ambiguous
-configure:11252: /Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//usr/bin/i686-apple-darwin11-llvm-g++-4.2 -isysroot /Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk -mmacosx-version-min=10.6 -L/Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk/usr/lib -no-cpp-precomp -pipe -O3 -c  -fno-strict-aliasing -fpascal-strings -fno-common -pthread  conftest.C 1>&5
-configure:11274: checking for C++ reinterpret_cast
-configure:11287: /Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//usr/bin/i686-apple-darwin11-llvm-g++-4.2 -isysroot /Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk -mmacosx-version-min=10.6 -L/Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk/usr/lib -no-cpp-precomp -pipe -O3 -c  -fno-strict-aliasing -fpascal-strings -fno-common -pthread  conftest.C 1>&5
-configure:11308: checking for C++ dynamic_cast to void*
-configure:11335: /Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//usr/bin/i686-apple-darwin11-llvm-g++-4.2 -isysroot /Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk -mmacosx-version-min=10.6 -L/Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk/usr/lib -no-cpp-precomp -pipe -O3 -o conftest  -fno-strict-aliasing -fpascal-strings -fno-common -pthread   -L/Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk/usr/lib -lobjc conftest.C  1>&5
-configure:11359: checking whether C++ requires implementation of unused virtual methods
-configure:11371: /Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//usr/bin/i686-apple-darwin11-llvm-g++-4.2 -isysroot /Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk -mmacosx-version-min=10.6 -L/Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk/usr/lib -no-cpp-precomp -pipe -O3 -o conftest  -fno-strict-aliasing -fpascal-strings -fno-common -pthread   -L/Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk/usr/lib -lobjc conftest.C  1>&5
-configure:11394: checking for trouble comparing to zero near std::operator!=()
-configure:11410: /Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//usr/bin/i686-apple-darwin11-llvm-g++-4.2 -isysroot /Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk -mmacosx-version-min=10.6 -L/Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk/usr/lib -no-cpp-precomp -pipe -O3 -c  -fno-strict-aliasing -fpascal-strings -fno-common -pthread  conftest.C 1>&5
-configure:11442: checking for LC_MESSAGES
-configure:11454: /Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//usr/bin/i686-apple-darwin11-llvm-gcc-4.2 -isysroot /Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk -mmacosx-version-min=10.6 -L/Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk/usr/lib -no-cpp-precomp -pipe -O3 -c  -fno-strict-aliasing -fpascal-strings -fno-common -pthread  conftest.c 1>&5
-configure:11815: checking for valid debug flags
-configure:11826: /Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//usr/bin/i686-apple-darwin11-llvm-gcc-4.2 -isysroot /Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk -mmacosx-version-min=10.6 -L/Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk/usr/lib -no-cpp-precomp -pipe -O3 -c  -fno-strict-aliasing -fpascal-strings -fno-common -pthread -g  conftest.c 1>&5
-configure:12558: checking for __cxa_demangle
-configure:12589: /Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//usr/bin/i686-apple-darwin11-llvm-g++-4.2 -isysroot /Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk -mmacosx-version-min=10.6 -L/Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk/usr/lib -no-cpp-precomp -pipe -O3 -o conftest  -fno-strict-aliasing -fpascal-strings -fno-common -pthread   -L/Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk/usr/lib -lobjc conftest.C  1>&5
-configure:12637: checking for unwind.h
-configure:12647: /Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//usr/bin/i686-apple-darwin11-llvm-gcc-4.2 -isysroot /Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk -mmacosx-version-min=10.6 -L/Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk/usr/lib -no-cpp-precomp -pipe -O3 -E  conftest.c >/dev/null 2>conftest.out
-configure:12666: checking for _Unwind_Backtrace
-configure:12694: /Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//usr/bin/i686-apple-darwin11-llvm-gcc-4.2 -isysroot /Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk -mmacosx-version-min=10.6 -L/Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk/usr/lib -no-cpp-precomp -pipe -O3 -o conftest  -fno-strict-aliasing -fpascal-strings -fno-common -pthread   -L/Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk/usr/lib -lobjc conftest.c  1>&5
-configure:12743: checking for gcc -pipe support
-dummy-hello.c:2:21: warning: missing terminating " character
-dummy-hello.c: In function 'main':
-dummy-hello.c:2: error: missing terminating " character
-dummy-hello.c:3:1: warning: missing terminating " character
-dummy-hello.c:3: error: missing terminating " character
-dummy-hello.c:3: error: expected expression at end of input
-dummy-hello.c:3: warning: format not a string literal and no format arguments
-dummy-hello.c:3: warning: format not a string literal and no format arguments
-dummy-hello.c:3: error: expected declaration or statement at end of input
-configure:12765: /Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//usr/bin/i686-apple-darwin11-llvm-gcc-4.2 -isysroot /Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk -mmacosx-version-min=10.6 -L/Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk/usr/lib -no-cpp-precomp -pipe -O3 -c  -fno-strict-aliasing -fpascal-strings -fno-common -pthread -pipe  conftest.c 1>&5
-configure:12810: checking whether C compiler supports -fprofile-generate
-configure:12819: /Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//usr/bin/i686-apple-darwin11-llvm-gcc-4.2 -isysroot /Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk -mmacosx-version-min=10.6 -L/Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk/usr/lib -no-cpp-precomp -pipe -O3 -c  -fno-strict-aliasing -fpascal-strings -fno-common -pthread -pipe -fprofile-generate -fprofile-correction  conftest.c 1>&5
-cc1: error: unrecognized command line option "-fprofile-correction"
-configure: failed program was:
-#line 12812 "configure"
+#line 7225 "configure"
 #include "confdefs.h"
 
 int main() {
 return 0;
 ; return 0; }
-configure:12917: checking for correct temporary object destruction order
-configure:12945: /Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//usr/bin/i686-apple-darwin11-llvm-g++-4.2 -isysroot /Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk -mmacosx-version-min=10.6 -L/Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk/usr/lib -no-cpp-precomp -pipe -O3 -o conftest  -fno-strict-aliasing -fpascal-strings -fno-common -pthread -pipe   -L/Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk/usr/lib -lobjc conftest.C  1>&5
-configure:12966: checking for correct overload resolution with const and templates
-configure:13001: /Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//usr/bin/i686-apple-darwin11-llvm-g++-4.2 -isysroot /Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk -mmacosx-version-min=10.6 -L/Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk/usr/lib -no-cpp-precomp -pipe -O3 -c  -fno-strict-aliasing -fpascal-strings -fno-common -pthread -pipe  -Wall -Wpointer-arith -Woverloaded-virtual -Wsynth -Wno-ctor-dtor-privacy -Wno-non-virtual-dtor -Wcast-align -Wno-invalid-offsetof -Wno-variadic-macros  conftest.C 1>&5
-configure:13024: checking for tm_zone tm_gmtoff in struct tm
-configure:13036: /Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//usr/bin/i686-apple-darwin11-llvm-g++-4.2 -isysroot /Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk -mmacosx-version-min=10.6 -L/Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk/usr/lib -no-cpp-precomp -pipe -O3 -c  -fno-strict-aliasing -fpascal-strings -fno-common -pthread -pipe  conftest.C 1>&5
-configure:13601: checking for setlocale
-configure:13629: /Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//usr/bin/i686-apple-darwin11-llvm-gcc-4.2 -isysroot /Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk -mmacosx-version-min=10.6 -L/Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk/usr/lib -no-cpp-precomp -pipe -O3 -o conftest -Wall -W -Wno-unused -Wpointer-arith -Wcast-align -W -fno-strict-aliasing -fpascal-strings -fno-common -pthread -pipe   -L/Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk/usr/lib -lobjc conftest.c  1>&5
-configure:13656: checking for localeconv
-configure:13684: /Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//usr/bin/i686-apple-darwin11-llvm-gcc-4.2 -isysroot /Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk -mmacosx-version-min=10.6 -L/Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk/usr/lib -no-cpp-precomp -pipe -O3 -o conftest -Wall -W -Wno-unused -Wpointer-arith -Wcast-align -W -fno-strict-aliasing -fpascal-strings -fno-common -pthread -pipe   -L/Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer//SDKs/iPhoneSimulator6.0.sdk/usr/lib -lobjc conftest.c  1>&5
+configure:7254: checking for -dead_strip option to ld
+configure:7265: /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -o conftest -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator6.0.sdk -arch i386 -miphoneos-version-min=4.3 -I/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator6.0.sdk/usr/include -pipe -Wno-implicit-int -Wno-return-type -integrated-as -mvectorize-with-neon-quad -mfpu=neon -fprefetch-loop-arrays -mfloat-abi=softfp -fno-common -Qunused-arguments  -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator6.0.sdk -arch i386 -v -lobjc -Wl,-dead_strip conftest.c  1>&5
+Apple clang version 4.1 (tags/Apple/clang-421.11.65) (based on LLVM 3.1svn)
+Target: i386-apple-darwin11.4.2
+Thread model: posix
+ "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang" -cc1 -triple i386-apple-ios4.3.0 -emit-obj -mrelax-all -disable-free -disable-llvm-verifier -main-file-name conftest.c -pic-level 1 -mdisable-fp-elim -relaxed-aliasing -masm-verbose -target-cpu yonah -target-linker-version 134.9 -v -resource-dir /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../lib/clang/4.1 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator6.0.sdk -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator6.0.sdk -I /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator6.0.sdk/usr/include -fmodule-cache-path /var/folders/mk/4zlmqk1d6z1b7wjr52177fz80000gn/T/clang-module-cache -Wno-implicit-int -Wno-return-type -fdebug-compilation-dir /Users/cat/Downloads/newsm/js/src -ferror-limit 19 -fmessage-length 0 -stack-protector 1 -mstackrealign -fblocks -fobjc-fragile-abi -fobjc-default-synthesize-properties -fno-common -fdiagnostics-show-option -o /var/folders/mk/4zlmqk1d6z1b7wjr52177fz80000gn/T/conftest-vuD4Ab.o -x c conftest.c
+clang -cc1 version 4.1 based upon LLVM 3.1svn default target x86_64-apple-darwin11.4.2
+ignoring nonexistent directory "/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator6.0.sdk/usr/local/include"
+ignoring nonexistent directory "/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator6.0.sdk/Library/Frameworks"
+ignoring duplicate directory "/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator6.0.sdk/usr/include"
+  as it is a non-system directory that duplicates a system directory
+#include "..." search starts here:
+#include <...> search starts here:
+ /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../lib/clang/4.1/include
+ /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator6.0.sdk/usr/include
+ /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator6.0.sdk/System/Library/Frameworks (framework directory)
+End of search list.
+ "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/ld" -demangle -dynamic -arch i386 -iphoneos_version_min 4.3.0 -syslibroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator6.0.sdk -o conftest -lcrt1.o -lobjc -dead_strip /var/folders/mk/4zlmqk1d6z1b7wjr52177fz80000gn/T/conftest-vuD4Ab.o -lSystem /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../lib/clang/4.1/lib/darwin/libclang_rt.ios.a
+configure:8524: checking for ANSI C header files
+configure:8631: checking for working const
+configure:8709: checking for mode_t
+configure:8745: checking for off_t
+configure:8781: checking for pid_t
+configure:8817: checking for size_t
+configure:8860: checking for __stdcall
+configure:8906: checking for ssize_t
+configure:8944: checking for st_blksize in struct stat
+configure:8981: checking for siginfo_t
+configure:9021: checking for the size of void*
+configure:9085: checking for the alignment of void*
+configure:9132: checking for the size of double
+configure:9179: checking for endian.h
+configure:9235: checking for machine/endian.h
+configure:9291: checking for sys/isa_defs.h
+configure:9344: checking for uint
+configure:9382: checking for uint_t
+configure:9429: checking for uname.domainname
+configure:9469: checking for uname.__domainname
+configure:9518: checking for visibility(hidden) attribute
+configure:9546: checking for visibility(default) attribute
+configure:9574: checking for visibility pragma support
+configure:9599: checking For gcc visibility bug with class-level attributes (GCC bug 26905)
+configure:9627: checking For x86_64 gcc visibility bug with builtins (GCC bug 20297)
+configure:9679: checking for gcc PR49911
+configure:9740: /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang++ -o conftest -O2 -Qunused-arguments  -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator6.0.sdk -arch i386 -v -lobjc conftest.C  1>&5
+Apple clang version 4.1 (tags/Apple/clang-421.11.65) (based on LLVM 3.1svn)
+Target: i386-apple-darwin11.4.2
+Thread model: posix
+ "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang" -cc1 -triple i386-apple-macosx10.6.0 -emit-obj -disable-free -disable-llvm-verifier -main-file-name conftest.C -pic-level 1 -mdisable-fp-elim -relaxed-aliasing -masm-verbose -target-cpu yonah -target-linker-version 134.9 -v -resource-dir /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../lib/clang/4.1 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator6.0.sdk -fmodule-cache-path /var/folders/mk/4zlmqk1d6z1b7wjr52177fz80000gn/T/clang-module-cache -O2 -fdeprecated-macro -fdebug-compilation-dir /Users/cat/Downloads/newsm/js/src -ferror-limit 19 -fmessage-length 0 -stack-protector 1 -mstackrealign -fblocks -fobjc-fragile-abi -fobjc-default-synthesize-properties -fcxx-exceptions -fexceptions -fdiagnostics-show-option -o /var/folders/mk/4zlmqk1d6z1b7wjr52177fz80000gn/T/conftest-rrb2IG.o -x c++ conftest.C
+clang -cc1 version 4.1 based upon LLVM 3.1svn default target x86_64-apple-darwin11.4.2
+ignoring nonexistent directory "/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator6.0.sdk/usr/include/c++/4.2.1/i686-apple-darwin10/"
+ignoring nonexistent directory "/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator6.0.sdk/usr/include/c++/4.0.0"
+ignoring nonexistent directory "/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator6.0.sdk/usr/include/c++/4.0.0/i686-apple-darwin8/"
+ignoring nonexistent directory "/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator6.0.sdk/usr/include/c++/4.0.0/backward"
+ignoring nonexistent directory "/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator6.0.sdk/usr/local/include"
+ignoring nonexistent directory "/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator6.0.sdk/Library/Frameworks"
+#include "..." search starts here:
+#include <...> search starts here:
+ /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator6.0.sdk/usr/include/c++/4.2.1
+ /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator6.0.sdk/usr/include/c++/4.2.1/backward
+ /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../lib/clang/4.1/include
+ /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator6.0.sdk/usr/include
+ /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator6.0.sdk/System/Library/Frameworks (framework directory)
+End of search list.
+ "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/ld" -demangle -dynamic -arch i386 -macosx_version_min 10.6.0 -syslibroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator6.0.sdk -o conftest -lcrt1.10.6.o -lobjc /var/folders/mk/4zlmqk1d6z1b7wjr52177fz80000gn/T/conftest-rrb2IG.o -lstdc++ -lSystem /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../lib/clang/4.1/lib/darwin/libclang_rt.eprintf.a /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../lib/clang/4.1/lib/darwin/libclang_rt.osx.a
+configure:9773: checking for gcc pr39608
+configure:9803: /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang++ -c -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator6.0.sdk -arch i386 -miphoneos-version-min=4.3 -I/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator6.0.sdk/usr/include -pipe -Wno-implicit-int -Wno-return-type -integrated-as -mvectorize-with-neon-quad -mfpu=neon -fprefetch-loop-arrays -mfloat-abi=softfp -fno-common -fno-rtti -ffunction-sections -fdata-sections -fno-exceptions -Qunused-arguments  conftest.C 1>&5
+configure:9799:1: warning: expression result unused [-Wunused-value]
+true
+^~~~
+1 warning generated.
+configure:9830: checking for llvm pr8927
+configure:9870: /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -o conftest -O2 -Qunused-arguments  -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator6.0.sdk -arch i386 -v -lobjc conftest.c  1>&5
+Apple clang version 4.1 (tags/Apple/clang-421.11.65) (based on LLVM 3.1svn)
+Target: i386-apple-darwin11.4.2
+Thread model: posix
+ "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang" -cc1 -triple i386-apple-macosx10.6.0 -emit-obj -disable-free -disable-llvm-verifier -main-file-name conftest.c -pic-level 1 -mdisable-fp-elim -relaxed-aliasing -masm-verbose -target-cpu yonah -target-linker-version 134.9 -v -resource-dir /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../lib/clang/4.1 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator6.0.sdk -fmodule-cache-path /var/folders/mk/4zlmqk1d6z1b7wjr52177fz80000gn/T/clang-module-cache -O2 -fdebug-compilation-dir /Users/cat/Downloads/newsm/js/src -ferror-limit 19 -fmessage-length 0 -stack-protector 1 -mstackrealign -fblocks -fobjc-fragile-abi -fobjc-default-synthesize-properties -fdiagnostics-show-option -o /var/folders/mk/4zlmqk1d6z1b7wjr52177fz80000gn/T/conftest-xwbUqZ.o -x c conftest.c
+clang -cc1 version 4.1 based upon LLVM 3.1svn default target x86_64-apple-darwin11.4.2
+ignoring nonexistent directory "/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator6.0.sdk/usr/local/include"
+ignoring nonexistent directory "/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator6.0.sdk/Library/Frameworks"
+#include "..." search starts here:
+#include <...> search starts here:
+ /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../lib/clang/4.1/include
+ /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator6.0.sdk/usr/include
+ /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator6.0.sdk/System/Library/Frameworks (framework directory)
+End of search list.
+ "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/ld" -demangle -dynamic -arch i386 -macosx_version_min 10.6.0 -syslibroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator6.0.sdk -o conftest -lcrt1.10.6.o -lobjc /var/folders/mk/4zlmqk1d6z1b7wjr52177fz80000gn/T/conftest-xwbUqZ.o -lSystem /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../lib/clang/4.1/lib/darwin/libclang_rt.eprintf.a /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../lib/clang/4.1/lib/darwin/libclang_rt.osx.a
+configure:9908: checking for dirent.h that defines DIR
+configure:9949: checking for opendir in -ldir
+configure:10043: checking for sys/byteorder.h
+configure:10043: checking for compat.h
+configure:10043: checking for getopt.h
+configure:10043: checking for sys/bitypes.h
+configure:10043: checking for memory.h
+configure:10043: checking for unistd.h
+configure:10043: checking for gnu/libc-version.h
+configure:10043: checking for nl_types.h
+configure:10043: checking for malloc.h
+configure:10043: checking for X11/XKBlib.h
+configure:10043: checking for io.h
+configure:10043: checking for cpuid.h
+configure:10091: checking for sys/statvfs.h
+configure:10091: checking for sys/statfs.h
+configure:10091: checking for sys/vfs.h
+configure:10091: checking for sys/mount.h
+configure:10138: checking for sys/quota.h
+configure:10184: checking for linux/quota.h
+configure:10237: checking for new
+configure:10349: checking for sys/cdefs.h
+configure:10414: checking for linux/perf_event.h
+configure:10490: checking for gethostbyname_r in -lc_r
+configure:10658: checking for dladdr
+configure:10830: checking for socket in -lsocket
+configure:11016: checking whether /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang accepts -pthread
+configure:11144: checking whether /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang needs -traditional
+configure:11190: checking for 8-bit clean memcmp
+configure:11230: checking for fchmod
+configure:11230: checking for flockfile
+configure:11230: checking for getc_unlocked
+configure:11230: checking for _getc_nolock
+configure:11230: checking for getpagesize
+configure:11230: checking for lchown
+configure:11230: checking for localtime_r
+configure:11230: checking for lstat64
+configure:11230: checking for memmove
+configure:11230: checking for random
+configure:11230: checking for rint
+configure:11230: checking for sbrk
+configure:11230: checking for snprintf
+configure:11230: checking for stat64
+configure:11230: checking for statvfs
+configure:11230: checking for statvfs64
+configure:11230: checking for strerror
+configure:11230: checking for strtok_r
+configure:11230: checking for truncate64
+configure:11296: checking for wcrtomb
+configure:11331: checking for mbrtowc
+configure:11375: checking for res_ninit()
+configure:11425: checking for gnu_get_libc_version()
+configure:11475: checking for an implementation of va_copy()
+configure:11516: checking for an implementation of __va_copy()
+configure:11557: checking whether va_lists can be copied by value
+configure:11694: checking for modern C++ template specialization syntax support
+configure:11727: checking whether partial template specialization works
+configure:11764: checking whether the C++ "using" keyword resolves ambiguity
+configure:11809: checking for C++ dynamic_cast to void*
+configure:11863: checking whether C++ requires implementation of unused virtual methods
+configure:11901: checking for trouble comparing to zero near std::operator!=()
+configure:11947: checking for __thread keyword for TLS variables
+configure:11997: checking for __attribute__((always_inline))
+configure:12024: checking for __attribute__((malloc))
+configure:12051: checking for __attribute__((warn_unused_result))
+configure:12087: checking for LC_MESSAGES
+configure:12125: checking for localeconv
+configure:12484: checking for gzread in -lz
+configure:12538: /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -c -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator6.0.sdk -arch i386 -miphoneos-version-min=4.3 -I/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator6.0.sdk/usr/include -pipe -Wno-implicit-int -Wno-return-type -integrated-as -mvectorize-with-neon-quad -mfpu=neon -fprefetch-loop-arrays -mfloat-abi=softfp -fno-common -ffunction-sections -fdata-sections -pthread -Qunused-arguments  conftest.c 1>&5
+configure:12867: checking for valid debug flags
+configure:12878: /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -c -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator6.0.sdk -arch i386 -miphoneos-version-min=4.3 -I/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator6.0.sdk/usr/include -pipe -Wno-implicit-int -Wno-return-type -integrated-as -mvectorize-with-neon-quad -mfpu=neon -fprefetch-loop-arrays -mfloat-abi=softfp -fno-common -ffunction-sections -fdata-sections -pthread -g -Qunused-arguments  conftest.c 1>&5
+configure:12956: checking for valid optimization flags
+configure:12967: /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -c -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator6.0.sdk -arch i386 -miphoneos-version-min=4.3 -I/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator6.0.sdk/usr/include -pipe -Wno-implicit-int -Wno-return-type -integrated-as -mvectorize-with-neon-quad -mfpu=neon -fprefetch-loop-arrays -mfloat-abi=softfp -fno-common -ffunction-sections -fdata-sections -pthread -O3 -fno-stack-protector -Qunused-arguments  conftest.c 1>&5
+configure:13879: checking for __cxa_demangle
+configure:13964: checking for unwind.h
+configure:13994: checking for _Unwind_Backtrace
+configure:14114: checking for -pipe support
+configure:14128: checking whether C compiler supports -fprofile-generate
+configure:14137: /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -c -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator6.0.sdk -arch i386 -miphoneos-version-min=4.3 -I/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator6.0.sdk/usr/include -pipe -Wno-implicit-int -Wno-return-type -integrated-as -mvectorize-with-neon-quad -mfpu=neon -fprefetch-loop-arrays -mfloat-abi=softfp -fno-common -ffunction-sections -fdata-sections -pthread -pipe -fprofile-generate -fprofile-correction -Qunused-arguments  conftest.c 1>&5
+configure:14237: checking for correct overload resolution with const and templates
+configure:14272: /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang++ -c -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator6.0.sdk -arch i386 -miphoneos-version-min=4.3 -I/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator6.0.sdk/usr/include -pipe -Wno-implicit-int -Wno-return-type -integrated-as -mvectorize-with-neon-quad -mfpu=neon -fprefetch-loop-arrays -mfloat-abi=softfp -fno-common -fno-rtti -ffunction-sections -fdata-sections -fno-exceptions -pthread -pipe -Qunused-arguments  -Wall -Wpointer-arith -Woverloaded-virtual -Werror=return-type -Wtype-limits -Wempty-body -Wno-ctor-dtor-privacy -Wno-overlength-strings -Wno-invalid-offsetof -Wno-variadic-macros -Wno-c++0x-extensions -Wno-extended-offsetof -Wno-unknown-warning-option -Wno-return-type-c-linkage -Wno-mismatched-tags -Qunused-arguments  conftest.C 1>&5
+configure:14267:37: warning: variable 'bar' is uninitialized when used here [-Wuninitialized]
+                      return foo == bar;
+                                    ^~~
+configure:14266:37: note: initialize the variable 'bar' to silence this warning
+                      const int* bar;
+                                    ^
+                                     = 0
+1 warning generated.
+configure:14298: checking for tm_zone tm_gmtoff in struct tm
+configure:14352: checking what kind of list files are supported by the linker
+configure:14357: /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -o conftest.o -c -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator6.0.sdk -arch i386 -miphoneos-version-min=4.3 -I/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator6.0.sdk/usr/include -pipe -Wno-implicit-int -Wno-return-type -integrated-as -mvectorize-with-neon-quad -mfpu=neon -fprefetch-loop-arrays -mfloat-abi=softfp -fno-common -ffunction-sections -fdata-sections -pthread -pipe -Qunused-arguments  conftest.c 1>&5
+configure:14359: /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -o conftest  -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator6.0.sdk -arch i386 -v -lobjc conftest.list  1>&5
+Apple clang version 4.1 (tags/Apple/clang-421.11.65) (based on LLVM 3.1svn)
+Target: i386-apple-darwin11.4.2
+Thread model: posix
+ "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/ld" -demangle -dynamic -arch i386 -macosx_version_min 10.6.0 -syslibroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator6.0.sdk -o conftest -lcrt1.10.6.o -lobjc conftest.list -lSystem /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../lib/clang/4.1/lib/darwin/libclang_rt.eprintf.a /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../lib/clang/4.1/lib/darwin/libclang_rt.osx.a
+ld: file too small for architecture i386
+clang: error: linker command failed with exit code 1 (use -v to see invocation)
+configure:14363: /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -o conftest  -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator6.0.sdk -arch i386 -v -lobjc @conftest.list  1>&5
+Apple clang version 4.1 (tags/Apple/clang-421.11.65) (based on LLVM 3.1svn)
+Target: i386-apple-darwin11.4.2
+Thread model: posix
+ "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/ld" -demangle -dynamic -arch i386 -macosx_version_min 10.6.0 -syslibroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator6.0.sdk -o conftest -lcrt1.10.6.o -lobjc conftest.o -lSystem /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../lib/clang/4.1/lib/darwin/libclang_rt.eprintf.a /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../lib/clang/4.1/lib/darwin/libclang_rt.osx.a
+configure:14725: checking for posix_fallocate
+configure:14735: /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -o conftest -Qunused-arguments -Wall -Wpointer-arith -Wdeclaration-after-statement -Werror=return-type -Wtype-limits -Wempty-body -Wno-unused -Wno-overlength-strings -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator6.0.sdk -arch i386 -miphoneos-version-min=4.3 -I/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator6.0.sdk/usr/include -pipe -Wno-implicit-int -Wno-return-type -integrated-as -mvectorize-with-neon-quad -mfpu=neon -fprefetch-loop-arrays -mfloat-abi=softfp -fno-common -ffunction-sections -fdata-sections -pthread -pipe -Qunused-arguments   -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator6.0.sdk -arch i386 -v -lobjc conftest.c  1>&5
+Apple clang version 4.1 (tags/Apple/clang-421.11.65) (based on LLVM 3.1svn)
+Target: i386-apple-darwin11.4.2
+Thread model: posix
+ "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang" -cc1 -triple i386-apple-ios4.3.0 -emit-obj -mrelax-all -disable-free -disable-llvm-verifier -main-file-name conftest.c -pic-level 1 -mdisable-fp-elim -relaxed-aliasing -masm-verbose -target-cpu yonah -target-linker-version 134.9 -v -ffunction-sections -fdata-sections -resource-dir /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../lib/clang/4.1 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator6.0.sdk -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator6.0.sdk -I /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator6.0.sdk/usr/include -fmodule-cache-path /var/folders/mk/4zlmqk1d6z1b7wjr52177fz80000gn/T/clang-module-cache -Wall -Wpointer-arith -Wdeclaration-after-statement -Werror=return-type -Wtype-limits -Wempty-body -Wno-unused -Wno-overlength-strings -Wno-implicit-int -Wno-return-type -fdebug-compilation-dir /Users/cat/Downloads/newsm/js/src -ferror-limit 19 -fmessage-length 0 -pthread -stack-protector 1 -mstackrealign -fblocks -fobjc-fragile-abi -fobjc-default-synthesize-properties -fno-common -fdiagnostics-show-option -o /var/folders/mk/4zlmqk1d6z1b7wjr52177fz80000gn/T/conftest-qMpwso.o -x c conftest.c
+clang -cc1 version 4.1 based upon LLVM 3.1svn default target x86_64-apple-darwin11.4.2
+ignoring nonexistent directory "/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator6.0.sdk/usr/local/include"
+ignoring nonexistent directory "/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator6.0.sdk/Library/Frameworks"
+ignoring duplicate directory "/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator6.0.sdk/usr/include"
+  as it is a non-system directory that duplicates a system directory
+#include "..." search starts here:
+#include <...> search starts here:
+ /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../lib/clang/4.1/include
+ /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator6.0.sdk/usr/include
+ /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator6.0.sdk/System/Library/Frameworks (framework directory)
+End of search list.
+configure:14731:1: warning: implicit declaration of function 'posix_fallocate' is invalid in C99 [-Wimplicit-function-declaration]
+posix_fallocate(0, 0, 0);
+^
+1 warning generated.
+ "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/ld" -demangle -dynamic -arch i386 -iphoneos_version_min 4.3.0 -syslibroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator6.0.sdk -o conftest -lcrt1.o -lobjc /var/folders/mk/4zlmqk1d6z1b7wjr52177fz80000gn/T/conftest-qMpwso.o -lSystem /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../lib/clang/4.1/lib/darwin/libclang_rt.ios.a
+Undefined symbols for architecture i386:
+  "_posix_fallocate", referenced from:
+      _main in conftest-qMpwso.o
+ld: symbol(s) not found for architecture i386
+clang: error: linker command failed with exit code 1 (use -v to see invocation)
+configure: failed program was:
+#line 14727 "configure"
+#include "confdefs.h"
+#define _XOPEN_SOURCE 600
+  #include <fcntl.h>
+int main() {
+posix_fallocate(0, 0, 0);
+; return 0; }
+configure:14897: checking for setlocale
+configure:14955: checking for localeconv

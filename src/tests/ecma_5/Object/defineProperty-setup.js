@@ -1,8 +1,16 @@
+// |reftest| skip -- not a test.
 // Any copyright is dedicated to the Public Domain.
 // http://creativecommons.org/licenses/publicdomain/
 
 assertEq("defineProperty" in Object, true);
 assertEq(Object.defineProperty.length, 3);
+
+/*
+ * Disable an assertion that is pathologically slow given the exhaustiveness of
+ * these tests.
+ */
+if (typeof enableStackWalkingAssertion === "function")
+  enableStackWalkingAssertion(false);
 
 if (!Object.prototype.toSource)
 {

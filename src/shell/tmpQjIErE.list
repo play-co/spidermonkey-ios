@@ -1,0 +1,5 @@
+js.o
+jsoptparse.o
+jsheaptools.o
+../editline/editline.o
+../editline/sysunix.o

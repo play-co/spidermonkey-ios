@@ -1,4 +1,7 @@
-/*
+/* -*- Mode: C++; tab-width: 8; indent-tabs-mode: nil; c-basic-offset: 4 -*-
+ * vim: set ts=8 sw=4 et tw=79:
+ *
+ * ***** BEGIN LICENSE BLOCK *****
  * Copyright (C) 2008 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -21,7 +24,8 @@
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
- */
+ * 
+ * ***** END LICENSE BLOCK ***** */
 
 #ifndef MacroAssemblerX86_64_h
 #define MacroAssemblerX86_64_h
@@ -33,6 +37,8 @@
 #include "MacroAssemblerX86Common.h"
 
 #define REPTACH_OFFSET_CALL_R11 3
+
+#include "mozilla/Util.h"
 
 namespace JSC {
 
@@ -53,9 +59,10 @@ public:
     using MacroAssemblerX86Common::store32;
     using MacroAssemblerX86Common::call;
     using MacroAssemblerX86Common::loadDouble;
+    using MacroAssemblerX86Common::storeDouble;
     using MacroAssemblerX86Common::convertInt32ToDouble;
 
-    void add32(Imm32 imm, AbsoluteAddress address)
+    void add32(TrustedImm32 imm, AbsoluteAddress address)
     {
         move(ImmPtr(address.m_ptr), scratchRegister);
         add32(imm, Address(scratchRegister));
@@ -67,13 +74,13 @@ public:
         and32(imm, Address(scratchRegister));
     }
     
-    void or32(Imm32 imm, AbsoluteAddress address)
+    void or32(TrustedImm32 imm, AbsoluteAddress address)
     {
         move(ImmPtr(address.m_ptr), scratchRegister);
         or32(imm, Address(scratchRegister));
     }
 
-    void sub32(Imm32 imm, AbsoluteAddress address)
+    void sub32(TrustedImm32 imm, AbsoluteAddress address)
     {
         move(ImmPtr(address.m_ptr), scratchRegister);
         sub32(imm, Address(scratchRegister));
@@ -102,7 +109,14 @@ public:
         m_assembler.cvtsi2sd_rr(scratchRegister, dest);
     }
 
-    void store32(Imm32 imm, void* address)
+    void convertUInt32ToDouble(RegisterID srcDest, FPRegisterID dest)
+    {
+        zeroExtend32ToPtr(srcDest, srcDest);
+        zeroDouble(dest); // break dependency chains
+        m_assembler.cvtsq2sd_rr(srcDest, dest);
+    }
+
+    void store32(TrustedImm32 imm, void* address)
     {
         move(X86Registers::eax, scratchRegister);
         move(imm, X86Registers::eax);
@@ -112,7 +126,7 @@ public:
 
     Call call()
     {
-        DataLabelPtr label = moveWithPatch(ImmPtr(0), scratchRegister);
+        js::DebugOnly<DataLabelPtr> label = moveWithPatch(ImmPtr(0), scratchRegister);
         Call result = Call(m_assembler.call(scratchRegister), Call::Linkable);
         ASSERT(differenceBetween(label, result) == REPTACH_OFFSET_CALL_R11);
         return result;
@@ -120,7 +134,7 @@ public:
 
     Call tailRecursiveCall()
     {
-        DataLabelPtr label = moveWithPatch(ImmPtr(0), scratchRegister);
+        js::DebugOnly<DataLabelPtr> label = moveWithPatch(ImmPtr(0), scratchRegister);
         Jump newJump = Jump(m_assembler.jmp_r(scratchRegister));
         ASSERT(differenceBetween(label, newJump) == REPTACH_OFFSET_CALL_R11);
         return Call::fromTailJump(newJump);
@@ -129,7 +143,7 @@ public:
     Call makeTailRecursiveCall(Jump oldJump)
     {
         oldJump.link(this);
-        DataLabelPtr label = moveWithPatch(ImmPtr(0), scratchRegister);
+        js::DebugOnly<DataLabelPtr> label = moveWithPatch(ImmPtr(0), scratchRegister);
         Jump newJump = Jump(m_assembler.jmp_r(scratchRegister));
         ASSERT(differenceBetween(label, newJump) == REPTACH_OFFSET_CALL_R11);
         return Call::fromTailJump(newJump);
@@ -204,6 +218,11 @@ public:
             move(imm, scratchRegister);
             m_assembler.andq_rr(scratchRegister, srcDest);
         }
+    }
+
+    void negPtr(RegisterID srcDest)
+    {
+        m_assembler.negq_r(srcDest);
     }
 
     void notPtr(RegisterID srcDest)
@@ -299,7 +318,7 @@ public:
         m_assembler.movq_rm(src, address.offset, address.base);
     }
 
-    void storePtr(ImmPtr imm, BaseIndex address)
+    void storePtr(TrustedImmPtr imm, BaseIndex address)
     {
         intptr_t value = intptr_t(imm.m_value);
 
@@ -329,7 +348,7 @@ public:
         }
     }
 
-    void storePtr(ImmPtr imm, ImplicitAddress address)
+    void storePtr(TrustedImmPtr imm, ImplicitAddress address)
     {
         intptr_t value = intptr_t(imm.m_value);
 
@@ -376,6 +395,12 @@ public:
         m_assembler.movzbl_rr(dest, dest);
     }
 
+    void setPtr(Condition cond, RegisterID left, ImmPtr right, RegisterID dest)	
+    {
+        move(right, scratchRegister);
+        setPtr(cond, left, scratchRegister, dest);
+    }
+
     Jump branchPtr(Condition cond, RegisterID left, RegisterID right)
     {
         m_assembler.cmpq_rr(right, left);
@@ -404,6 +429,12 @@ public:
     {
         move(ImmPtr(left.m_ptr), scratchRegister);
         return branchPtr(cond, Address(scratchRegister), right);
+    }
+
+    Jump branchPtr(Condition cond, AbsoluteAddress left, ImmPtr right, RegisterID scratch)
+    {
+        move(ImmPtr(left.m_ptr), scratch);
+        return branchPtr(cond, Address(scratch), right);
     }
 
     Jump branchPtr(Condition cond, Address left, RegisterID right)
@@ -469,7 +500,7 @@ public:
         return Jump(m_assembler.jCC(x86Condition(cond)));
     }
 
-    DataLabelPtr moveWithPatch(ImmPtr initialValue, RegisterID dest)
+    DataLabelPtr moveWithPatch(TrustedImmPtr initialValue, RegisterID dest)
     {
         m_assembler.movq_i64r(initialValue.asIntptr(), dest);
         return DataLabelPtr(this);
@@ -487,7 +518,7 @@ public:
         return branchPtr(cond, left, scratchRegister);
     }
 
-    DataLabelPtr storePtrWithPatch(ImmPtr initialValue, ImplicitAddress address)
+    DataLabelPtr storePtrWithPatch(TrustedImmPtr initialValue, ImplicitAddress address)
     {
         DataLabelPtr label = moveWithPatch(initialValue, scratchRegister);
         storePtr(scratchRegister, address);
@@ -519,6 +550,16 @@ public:
     {
         for (int i = X86Registers::r15; i >= X86Registers::eax; i--)
             m_assembler.pop_r((RegisterID)i);
+    }
+
+    void storeDouble(ImmDouble imm, Address address)
+    {
+        storePtr(ImmPtr(reinterpret_cast<void *>(imm.u.u64)), address);
+    }
+
+    void storeDouble(ImmDouble imm, BaseIndex address)
+    {
+        storePtr(ImmPtr(reinterpret_cast<void *>(imm.u.u64)), address);
     }
 
     bool supportsFloatingPoint() const { return true; }

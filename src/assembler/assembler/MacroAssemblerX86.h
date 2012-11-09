@@ -1,4 +1,7 @@
-/*
+/* -*- Mode: C++; tab-width: 8; indent-tabs-mode: nil; c-basic-offset: 4 -*-
+ * vim: set ts=8 sw=4 et tw=79:
+ *
+ * ***** BEGIN LICENSE BLOCK *****
  * Copyright (C) 2008 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -21,7 +24,8 @@
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
- */
+ * 
+ * ***** END LICENSE BLOCK ***** */
 
 #ifndef MacroAssemblerX86_h
 #define MacroAssemblerX86_h
@@ -53,9 +57,10 @@ public:
     using MacroAssemblerX86Common::branch32;
     using MacroAssemblerX86Common::call;
     using MacroAssemblerX86Common::loadDouble;
+    using MacroAssemblerX86Common::storeDouble;
     using MacroAssemblerX86Common::convertInt32ToDouble;
 
-    void add32(Imm32 imm, RegisterID src, RegisterID dest)
+    void add32(TrustedImm32 imm, RegisterID src, RegisterID dest)
     {
         m_assembler.leal_mr(imm.m_value, src, dest);
     }
@@ -85,12 +90,12 @@ public:
         m_assembler.andl_im(imm.m_value, address.m_ptr);
     }
     
-    void or32(Imm32 imm, AbsoluteAddress address)
+    void or32(TrustedImm32 imm, AbsoluteAddress address)
     {
         m_assembler.orl_im(imm.m_value, address.m_ptr);
     }
 
-    void sub32(Imm32 imm, AbsoluteAddress address)
+    void sub32(TrustedImm32 imm, AbsoluteAddress address)
     {
         m_assembler.subl_im(imm.m_value, address.m_ptr);
     }
@@ -98,6 +103,19 @@ public:
     void load32(void* address, RegisterID dest)
     {
         m_assembler.movl_mr(address, dest);
+    }
+
+    void storeDouble(ImmDouble imm, Address address)
+    {
+        store32(Imm32(imm.u.s.lsb), address);
+        store32(Imm32(imm.u.s.msb), Address(address.base, address.offset + 4));
+    }
+
+    void storeDouble(ImmDouble imm, BaseIndex address)
+    {
+        store32(Imm32(imm.u.s.lsb), address);
+        store32(Imm32(imm.u.s.msb),
+                BaseIndex(address.base, address.index, address.scale, address.offset + 4));
     }
 
     DataLabelPtr loadDouble(const void* address, FPRegisterID dest)
@@ -112,7 +130,25 @@ public:
         m_assembler.cvtsi2sd_mr(src.m_ptr, dest);
     }
 
-    void store32(Imm32 imm, void* address)
+    void convertUInt32ToDouble(RegisterID srcDest, FPRegisterID dest)
+    {
+        // Trick is from nanojit/Nativei386.cpp, asm_ui2d.
+        static const double NegativeOne = 2147483648.0;
+
+        // src is [0, 2^32-1]
+        sub32(Imm32(0x80000000), srcDest);
+
+        // Now src is [-2^31, 2^31-1] - int range, but not the same value.
+        zeroDouble(dest);
+        convertInt32ToDouble(srcDest, dest);
+
+        // dest is now a double with the int range.
+        // correct the double value by adding (0x80000000).
+        move(ImmPtr(&NegativeOne), srcDest);
+        addDouble(Address(srcDest), dest);
+    }
+
+    void store32(TrustedImm32 imm, void* address)
     {
         m_assembler.movl_i32m(imm.m_value, address);
     }
@@ -128,7 +164,7 @@ public:
         return Jump(m_assembler.jCC(x86Condition(cond)));
     }
 
-    Jump branch32(Condition cond, AbsoluteAddress left, Imm32 right)
+    Jump branch32(Condition cond, AbsoluteAddress left, TrustedImm32 right)
     {
         m_assembler.cmpl_im(right.m_value, left.m_ptr);
         return Jump(m_assembler.jCC(x86Condition(cond)));
@@ -150,7 +186,7 @@ public:
     }
 
 
-    DataLabelPtr moveWithPatch(ImmPtr initialValue, RegisterID dest)
+    DataLabelPtr moveWithPatch(TrustedImmPtr initialValue, RegisterID dest)
     {
         m_assembler.movl_i32r(initialValue.asIntptr(), dest);
         return DataLabelPtr(this);
@@ -170,7 +206,7 @@ public:
         return Jump(m_assembler.jCC(x86Condition(cond)));
     }
 
-    DataLabelPtr storePtrWithPatch(ImmPtr initialValue, ImplicitAddress address)
+    DataLabelPtr storePtrWithPatch(TrustedImmPtr initialValue, ImplicitAddress address)
     {
         m_assembler.movl_i32m(initialValue.asIntptr(), address.offset, address.base);
         return DataLabelPtr(this);

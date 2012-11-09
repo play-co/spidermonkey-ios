@@ -3,34 +3,39 @@
  *
  * Tests for operators and implicit type conversion.
  */
+/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+
 
 #include "tests.h"
 
 static JSBool
-my_convert(JSContext* context, JSObject* obj, JSType type, jsval* rval)
+my_convert(JSContext* context, JS::HandleObject obj, JSType type, JS::MutableHandleValue rval)
 {
-    if (type == JSTYPE_VOID || type == JSTYPE_STRING || type == JSTYPE_NUMBER || type == JSTYPE_BOOLEAN)
-        return JS_NewNumberValue(context, 123, rval);
+    if (type == JSTYPE_VOID || type == JSTYPE_STRING || type == JSTYPE_NUMBER || type == JSTYPE_BOOLEAN) {
+        rval.set(JS_NumberValue(123));
+        return JS_TRUE;
+    }
     return JS_FALSE;
 }
 
 static JSClass myClass = {
     "MyClass",
     0,
-    JS_PropertyStub, JS_PropertyStub, JS_PropertyStub, JS_PropertyStub,
-    JS_EnumerateStub, JS_ResolveStub, my_convert, JS_FinalizeStub,
-    JSCLASS_NO_OPTIONAL_MEMBERS
+    JS_PropertyStub, JS_PropertyStub, JS_PropertyStub, JS_StrictPropertyStub,
+    JS_EnumerateStub, JS_ResolveStub, my_convert
 };
 
 static JSBool
-createMyObject(JSContext* context, JSObject* obj, uintN argc, jsval *argv, jsval* rval)
+createMyObject(JSContext* context, unsigned argc, jsval *vp)
 {
     JS_BeginRequest(context);
 
     //JS_GC(context); //<- if we make GC here, all is ok
 
     JSObject* myObject = JS_NewObject(context, &myClass, NULL, NULL);
-    *rval = OBJECT_TO_JSVAL(myObject);
+    *vp = OBJECT_TO_JSVAL(myObject);
 
     JS_EndRequest(context);
 
@@ -39,8 +44,8 @@ createMyObject(JSContext* context, JSObject* obj, uintN argc, jsval *argv, jsval
 
 static JSFunctionSpec s_functions[] =
 {
-    { "createMyObject", createMyObject, 0 },
-    { 0,0,0,0,0 }
+    JS_FN("createMyObject", createMyObject, 0, 0),
+    JS_FS_END
 };
 
 BEGIN_TEST(testOps_bug559006)
@@ -50,8 +55,8 @@ BEGIN_TEST(testOps_bug559006)
     EXEC("function main() { while(1) return 0 + createMyObject(); }");
 
     for (int i = 0; i < 9; i++) {
-        jsvalRoot rval(cx);
-        CHECK(JS_CallFunctionName(cx, global, "main", 0, NULL, rval.addr()));
+        js::RootedValue rval(cx);
+        CHECK(JS_CallFunctionName(cx, global, "main", 0, NULL, rval.address()));
         CHECK_SAME(rval, INT_TO_JSVAL(123));
     }
     return true;

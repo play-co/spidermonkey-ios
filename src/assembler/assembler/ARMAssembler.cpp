@@ -1,4 +1,7 @@
-/*
+/* -*- Mode: C++; tab-width: 8; indent-tabs-mode: nil; c-basic-offset: 4 -*-
+ * vim: set ts=8 sw=4 et tw=79:
+ *
+ * ***** BEGIN LICENSE BLOCK *****
  * Copyright (C) 2009 University of Szeged
  * All rights reserved.
  *
@@ -22,7 +25,8 @@
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- */
+ *
+ * ***** END LICENSE BLOCK ***** */
 
 #include "assembler/wtf/Platform.h"
 
@@ -86,6 +90,46 @@ ARMWord ARMAssembler::getOp2(ARMWord imm)
         return OP2_IMM | (imm >> 24) | (rol << 8);
 
     return INVALID_IMM;
+}
+
+ARMWord ARMAssembler::getOp2RegScale(RegisterID reg, ARMWord scale)
+{
+    // The field that this method constructs looks like this:
+    // [11:7]   Shift immediate.
+    // [ 6:5]   Shift type. Only LSL ("00") is used here.
+    // [ 4:4]   0.
+    // [ 3:0]   The register to shift.
+
+    ARMWord shift;  // Shift field. This is log2(scale).
+    ARMWord lz;     // Leading zeroes.
+
+    // Calculate shift=log2(scale).
+#if WTF_ARM_ARCH_AT_LEAST_5
+    asm (
+    "   clz     %[lz], %[scale]\n"
+    : [lz]      "=r"  (lz)
+    : [scale]   "r"   (scale)
+    : // No clobbers.
+    );
+#else
+    lz = 0; // Accumulate leading zeroes.
+    for (ARMWord s = 16; s > 0; s /= 2) {
+        ARMWord mask = 0xffffffff << (32-lz-s);
+        if ((scale & mask) == 0) {
+            lz += s;
+        }
+    }
+#endif
+    if (lz >= 32) {
+        return INVALID_IMM;
+    }
+    shift = 31-lz;
+    // Check that scale was a power of 2.
+    if ((1u<<shift) != scale) {
+        return INVALID_IMM;
+    }
+
+    return (shift << 7) | (reg);
 }
 
 int ARMAssembler::genInt(int reg, ARMWord imm, bool positive)
@@ -197,6 +241,11 @@ int ARMAssembler::genInt(int reg, ARMWord imm, bool positive)
     return 1;
 }
 
+#ifdef __GNUC__
+// If the result of this function isn't used, the caller should probably be
+// using movImm.
+__attribute__((warn_unused_result))
+#endif
 ARMWord ARMAssembler::getImm(ARMWord imm, int tmpReg, bool invert)
 {
     ARMWord tmp;
@@ -261,59 +310,121 @@ ARMWord ARMAssembler::encodeComplexImm(ARMWord imm, int dest)
 }
 
 // Memory load/store helpers
+// TODO: this does not take advantage of all of ARMv7's instruction encodings, it should.
+void ARMAssembler::dataTransferN(bool isLoad, bool isSigned, int size, RegisterID rt, RegisterID base, int32_t offset)
+{
+    bool posOffset = true;
+
+    // There may be more elegant ways of handling this, but this one works.
+    if (offset == int32_t(0x80000000)) {
+        // For even bigger offsets, load the entire offset into a register, then do an
+        // indexed load using the base register and the index register.
+        moveImm(offset, ARMRegisters::S0);
+        mem_reg_off(isLoad, isSigned, size, posOffset, rt, base, ARMRegisters::S0);
+        return;
+    }
+    if (offset < 0) {
+        offset = - offset;
+        posOffset = false;
+    }
+    if (offset <= 0xfff) {
+        // LDR rd, [rb, #+offset]
+        mem_imm_off(isLoad, isSigned, size, posOffset, rt, base, offset);
+    } else if (offset <= 0xfffff) {
+        // Add upper bits of offset to the base, and store the result into the temp register.
+        if (posOffset) {
+            add_r(ARMRegisters::S0, base, OP2_IMM | (offset >> 12) | getOp2RotLSL(12));
+        } else {
+            sub_r(ARMRegisters::S0, base, OP2_IMM | (offset >> 12) | getOp2RotLSL(12));
+        }
+        // Load using the lower bits of the offset.
+        mem_imm_off(isLoad, isSigned, size, posOffset, rt,
+                    ARMRegisters::S0, (offset & 0xfff));
+    } else {
+        // For even bigger offsets, load the entire offset into a register, then do an
+        // indexed load using the base register and the index register.
+        moveImm(offset, ARMRegisters::S0);
+        mem_reg_off(isLoad, isSigned, size, posOffset, rt, base, ARMRegisters::S0);
+    }
+}
 
 void ARMAssembler::dataTransfer32(bool isLoad, RegisterID srcDst, RegisterID base, int32_t offset)
 {
     if (offset >= 0) {
-        if (offset <= 0xfff)
+        if (offset <= 0xfff) {
+            // LDR rd, [rb, +offset]
             dtr_u(isLoad, srcDst, base, offset);
-        else if (offset <= 0xfffff) {
-            add_r(ARMRegisters::S0, base, OP2_IMM | (offset >> 12) | (10 << 8));
+        } else if (offset <= 0xfffff) {
+            // Add upper bits of offset to the base, and store the result into the temp register.
+            add_r(ARMRegisters::S0, base, OP2_IMM | (offset >> 12) | getOp2RotLSL(12));
+            // Load using the lower bits of the register.
             dtr_u(isLoad, srcDst, ARMRegisters::S0, (offset & 0xfff));
         } else {
-            ARMWord reg = getImm(offset, ARMRegisters::S0);
-            dtr_ur(isLoad, srcDst, base, reg);
+            // For even bigger offsets, load the entire offset into a register, then do an
+            // indexed load using the base register and the index register.
+            moveImm(offset, ARMRegisters::S0);
+            dtr_ur(isLoad, srcDst, base, ARMRegisters::S0);
         }
     } else {
-        offset = -offset;
-        if (offset <= 0xfff)
-            dtr_d(isLoad, srcDst, base, offset);
-        else if (offset <= 0xfffff) {
-            sub_r(ARMRegisters::S0, base, OP2_IMM | (offset >> 12) | (10 << 8));
-            dtr_d(isLoad, srcDst, ARMRegisters::S0, (offset & 0xfff));
+        // Negative offsets.
+        if (offset >= -0xfff) {
+            dtr_d(isLoad, srcDst, base, -offset);
+        } else if (offset >= -0xfffff) {
+            sub_r(ARMRegisters::S0, base, OP2_IMM | (-offset >> 12) | getOp2RotLSL(12));
+            dtr_d(isLoad, srcDst, ARMRegisters::S0, (-offset & 0xfff));
         } else {
-            ARMWord reg = getImm(offset, ARMRegisters::S0);
-            dtr_dr(isLoad, srcDst, base, reg);
+            moveImm(offset, ARMRegisters::S0);
+            dtr_ur(isLoad, srcDst, base, ARMRegisters::S0);
         }
     }
 }
-
-void ARMAssembler::dataTransfer8(bool isLoad, RegisterID srcDst, RegisterID base, int32_t offset)
+/* this is large, ugly and obsolete.  dataTransferN is superior.*/
+void ARMAssembler::dataTransfer8(bool isLoad, RegisterID srcDst, RegisterID base, int32_t offset, bool isSigned)
 {
     if (offset >= 0) {
-        if (offset <= 0xfff)
-            dtrb_u(isLoad, srcDst, base, offset);
-        else if (offset <= 0xfffff) {
-            add_r(ARMRegisters::S0, base, OP2_IMM | (offset >> 12) | (10 << 8));
-            dtrb_u(isLoad, srcDst, ARMRegisters::S0, (offset & 0xfff));
+        if (offset <= 0xfff) {
+            if (isSigned)
+                mem_imm_off(isLoad, true, 8, true, srcDst, base, offset);
+            else
+                dtrb_u(isLoad, srcDst, base, offset);
+        } else if (offset <= 0xfffff) {
+            add_r(ARMRegisters::S0, base, OP2_IMM | (offset >> 12) | getOp2RotLSL(12));
+            if (isSigned)
+                mem_imm_off(isLoad, true, 8, true, srcDst, ARMRegisters::S0, (offset & 0xfff));
+            else
+                dtrb_u(isLoad, srcDst, ARMRegisters::S0, (offset & 0xfff));
         } else {
-            ARMWord reg = getImm(offset, ARMRegisters::S0);
-            dtrb_ur(isLoad, srcDst, base, reg);
+            moveImm(offset, ARMRegisters::S0);
+            if (isSigned)
+                mem_reg_off(isLoad, true, 8, true, srcDst, base, ARMRegisters::S0);
+            else
+                dtrb_ur(isLoad, srcDst, base, ARMRegisters::S0);
         }
     } else {
-        offset = -offset;
-        if (offset <= 0xfff)
-            dtrb_d(isLoad, srcDst, base, offset);
-        else if (offset <= 0xfffff) {
-            sub_r(ARMRegisters::S0, base, OP2_IMM | (offset >> 12) | (10 << 8));
-            dtrb_d(isLoad, srcDst, ARMRegisters::S0, (offset & 0xfff));
+        if (offset >= -0xfff) {
+            if (isSigned)
+                mem_imm_off(isLoad, true, 8, false, srcDst, base, -offset);
+            else
+                dtrb_d(isLoad, srcDst, base, -offset);
+        } else if (offset >= -0xfffff) {
+            sub_r(ARMRegisters::S0, base, OP2_IMM | (-offset >> 12) | getOp2RotLSL(12));
+            if (isSigned)
+                mem_imm_off(isLoad, true, 8, false, srcDst, ARMRegisters::S0, (-offset & 0xfff));
+            else
+                dtrb_d(isLoad, srcDst, ARMRegisters::S0, (-offset & 0xfff));
+
         } else {
-            ARMWord reg = getImm(offset, ARMRegisters::S0);
-            dtrb_dr(isLoad, srcDst, base, reg);
+            moveImm(offset, ARMRegisters::S0);
+            if (isSigned)
+                mem_reg_off(isLoad, true, 8, true, srcDst, base, ARMRegisters::S0);
+            else
+                dtrb_ur(isLoad, srcDst, base, ARMRegisters::S0);
+                
         }
     }
 }
 
+// rather X86-like, implements dest <- [base, index * shift + offset]
 void ARMAssembler::baseIndexTransfer32(bool isLoad, RegisterID srcDst, RegisterID base, RegisterID index, int scale, int32_t offset)
 {
     ARMWord op2;
@@ -337,42 +448,158 @@ void ARMAssembler::baseIndexTransfer32(bool isLoad, RegisterID srcDst, RegisterI
     dtr_ur(isLoad, srcDst, base, ARMRegisters::S0);
 }
 
+void ARMAssembler::baseIndexTransferN(bool isLoad, bool isSigned, int size, RegisterID srcDst, RegisterID base, RegisterID index, int scale, int32_t offset)
+{
+    ARMWord op2;
+
+    ASSERT(scale >= 0 && scale <= 3);
+    op2 = lsl(index, scale);
+
+    if (offset >= -0xfff && offset <= 0xfff) {
+        add_r(ARMRegisters::S0, base, op2);
+        bool posOffset = true;
+        if (offset < 0) {
+            posOffset = false;
+            offset = -offset;
+        }
+        mem_imm_off(isLoad, isSigned, size, posOffset, srcDst, ARMRegisters::S0, offset);
+        return;
+    }
+    ldr_un_imm(ARMRegisters::S0, offset);
+    add_r(ARMRegisters::S0, ARMRegisters::S0, op2);
+    mem_reg_off(isLoad, isSigned, size, true, srcDst, base, ARMRegisters::S0);
+}
+
 void ARMAssembler::doubleTransfer(bool isLoad, FPRegisterID srcDst, RegisterID base, int32_t offset)
 {
-    if (offset & 0x3) {
-        if (offset <= 0x3ff && offset >= 0) {
-            fdtr_u(isLoad, srcDst, base, offset >> 2);
-            return;
-        }
-        if (offset <= 0x3ffff && offset >= 0) {
-            add_r(ARMRegisters::S0, base, OP2_IMM | (offset >> 10) | (11 << 8));
-            fdtr_u(isLoad, srcDst, ARMRegisters::S0, (offset >> 2) & 0xff);
-            return;
-        }
-        offset = -offset;
-
-        if (offset <= 0x3ff && offset >= 0) {
-            fdtr_d(isLoad, srcDst, base, offset >> 2);
-            return;
-        }
-        if (offset <= 0x3ffff && offset >= 0) {
-            sub_r(ARMRegisters::S0, base, OP2_IMM | (offset >> 10) | (11 << 8));
-            fdtr_d(isLoad, srcDst, ARMRegisters::S0, (offset >> 2) & 0xff);
-            return;
-        }
-        offset = -offset;
-    }
-
-    // TODO: This is broken in the case that offset is unaligned. VFP can never
-    // perform unaligned accesses, even from an unaligned register base. (NEON
-    // can, but VFP isn't NEON. It is not advisable to interleave a NEON load
-    // with VFP code, so the best solution here is probably to perform an
-    // unaligned integer load, then move the result into VFP using VMOV.)
+    // VFP cannot directly access memory that is not four-byte-aligned, so
+    // special-case support will be required for such cases. However, we don't
+    // currently use any unaligned floating-point memory accesses and probably
+    // never will, so for now just assert that the offset is aligned.
+    //
+    // Note that we cannot assert that the base register is aligned, but in
+    // that case, an alignment fault will be raised at run-time.
     ASSERT((offset & 0x3) == 0);
 
+    // Try to use a single load/store instruction, or at least a simple address
+    // calculation.
+    if (offset >= 0) {
+        if (offset <= 0x3ff) {
+            fmem_imm_off(isLoad, true, true, srcDst, base, offset >> 2);
+            return;
+        }
+        if (offset <= 0x3ffff) {
+            add_r(ARMRegisters::S0, base, OP2_IMM | (offset >> 10) | getOp2RotLSL(10));
+            fmem_imm_off(isLoad, true, true, srcDst, ARMRegisters::S0, (offset >> 2) & 0xff);
+            return;
+        }
+    } else {
+        if (offset >= -0x3ff) {
+            fmem_imm_off(isLoad, true, false, srcDst, base, -offset >> 2);
+            return;
+        }
+        if (offset >= -0x3ffff) {
+            sub_r(ARMRegisters::S0, base, OP2_IMM | (-offset >> 10) | getOp2RotLSL(10));
+            fmem_imm_off(isLoad, true, false, srcDst, ARMRegisters::S0, (-offset >> 2) & 0xff);
+            return;
+        }
+    }
+
+    // Slow case for long-range accesses.
     ldr_un_imm(ARMRegisters::S0, offset);
     add_r(ARMRegisters::S0, ARMRegisters::S0, base);
-    fdtr_u(isLoad, srcDst, ARMRegisters::S0, 0);
+    fmem_imm_off(isLoad, true, true, srcDst, ARMRegisters::S0, 0);
+}
+
+void ARMAssembler::doubleTransfer(bool isLoad, FPRegisterID srcDst, RegisterID base, int32_t offset, RegisterID index, int32_t scale)
+{
+    // This variant accesses memory at base+offset+(index*scale). VLDR and VSTR
+    // don't have such an addressing mode, so this access will require some
+    // arithmetic instructions.
+
+    // This method does not support accesses that are not four-byte-aligned.
+    ASSERT((offset & 0x3) == 0);
+
+    // Catch the trivial case, where scale is 0.
+    if (scale == 0) {
+        doubleTransfer(isLoad, srcDst, base, offset);
+        return;
+    }
+
+    // Calculate the address, excluding the non-scaled offset. This is
+    // efficient for scale factors that are powers of two.
+    ARMWord op2_index = getOp2RegScale(index, scale);
+    if (op2_index == INVALID_IMM) {
+        // Use MUL to calculate scale factors that are not powers of two.
+        moveImm(scale, ARMRegisters::S0);
+        mul_r(ARMRegisters::S0, index, ARMRegisters::S0);
+        op2_index = ARMRegisters::S0;
+    }
+
+    add_r(ARMRegisters::S0, base, op2_index);
+    doubleTransfer(isLoad, srcDst, ARMRegisters::S0, offset);
+}
+
+void ARMAssembler::floatTransfer(bool isLoad, FPRegisterID srcDst, RegisterID base, int32_t offset)
+{
+    // Assert that the access is aligned, as in doubleTransfer.
+    ASSERT((offset & 0x3) == 0);
+
+    // Try to use a single load/store instruction, or at least a simple address
+    // calculation.
+    if (offset >= 0) {
+        if (offset <= 0x3ff) {
+            fmem_imm_off(isLoad, false, true, srcDst, base, offset >> 2);
+            return;
+        }
+        if (offset <= 0x3ffff) {
+            add_r(ARMRegisters::S0, base, OP2_IMM | (offset >> 10) | getOp2RotLSL(10));
+            fmem_imm_off(isLoad, false, true, srcDst, ARMRegisters::S0, (offset >> 2) & 0xff);
+            return;
+        }
+    } else {
+        if (offset >= -0x3ff) {
+            fmem_imm_off(isLoad, false, false, srcDst, base, -offset >> 2);
+            return;
+        }
+        if (offset >= -0x3ffff) {
+            sub_r(ARMRegisters::S0, base, OP2_IMM | (-offset >> 10) | getOp2RotLSL(10));
+            fmem_imm_off(isLoad, false, false, srcDst, ARMRegisters::S0, (-offset >> 2) & 0xff);
+            return;
+        }
+    }
+
+    // Slow case for long-range accesses.
+    ldr_un_imm(ARMRegisters::S0, offset);
+    add_r(ARMRegisters::S0, ARMRegisters::S0, base);
+    fmem_imm_off(isLoad, false, true, srcDst, ARMRegisters::S0, 0);
+}
+
+void ARMAssembler::baseIndexFloatTransfer(bool isLoad, bool isDouble, FPRegisterID srcDst, RegisterID base, RegisterID index, int scale, int32_t offset)
+{
+    ARMWord op2;
+
+    ASSERT(scale >= 0 && scale <= 3);
+    op2 = lsl(index, scale);
+    // vldr/vstr have a more restricted range than your standard ldr.
+    // they get 8 bits that are implicitly shifted left by 2.
+    if (offset >= -(0xff<<2) && offset <= (0xff<<2)) {
+        add_r(ARMRegisters::S0, base, op2);
+        bool posOffset = true;
+        if (offset < 0) {
+            posOffset = false;
+            offset = -offset;
+        }
+        fmem_imm_off(isLoad, isDouble, posOffset, srcDst, ARMRegisters::S0, offset >> 2);
+        return;
+    }
+
+    ldr_un_imm(ARMRegisters::S0, offset);
+    // vldr/vstr do not allow register-indexed operations, so we get to do this *manually*.
+    add_r(ARMRegisters::S0, ARMRegisters::S0, op2);
+    add_r(ARMRegisters::S0, ARMRegisters::S0, base);
+
+    fmem_imm_off(isLoad, isDouble, true, srcDst, ARMRegisters::S0, 0);
 }
 
 // Fix up the offsets and literal-pool loads in buffer. The buffer should
@@ -386,6 +613,10 @@ inline void ARMAssembler::fixUpOffsets(void * buffer)
         ARMWord* ldrAddr = reinterpret_cast<ARMWord*>(data + pos);
         ARMWord* addr = getLdrImmAddress(ldrAddr);
         if (*addr != InvalidBranchTarget) {
+// The following is disabled for JM because we patch some branches after
+// calling fixUpOffset, and the branch patcher doesn't know how to handle 'B'
+// instructions.
+#if 0
             if (!(*iter & 1)) {
                 int diff = reinterpret_cast<ARMWord*>(data + *addr) - (ldrAddr + DefaultPrefetching);
 
@@ -394,20 +625,22 @@ inline void ARMAssembler::fixUpOffsets(void * buffer)
                     continue;
                 }
             }
+#endif
             *addr = reinterpret_cast<ARMWord>(data + *addr);
         }
     }
 }
 
-void* ARMAssembler::executableCopy(ExecutablePool* allocator)
+void* ARMAssembler::executableAllocAndCopy(ExecutableAllocator* allocator, ExecutablePool **poolp, CodeKind kind)
 {
     // 64-bit alignment is required for next constant pool and JIT code as well
     m_buffer.flushWithoutBarrier(true);
     if (m_buffer.uncheckedSize() & 0x7)
         bkpt(0);
 
-    void * data = m_buffer.executableCopy(allocator);
-    fixUpOffsets(data);
+    void * data = m_buffer.executableAllocAndCopy(allocator, poolp, kind);
+    if (data)
+        fixUpOffsets(data);
     return data;
 }
 
@@ -415,13 +648,11 @@ void* ARMAssembler::executableCopy(ExecutablePool* allocator)
 // offsets and literal pool loads as it goes. The buffer is assumed to be large
 // enough to hold the code, and any pre-existing literal pool is assumed to
 // have been flushed.
-void* ARMAssembler::executableCopy(void * buffer)
+void ARMAssembler::executableCopy(void * buffer)
 {
     ASSERT(m_buffer.sizeOfConstantPool() == 0);
-
     memcpy(buffer, m_buffer.data(), m_buffer.size());
     fixUpOffsets(buffer);
-    return buffer;
 }
 
 } // namespace JSC

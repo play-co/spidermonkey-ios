@@ -1,89 +1,174 @@
-/* -*- Mode: C; tab-width: 8; indent-tabs-mode: nil; c-basic-offset: 4 -*-
+/* -*- Mode: C++; tab-width: 8; indent-tabs-mode: nil; c-basic-offset: 4 -*-
  * vim: set ts=8 sw=4 et tw=79 ft=cpp:
  *
- * ***** BEGIN LICENSE BLOCK *****
- * Version: MPL 1.1/GPL 2.0/LGPL 2.1
- *
- * The contents of this file are subject to the Mozilla Public License Version
- * 1.1 (the "License"); you may not use this file except in compliance with
- * the License. You may obtain a copy of the License at
- * http://www.mozilla.org/MPL/
- *
- * Software distributed under the License is distributed on an "AS IS" basis,
- * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
- * for the specific language governing rights and limitations under the
- * License.
- *
- * The Original Code is SpiderMonkey JavaScript engine.
- *
- * The Initial Developer of the Original Code is
- * Mozilla Corporation.
- * Portions created by the Initial Developer are Copyright (C) 2009
- * the Initial Developer. All Rights Reserved.
- *
- * Contributor(s):
- *   Jason Orendorff <jorendorff@mozilla.com>
- *
- * Alternatively, the contents of this file may be used under the terms of
- * either the GNU General Public License Version 2 or later (the "GPL"), or
- * the GNU Lesser General Public License Version 2.1 or later (the "LGPL"),
- * in which case the provisions of the GPL or the LGPL are applicable instead
- * of those above. If you wish to allow use of your version of this file only
- * under the terms of either the GPL or the LGPL, and not to allow others to
- * use your version of this file under the terms of the MPL, indicate your
- * decision by deleting the provisions above and replace them with the notice
- * and other provisions required by the GPL or the LGPL. If you do not delete
- * the provisions above, a recipient may use your version of this file under
- * the terms of any one of the MPL, the GPL or the LGPL.
- *
- * ***** END LICENSE BLOCK ***** */
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 #ifndef jsscriptinlines_h___
 #define jsscriptinlines_h___
 
+#include "jsautooplen.h"
+#include "jscntxt.h"
 #include "jsfun.h"
 #include "jsopcode.h"
-#include "jsregexp.h"
 #include "jsscript.h"
+#include "jsscope.h"
+
+#include "vm/GlobalObject.h"
+#include "vm/RegExpObject.h"
+
+#include "jsscopeinlines.h"
+
+namespace js {
+
+inline
+Bindings::Bindings()
+    : callObjShape_(NULL), bindingArrayAndFlag_(TEMPORARY_STORAGE_BIT), numArgs_(0), numVars_(0)
+{}
+
+inline
+AliasedFormalIter::AliasedFormalIter(JSScript *script)
+  : begin_(script->bindings.bindingArray()),
+    p_(begin_),
+    end_(begin_ + (script->funHasAnyAliasedFormal ? script->bindings.numArgs() : 0)),
+    slot_(CallObject::RESERVED_SLOTS)
+{
+    settle();
+}
+
+extern void
+CurrentScriptFileLineOriginSlow(JSContext *cx, const char **file, unsigned *linenop, JSPrincipals **origin);
+
+inline void
+CurrentScriptFileLineOrigin(JSContext *cx, const char **file, unsigned *linenop, JSPrincipals **origin,
+                            LineOption opt = NOT_CALLED_FROM_JSOP_EVAL)
+{
+    if (opt == CALLED_FROM_JSOP_EVAL) {
+        AutoAssertNoGC nogc;
+        JS_ASSERT(JSOp(*cx->regs().pc) == JSOP_EVAL);
+        JS_ASSERT(*(cx->regs().pc + JSOP_EVAL_LENGTH) == JSOP_LINENO);
+        RawScript script = cx->fp()->script().get(nogc);
+        *file = script->filename;
+        *linenop = GET_UINT16(cx->regs().pc + JSOP_EVAL_LENGTH);
+        *origin = script->originPrincipals;
+        return;
+    }
+
+    CurrentScriptFileLineOriginSlow(cx, file, linenop, origin);
+}
+
+inline void
+ScriptCounts::destroy(FreeOp *fop)
+{
+    fop->free_(pcCountsVector);
+}
+
+inline void
+MarkScriptFilename(JSRuntime *rt, const char *filename)
+{
+    /*
+     * As an invariant, a ScriptFilenameEntry should not be 'marked' outside of
+     * a GC. Since SweepScriptFilenames is only called during a full gc,
+     * to preserve this invariant, only mark during a full gc.
+     */
+    if (rt->gcIsFull)
+        ScriptFilenameEntry::fromFilename(filename)->marked = true;
+}
+
+} // namespace js
+
+inline void
+JSScript::setFunction(JSFunction *fun)
+{
+    function_ = fun;
+}
 
 inline JSFunction *
 JSScript::getFunction(size_t index)
 {
     JSObject *funobj = getObject(index);
-    JS_ASSERT(funobj->isFunction());
-    JS_ASSERT(funobj == (JSObject *) funobj->getPrivate());
-    JSFunction *fun = (JSFunction *) funobj;
-    JS_ASSERT(FUN_INTERPRETED(fun));
-    return fun;
+    JS_ASSERT(funobj->isFunction() && funobj->toFunction()->isInterpreted());
+    return funobj->toFunction();
 }
 
-inline JSObject *
+inline JSFunction *
+JSScript::getCallerFunction()
+{
+    JS_ASSERT(savedCallerFun);
+    return getFunction(0);
+}
+
+inline js::RegExpObject *
 JSScript::getRegExp(size_t index)
 {
-    JSObjectArray *arr = regexps();
-    JS_ASSERT((uint32) index < arr->length);
+    js::ObjectArray *arr = regexps();
+    JS_ASSERT(uint32_t(index) < arr->length);
     JSObject *obj = arr->vector[index];
-    JS_ASSERT(obj->getClass() == &js_RegExpClass);
-    return obj;
+    JS_ASSERT(obj->isRegExp());
+    return (js::RegExpObject *) obj;
 }
 
 inline bool
 JSScript::isEmpty() const
 {
-    if (this == emptyScript())
+    if (length > 3)
+        return false;
+
+    jsbytecode *pc = code;
+    if (noScriptRval && JSOp(*pc) == JSOP_FALSE)
+        ++pc;
+    return JSOp(*pc) == JSOP_STOP;
+}
+
+inline js::GlobalObject &
+JSScript::global() const
+{
+    /*
+     * A JSScript always marks its compartment's global (via bindings) so we
+     * can assert that maybeGlobal is non-null here.
+     */
+    return *compartment()->maybeGlobal();
+}
+
+#ifdef JS_METHODJIT
+inline bool
+JSScript::ensureHasMJITInfo(JSContext *cx)
+{
+    if (mJITInfo)
         return true;
+    mJITInfo = cx->new_<JITScriptSet>();
+    return mJITInfo != NULL;
+}
 
-    if (length <= 3) {
-        jsbytecode *pc = code;
+inline void
+JSScript::destroyMJITInfo(js::FreeOp *fop)
+{
+    fop->delete_(mJITInfo);
+    mJITInfo = NULL;
+}
+#endif /* JS_METHODJIT */
 
-        if (JSOp(*pc) == JSOP_TRACE)
-            ++pc;
-        if (noScriptRval && JSOp(*pc) == JSOP_FALSE)
-            ++pc;
-        if (JSOp(*pc) == JSOP_STOP)
-            return true;
+inline void
+JSScript::writeBarrierPre(JSScript *script)
+{
+#ifdef JSGC_INCREMENTAL
+    if (!script)
+        return;
+
+    JSCompartment *comp = script->compartment();
+    if (comp->needsBarrier()) {
+        JS_ASSERT(!comp->rt->isHeapBusy());
+        JSScript *tmp = script;
+        MarkScriptUnbarriered(comp->barrierTracer(), &tmp, "write barrier");
+        JS_ASSERT(tmp == script);
     }
-    return false;
+#endif
+}
+
+inline void
+JSScript::writeBarrierPost(JSScript *script, void *addr)
+{
 }
 
 #endif /* jsscriptinlines_h___ */

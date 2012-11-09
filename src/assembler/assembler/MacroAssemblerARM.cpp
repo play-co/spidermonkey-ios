@@ -1,4 +1,7 @@
-/*
+/* -*- Mode: C++; tab-width: 8; indent-tabs-mode: nil; c-basic-offset: 4 -*-
+ * vim: set ts=8 sw=4 et tw=79:
+ *
+ * ***** BEGIN LICENSE BLOCK *****
  * Copyright (C) 2009 University of Szeged
  * All rights reserved.
  *
@@ -22,7 +25,8 @@
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- */
+ * 
+ * ***** END LICENSE BLOCK ***** */
 
 #include "assembler/wtf/Platform.h"
 
@@ -30,7 +34,7 @@
 
 #include "MacroAssemblerARM.h"
 
-#if WTF_PLATFORM_LINUX || WTF_PLATFORM_ANDROID
+#if WTF_OS_LINUX || WTF_OS_ANDROID
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
@@ -52,7 +56,7 @@ namespace JSC {
 
 static bool isVFPPresent()
 {
-#if WTF_PLATFORM_LINUX
+#if WTF_OS_LINUX
     int fd = open("/proc/self/auxv", O_RDONLY);
     if (fd > 0) {
         Elf32_auxv_t aux;
@@ -64,6 +68,22 @@ static bool isVFPPresent()
         }
         close(fd);
     }
+#endif
+
+#if defined(__GNUC__) && defined(__VFP_FP__)
+    return true;
+#endif
+
+#ifdef WTF_OS_ANDROID
+    FILE *fp = fopen("/proc/cpuinfo", "r");
+    if (!fp)
+        return false;
+
+    char buf[1024];
+    fread(buf, sizeof(char), sizeof(buf), fp);
+    fclose(fp);
+    if (strstr(buf, "vfp"))
+        return true;
 #endif
 
     return false;

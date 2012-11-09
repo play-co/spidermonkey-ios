@@ -1,10 +1,13 @@
 #!/bin/sh
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 prefix='/usr/local'
 mozilla_version=''
 LIBRARY_NAME='mozjs'
 NSPR_CFLAGS=''
-JS_CONFIG_LIBS=' -dynamiclib -install_name @executable_path/libmozjs.dylib -compatibility_version 1 -current_version 1 -single_module  -lm '
+JS_CONFIG_LIBS='  -lm -lz'
 MOZ_JS_LIBS='-L/usr/local/lib -lmozjs'
 
 usage()
@@ -108,4 +111,4 @@ fi
 
 if test "$echo_libs" = "yes"; then
     echo "$MOZ_JS_LIBS $JS_CONFIG_LIBS"
-fi      
+fi

@@ -1,53 +1,20 @@
 /* -*- Mode: C++; tab-width: 8; indent-tabs-mode: nil; c-basic-offset: 4 -*- */
-/* ***** BEGIN LICENSE BLOCK *****
- * Version: MPL 1.1/GPL 2.0/LGPL 2.1
- *
- * The contents of this file are subject to the Mozilla Public License Version
- * 1.1 (the "License"); you may not use this file except in compliance with
- * the License. You may obtain a copy of the License at
- * http://www.mozilla.org/MPL/
- *
- * Software distributed under the License is distributed on an "AS IS" basis,
- * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
- * for the specific language governing rights and limitations under the
- * License.
- *
- * The Original Code is Mozilla JavaScript code.
- *
- * The Initial Developer of the Original Code is
- * Netscape Communications Corporation.
- * Portions created by the Initial Developer are Copyright (C) 1999-2001
- * the Initial Developer. All Rights Reserved.
- *
- * Contributor(s):
- *   Brendan Eich <brendan@mozilla.org> (Original Author)
- *   Chris Waterson <waterson@netscape.com>
- *   L. David Baron <dbaron@dbaron.org>, Mozilla Corporation
- *
- * Alternatively, the contents of this file may be used under the terms of
- * either of the GNU General Public License Version 2 or later (the "GPL"),
- * or the GNU Lesser General Public License Version 2.1 or later (the "LGPL"),
- * in which case the provisions of the GPL or the LGPL are applicable instead
- * of those above. If you wish to allow use of your version of this file only
- * under the terms of either the GPL or the LGPL, and not to allow others to
- * use your version of this file under the terms of the MPL, indicate your
- * decision by deleting the provisions above and replace them with the notice
- * and other provisions required by the GPL or the LGPL. If you do not delete
- * the provisions above, a recipient may use your version of this file under
- * the terms of any one of the MPL, the GPL or the LGPL.
- *
- * ***** END LICENSE BLOCK ***** */
+/* This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 /*
  * Double hashing implementation.
+ *
+ * Try to keep this file in sync with xpcom/glue/pldhash.cpp.
  */
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "jsstdint.h"
-#include "jsbit.h"
 #include "jsdhash.h"
-#include "jsutil.h"     /* for JS_ASSERT */
+#include "jsutil.h"
+
+using namespace js;
 
 #ifdef JS_DHASHMETER
 # if defined MOZILLA_CLIENT && defined DEBUG_XXXbrendan
@@ -69,9 +36,9 @@
 #ifdef DEBUG
 
 #define JSDHASH_ONELINE_ASSERT JS_ASSERT
-#define RECURSION_LEVEL(table_) (*(uint32*)(table_->entryStore + \
-                                            JS_DHASH_TABLE_SIZE(table_) * \
-                                            table_->entrySize))
+#define RECURSION_LEVEL(table_) (*(uint32_t*)(table_->entryStore +            \
+                                              JS_DHASH_TABLE_SIZE(table_) *   \
+                                              table_->entrySize))
 /*
  * Most callers that assert about the recursion level don't care about
  * this magical value because they are asserting that mutation is
@@ -80,13 +47,13 @@
  *
  * Only PL_DHashTableFinish needs to allow this special value.
  */
-#define IMMUTABLE_RECURSION_LEVEL ((uint32)-1)
+#define IMMUTABLE_RECURSION_LEVEL UINT32_MAX
 
 #define RECURSION_LEVEL_SAFE_TO_FINISH(table_)                                \
     (RECURSION_LEVEL(table_) == 0 ||                                          \
      RECURSION_LEVEL(table_) == IMMUTABLE_RECURSION_LEVEL)
 
-#define ENTRY_STORE_EXTRA                   sizeof(uint32)
+#define ENTRY_STORE_EXTRA                   sizeof(uint32_t)
 #define INCREMENT_RECURSION_LEVEL(table_)                                     \
     JS_BEGIN_MACRO                                                            \
         if (RECURSION_LEVEL(table_) != IMMUTABLE_RECURSION_LEVEL)             \
@@ -95,7 +62,7 @@
 #define DECREMENT_RECURSION_LEVEL(table_)                                     \
     JS_BEGIN_MACRO                                                            \
         if (RECURSION_LEVEL(table_) != IMMUTABLE_RECURSION_LEVEL) {           \
-            JSDHASH_ONELINE_ASSERT(RECURSION_LEVEL(table_) > 0);              \
+            JS_ASSERT(RECURSION_LEVEL(table_) > 0);                           \
             --RECURSION_LEVEL(table_);                                        \
         }                                                                     \
     JS_END_MACRO
@@ -109,7 +76,7 @@
 #endif /* defined(DEBUG) */
 
 JS_PUBLIC_API(void *)
-JS_DHashAllocTable(JSDHashTable *table, uint32 nbytes)
+JS_DHashAllocTable(JSDHashTable *table, uint32_t nbytes)
 {
     return js_malloc(nbytes);
 }
@@ -166,7 +133,7 @@ JS_DHashMoveEntryStub(JSDHashTable *table,
                       const JSDHashEntryHdr *from,
                       JSDHashEntryHdr *to)
 {
-    memcpy(to, from, table->entrySize);
+    js_memcpy(to, from, table->entrySize);
 }
 
 JS_PUBLIC_API(void)
@@ -207,12 +174,10 @@ JS_DHashGetStubOps(void)
 }
 
 JS_PUBLIC_API(JSDHashTable *)
-JS_NewDHashTable(const JSDHashTableOps *ops, void *data, uint32 entrySize,
-                 uint32 capacity)
+JS_NewDHashTable(const JSDHashTableOps *ops, void *data, uint32_t entrySize,
+                 uint32_t capacity)
 {
-    JSDHashTable *table;
-
-    table = (JSDHashTable *) js_malloc(sizeof *table);
+    JSDHashTable *table = js_pod_malloc<JSDHashTable>();
     if (!table)
         return NULL;
     if (!JS_DHashTableInit(table, ops, data, entrySize, capacity)) {
@@ -231,10 +196,10 @@ JS_DHashTableDestroy(JSDHashTable *table)
 
 JS_PUBLIC_API(JSBool)
 JS_DHashTableInit(JSDHashTable *table, const JSDHashTableOps *ops, void *data,
-                  uint32 entrySize, uint32 capacity)
+                  uint32_t entrySize, uint32_t capacity)
 {
     int log2;
-    uint32 nbytes;
+    uint32_t nbytes;
 
 #ifdef DEBUG
     if (entrySize > 10 * sizeof(void *)) {
@@ -258,8 +223,8 @@ JS_DHashTableInit(JSDHashTable *table, const JSDHashTableOps *ops, void *data,
     if (capacity >= JS_DHASH_SIZE_LIMIT)
         return JS_FALSE;
     table->hashShift = JS_DHASH_BITS - log2;
-    table->maxAlphaFrac = (uint8)(0x100 * JS_DHASH_DEFAULT_MAX_ALPHA);
-    table->minAlphaFrac = (uint8)(0x100 * JS_DHASH_DEFAULT_MIN_ALPHA);
+    table->maxAlphaFrac = (uint8_t)(0x100 * JS_DHASH_DEFAULT_MAX_ALPHA);
+    table->minAlphaFrac = (uint8_t)(0x100 * JS_DHASH_DEFAULT_MIN_ALPHA);
     table->entrySize = entrySize;
     table->entryCount = table->removedCount = 0;
     table->generation = 0;
@@ -290,7 +255,7 @@ JS_DHashTableSetAlphaBounds(JSDHashTable *table,
                             float maxAlpha,
                             float minAlpha)
 {
-    uint32 size;
+    uint32_t size;
 
     /*
      * Reject obviously insane bounds, rather than trying to guess what the
@@ -308,7 +273,7 @@ JS_DHashTableSetAlphaBounds(JSDHashTable *table,
     JS_ASSERT(JS_DHASH_MIN_SIZE - (maxAlpha * JS_DHASH_MIN_SIZE) >= 1);
     if (JS_DHASH_MIN_SIZE - (maxAlpha * JS_DHASH_MIN_SIZE) < 1) {
         maxAlpha = (float)
-                   (JS_DHASH_MIN_SIZE - JS_MAX(JS_DHASH_MIN_SIZE / 256, 1))
+                   (JS_DHASH_MIN_SIZE - Max(JS_DHASH_MIN_SIZE / 256, 1))
                    / JS_DHASH_MIN_SIZE;
     }
 
@@ -320,11 +285,11 @@ JS_DHashTableSetAlphaBounds(JSDHashTable *table,
     JS_ASSERT(minAlpha < maxAlpha / 2);
     if (minAlpha >= maxAlpha / 2) {
         size = JS_DHASH_TABLE_SIZE(table);
-        minAlpha = (size * maxAlpha - JS_MAX(size / 256, 1)) / (2 * size);
+        minAlpha = (size * maxAlpha - Max(size / 256, 1U)) / (2 * size);
     }
 
-    table->maxAlphaFrac = (uint8)(maxAlpha * 256);
-    table->minAlphaFrac = (uint8)(minAlpha * 256);
+    table->maxAlphaFrac = (uint8_t)(maxAlpha * 256);
+    table->minAlphaFrac = (uint8_t)(minAlpha * 256);
 }
 
 /*
@@ -365,7 +330,7 @@ JS_PUBLIC_API(void)
 JS_DHashTableFinish(JSDHashTable *table)
 {
     char *entryAddr, *entryLimit;
-    uint32 entrySize;
+    uint32_t entrySize;
     JSDHashEntryHdr *entry;
 
 #ifdef DEBUG_XXXbrendan
@@ -413,7 +378,7 @@ SearchTable(JSDHashTable *table, const void *key, JSDHashNumber keyHash,
     int hashShift, sizeLog2;
     JSDHashEntryHdr *entry, *firstRemoved;
     JSDHashMatchEntry matchEntry;
-    uint32 sizeMask;
+    uint32_t sizeMask;
 
     METER(table->stats.searches++);
     JS_ASSERT(!(keyHash & COLLISION_FLAG));
@@ -490,7 +455,7 @@ FindFreeEntry(JSDHashTable *table, JSDHashNumber keyHash)
     JSDHashNumber hash1, hash2;
     int hashShift, sizeLog2;
     JSDHashEntryHdr *entry;
-    uint32 sizeMask;
+    uint32_t sizeMask;
 
     METER(table->stats.searches++);
     JS_ASSERT(!(keyHash & COLLISION_FLAG));
@@ -534,13 +499,13 @@ static JSBool
 ChangeTable(JSDHashTable *table, int deltaLog2)
 {
     int oldLog2, newLog2;
-    uint32 oldCapacity, newCapacity;
+    uint32_t oldCapacity, newCapacity;
     char *newEntryStore, *oldEntryStore, *oldEntryAddr;
-    uint32 entrySize, i, nbytes;
+    uint32_t entrySize, i, nbytes;
     JSDHashEntryHdr *oldEntry, *newEntry;
     JSDHashMoveEntry moveEntry;
 #ifdef DEBUG
-    uint32 recursionLevel;
+    uint32_t recursionLevel;
 #endif
 
     /* Look, but don't touch, until we succeed in getting new entry store. */
@@ -597,7 +562,7 @@ JS_DHashTableOperate(JSDHashTable *table, const void *key, JSDHashOperator op)
 {
     JSDHashNumber keyHash;
     JSDHashEntryHdr *entry;
-    uint32 size;
+    uint32_t size;
     int deltaLog2;
 
     JS_ASSERT(op == JS_DHASH_LOOKUP || RECURSION_LEVEL(table) == 0);
@@ -720,11 +685,11 @@ JS_DHashTableRawRemove(JSDHashTable *table, JSDHashEntryHdr *entry)
     table->entryCount--;
 }
 
-JS_PUBLIC_API(uint32)
+JS_PUBLIC_API(uint32_t)
 JS_DHashTableEnumerate(JSDHashTable *table, JSDHashEnumerator etor, void *arg)
 {
     char *entryAddr, *entryLimit;
-    uint32 i, capacity, entrySize, ceiling;
+    uint32_t i, capacity, entrySize, ceiling;
     JSBool didRemove;
     JSDHashEntryHdr *entry;
     JSDHashOperator op;
@@ -782,6 +747,51 @@ JS_DHashTableEnumerate(JSDHashTable *table, JSDHashEnumerator etor, void *arg)
     return i;
 }
 
+struct SizeOfEntryExcludingThisArg
+{
+    size_t total;
+    JSDHashSizeOfEntryExcludingThisFun sizeOfEntryExcludingThis;
+    JSMallocSizeOfFun mallocSizeOf;
+    void *arg;      // the arg passed by the user
+};
+
+static JSDHashOperator
+SizeOfEntryExcludingThisEnumerator(JSDHashTable *table, JSDHashEntryHdr *hdr,
+                                   uint32_t number, void *arg)
+{
+    SizeOfEntryExcludingThisArg *e = (SizeOfEntryExcludingThisArg *)arg;
+    e->total += e->sizeOfEntryExcludingThis(hdr, e->mallocSizeOf, e->arg);
+    return JS_DHASH_NEXT;
+}
+
+extern JS_PUBLIC_API(size_t)
+JS_DHashTableSizeOfExcludingThis(const JSDHashTable *table,
+                                 JSDHashSizeOfEntryExcludingThisFun sizeOfEntryExcludingThis,
+                                 JSMallocSizeOfFun mallocSizeOf,
+                                 void *arg /* = NULL */)
+{
+    size_t n = 0;
+    n += mallocSizeOf(table->entryStore);
+    if (sizeOfEntryExcludingThis) {
+        SizeOfEntryExcludingThisArg arg2 = { 0, sizeOfEntryExcludingThis, mallocSizeOf, arg };
+        JS_DHashTableEnumerate(const_cast<JSDHashTable *>(table),
+                               SizeOfEntryExcludingThisEnumerator, &arg2);
+        n += arg2.total;
+    }
+    return n;
+}
+
+extern JS_PUBLIC_API(size_t)
+JS_DHashTableSizeOfIncludingThis(const JSDHashTable *table,
+                                 JSDHashSizeOfEntryExcludingThisFun sizeOfEntryExcludingThis,
+                                 JSMallocSizeOfFun mallocSizeOf,
+                                 void *arg /* = NULL */)
+{
+    return mallocSizeOf(table) +
+           JS_DHashTableSizeOfExcludingThis(table, sizeOfEntryExcludingThis,
+                                            mallocSizeOf, arg);
+}
+
 #ifdef DEBUG
 JS_PUBLIC_API(void)
 JS_DHashMarkTableImmutable(JSDHashTable *table)
@@ -797,9 +807,9 @@ JS_PUBLIC_API(void)
 JS_DHashTableDumpMeter(JSDHashTable *table, JSDHashEnumerator dump, FILE *fp)
 {
     char *entryAddr;
-    uint32 entrySize, entryCount;
+    uint32_t entrySize, entryCount;
     int hashShift, sizeLog2;
-    uint32 i, tableSize, sizeMask, chainLen, maxChainLen, chainCount;
+    uint32_t i, tableSize, sizeMask, chainLen, maxChainLen, chainCount;
     JSDHashNumber hash1, hash2, saveHash1, maxChainHash1, maxChainHash2;
     double sqsum, mean, variance, sigma;
     JSDHashEntryHdr *entry, *probe;

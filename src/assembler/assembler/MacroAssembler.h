@@ -1,4 +1,7 @@
-/*
+/* -*- Mode: C++; tab-width: 8; indent-tabs-mode: nil; c-basic-offset: 4 -*-
+ * vim: set ts=8 sw=4 et tw=79:
+ *
+ * ***** BEGIN LICENSE BLOCK *****
  * Copyright (C) 2008 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -21,7 +24,8 @@
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
- */
+ * 
+ * ***** END LICENSE BLOCK ***** */
 
 #ifndef MacroAssembler_h
 #define MacroAssembler_h
@@ -49,6 +53,10 @@ namespace JSC { typedef MacroAssemblerX86 MacroAssemblerBase; }
 #elif WTF_CPU_X86_64
 #include "MacroAssemblerX86_64.h"
 namespace JSC { typedef MacroAssemblerX86_64 MacroAssemblerBase; }
+
+#elif WTF_CPU_SPARC
+#include "MacroAssemblerSparc.h"
+namespace JSC { typedef MacroAssemblerSparc MacroAssemblerBase; }
 
 #else
 #error "The MacroAssembler is not supported on this platform."
@@ -87,12 +95,12 @@ public:
         storePtr(src, Address(stackPointerRegister, (index * sizeof(void*))));
     }
 
-    void poke(Imm32 value, int index = 0)
+    void poke(TrustedImm32 value, int index = 0)
     {
         store32(value, Address(stackPointerRegister, (index * sizeof(void*))));
     }
 
-    void poke(ImmPtr imm, int index = 0)
+    void poke(TrustedImmPtr imm, int index = 0)
     {
         storePtr(imm, Address(stackPointerRegister, (index * sizeof(void*))));
     }
@@ -109,7 +117,7 @@ public:
         branch32(cond, op1, op2).linkTo(target, this);
     }
 
-    void branch32(Condition cond, RegisterID op1, Imm32 imm, Label target)
+    void branch32(Condition cond, RegisterID op1, TrustedImm32 imm, Label target)
     {
         branch32(cond, op1, imm).linkTo(target, this);
     }
@@ -169,11 +177,6 @@ public:
         and32(src, dest);
     }
 
-    void andPtr(Address address, RegisterID srcDest)
-    {
-        and32(address, srcDest);
-    }
-
     void andPtr(Imm32 imm, RegisterID srcDest)
     {
         and32(imm, srcDest);
@@ -182,6 +185,11 @@ public:
     void andPtr(ImmPtr ptr, RegisterID srcDest)
     {
         and32(Imm32(ptr), srcDest);
+    }
+
+    void negPtr(RegisterID srcDest)
+    {
+        neg32(srcDest);
     }
 
     void notPtr(RegisterID srcDest)
@@ -202,11 +210,6 @@ public:
     void orPtr(Imm32 imm, RegisterID dest)
     {
         or32(imm, dest);
-    }
-
-    void orPtr(Address address, RegisterID srcDest)
-    {
-        or32(address, srcDest);
     }
 
     void subPtr(RegisterID src, RegisterID dest)
@@ -270,27 +273,22 @@ public:
         store32(src, address);
     }
 
-    void storePtr(RegisterID src, BaseIndex address)
-    {
-        store32(src, address);
-    }
-
     void storePtr(RegisterID src, void* address)
     {
         store32(src, address);
     }
 
-    void storePtr(ImmPtr imm, ImplicitAddress address)
+    void storePtr(TrustedImmPtr imm, ImplicitAddress address)
     {
         store32(Imm32(imm), address);
     }
 
-    void storePtr(ImmPtr imm, BaseIndex address)
+    void storePtr(TrustedImmPtr imm, BaseIndex address)
     {
         store32(Imm32(imm), address);
     }
 
-    void storePtr(ImmPtr imm, void* address)
+    void storePtr(TrustedImmPtr imm, void* address)
     {
         store32(Imm32(imm), address);
     }
@@ -336,7 +334,7 @@ public:
         return branch32(cond, left, Imm32(right));
     }
 
-    Jump branchPtr(Condition cond, AbsoluteAddress left, ImmPtr right)
+    Jump branchPtr(Condition cond, AbsoluteAddress left, ImmPtr right, RegisterID scratch)
     {
         return branch32(cond, left, Imm32(right));
     }

@@ -1,41 +1,8 @@
 /* -*- Mode: C; tab-width: 8; indent-tabs-mode: nil; c-basic-offset: 4 -*-
  *
- * ***** BEGIN LICENSE BLOCK *****
- * Version: MPL 1.1/GPL 2.0/LGPL 2.1
- *
- * The contents of this file are subject to the Mozilla Public License Version
- * 1.1 (the "License"); you may not use this file except in compliance with
- * the License. You may obtain a copy of the License at
- * http://www.mozilla.org/MPL/
- *
- * Software distributed under the License is distributed on an "AS IS" basis,
- * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
- * for the specific language governing rights and limitations under the
- * License.
- *
- * The Original Code is Mozilla Communicator client code, released
- * March 31, 1998.
- *
- * The Initial Developer of the Original Code is
- * Netscape Communications Corporation.
- * Portions created by the Initial Developer are Copyright (C) 1998
- * the Initial Developer. All Rights Reserved.
- *
- * Contributor(s):
- *
- * Alternatively, the contents of this file may be used under the terms of
- * either of the GNU General Public License Version 2 or later (the "GPL"),
- * or the GNU Lesser General Public License Version 2.1 or later (the "LGPL"),
- * in which case the provisions of the GPL or the LGPL are applicable instead
- * of those above. If you wish to allow use of your version of this file only
- * under the terms of either the GPL or the LGPL, and not to allow others to
- * use your version of this file under the terms of the MPL, indicate your
- * decision by deleting the provisions above and replace them with the notice
- * and other provisions required by the GPL or the LGPL. If you do not delete
- * the provisions above, a recipient may use your version of this file under
- * the terms of any one of the MPL, the GPL or the LGPL.
- *
- * ***** END LICENSE BLOCK ***** */
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 #ifndef jsdtoa_h___
 #define jsdtoa_h___
@@ -43,10 +10,6 @@
  * Public interface to portable double-precision floating point to string
  * and back conversion package.
  */
-
-#include "jscompat.h"
-
-JS_BEGIN_EXTERN_C
 
 struct DtoaState;
 
@@ -103,9 +66,18 @@ typedef enum JSDToStrMode {
 #define DTOSTR_VARIABLE_BUFFER_SIZE(precision) ((precision)+24 > DTOSTR_STANDARD_BUFFER_SIZE ? (precision)+24 : DTOSTR_STANDARD_BUFFER_SIZE)
 
 /*
- * Convert dval according to the given mode and return a pointer to the resulting ASCII string.
- * The result is held somewhere in buffer, but not necessarily at the beginning.  The size of
- * buffer is given in bufferSize, and must be at least as large as given by the above macros.
+ * DO NOT USE THIS FUNCTION IF YOU CAN AVOID IT.  js::NumberToCString() is a
+ * better function to use.
+ *
+ * Convert dval according to the given mode and return a pointer to the
+ * resulting ASCII string.  If mode == DTOSTR_STANDARD and precision == 0 it's
+ * equivalent to ToString() as specified by ECMA-262-5 section 9.8.1, but it
+ * doesn't handle integers specially so should be avoided in that case (that's
+ * why js::NumberToCString() is better).
+ *
+ * The result is held somewhere in buffer, but not necessarily at the
+ * beginning.  The size of buffer is given in bufferSize, and must be at least
+ * as large as given by the above macros.
  *
  * Return NULL if out of memory.
  */
@@ -114,19 +86,24 @@ js_dtostr(DtoaState *state, char *buffer, size_t bufferSize, JSDToStrMode mode, 
           double dval);
 
 /*
- * Convert d to a string in the given base.  The integral part of d will be printed exactly
- * in that base, regardless of how large it is, because there is no exponential notation for non-base-ten
- * numbers.  The fractional part will be rounded to as few digits as possible while still preserving
- * the round-trip property (analogous to that of printing decimal numbers).  In other words, if one were
- * to read the resulting string in via a hypothetical base-number-reading routine that rounds to the nearest
- * IEEE double (and to an even significand if there are two equally near doubles), then the result would
- * equal d (except for -0.0, which converts to "0", and NaN, which is not equal to itself).
+ * DO NOT USE THIS FUNCTION IF YOU CAN AVOID IT.  js::NumberToCString() is a
+ * better function to use.
  *
- * Return NULL if out of memory.  If the result is not NULL, it must be released via free().
+ * Convert d to a string in the given base.  The integral part of d will be
+ * printed exactly in that base, regardless of how large it is, because there
+ * is no exponential notation for non-base-ten numbers.  The fractional part
+ * will be rounded to as few digits as possible while still preserving the
+ * round-trip property (analogous to that of printing decimal numbers).  In
+ * other words, if one were to read the resulting string in via a hypothetical
+ * base-number-reading routine that rounds to the nearest IEEE double (and to
+ * an even significand if there are two equally near doubles), then the result
+ * would equal d (except for -0.0, which converts to "0", and NaN, which is
+ * not equal to itself).
+ *
+ * Return NULL if out of memory.  If the result is not NULL, it must be
+ * released via js_free().
  */
 char *
 js_dtobasestr(DtoaState *state, int base, double d);
-
-JS_END_EXTERN_C
 
 #endif /* jsdtoa_h___ */

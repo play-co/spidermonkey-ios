@@ -1,4 +1,7 @@
-/*
+/* -*- Mode: C++; tab-width: 8; indent-tabs-mode: nil; c-basic-offset: 4 -*-
+ * vim: set ts=8 sw=4 et tw=79:
+ *
+ * ***** BEGIN LICENSE BLOCK *****
  * Copyright (C) 2009 Apple Inc. All rights reserved.
  * Copyright (C) 2010 University of Szeged
  *
@@ -22,7 +25,8 @@
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
- */
+ * 
+ * ***** END LICENSE BLOCK ***** */
 
 #ifndef ARMAssembler_h
 #define ARMAssembler_h
@@ -451,6 +455,10 @@ public:
         JmpSrc()
             : m_offset(-1)
         {
+        }
+
+        bool isSet() const {
+            return m_offset != -1;
         }
 
     private:
@@ -1554,9 +1562,9 @@ public:
         return m_formatter.size();
     }
 
-    void* executableCopy(ExecutablePool* allocator)
+    void* executableAllocAndCopy(ExecutableAllocator* allocator, ExecutablePool** poolp, CodeKind kind)
     {
-        void* copy = m_formatter.executableCopy(allocator);
+        void* copy = m_formatter.executableAllocAndCopy(allocator, poolp, kind);
 
         unsigned jumpCount = m_jumpsToLink.size();
         for (unsigned i = 0; i < jumpCount; ++i) {
@@ -1623,6 +1631,11 @@ public:
         linkJumpAbsolute(reinterpret_cast<uint16_t*>(from), to);
 
         ExecutableAllocator::cacheFlush(reinterpret_cast<uint16_t*>(from) - 5, 5 * sizeof(uint16_t));
+    }
+
+    static bool canRelinkJump(void* from, void* to)
+    {
+        return true;
     }
     
     static void relinkCall(void* from, void* to)
@@ -1900,7 +1913,10 @@ private:
         size_t size() const { return m_buffer.size(); }
         bool isAligned(int alignment) const { return m_buffer.isAligned(alignment); }
         void* data() const { return m_buffer.data(); }
-        void* executableCopy(ExecutablePool* allocator) { return m_buffer.executableCopy(allocator); }
+        void* executableAllocAndCopy(ExecutableAllocator* allocator, ExecutablePool** poolp, CodeKind kind) {
+            return m_buffer.executableAllocAndCopy(allocator, poolp, kind);
+        }
+        bool oom() const { return m_buffer.oom(); }
 
     private:
         AssemblerBuffer m_buffer;

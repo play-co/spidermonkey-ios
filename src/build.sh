@@ -1,163 +1,51 @@
 #!/bin/sh
 
-# Shell script for compiling SpiderMonkey for iPhone
-#
-# 1) Install autoconf 2.13 if you don't have it. You can install it with
-#    port install autoconf213, or manually like so:
-#    curl -O http://ftp.gnu.org/gnu/autoconf/autoconf-2.13.tar.gz
-#    tar xzf autoconf-2.13.tar.gz
-#    cd autoconf-2.13
-#    ./configure --program-suffix=213 --prefix=/Users/nathano/.local
-#    make install
-#
-#    Or you can use brew.  Start with "brew search autoconf" and then
-#    probably "brew tap homebrew/versions" and
-#    "brew install homebrew/versions/autoconf213" unless it has moved.
-#
-# 2) Get the SpiderMonkey source:
-#    hg clone http://hg.mozilla.org/mozilla-central/
-#
-#    Or you can grab just the release we support:
-#    http://hg.mozilla.org/mozilla-central/file/c64d97a1ebd7
-#
-# 3) Dump the files from this gist into mozilla-central/js/src
-#
-#    Or you can dump them under mozilla-central and run "patch -p1 < js.src.patch"
-#
-# 4) Run "./build.sh" from the ./js/src path.
+## this script is supposed to be run one directory below the original configure script
+## usually in build-ios
 
+MIN_IOS_VERSION=4.3
+IOS_SDK=6.0
 
+LIPO="xcrun -sdk iphoneos lipo"
+STRIP="xcrun -sdk iphoneos strip"
 
-# Set CFlags below:
-export CAT_CFLAGS="-O3"
+make clean
 
-export CAT_SIMULATOR_CFLAGS="$CAT_CFLAGS"
-export CAT_NATIVE_CFLAGS="$CAT_CFLAGS"
-#export CAT_NATIVE_CFLAGS="$CAT_CFLAGS -ggdb -gdwarf-2"
+echo "------------------------------------------------------------------------"
+echo "Creating arm version..."
+echo "------------------------------------------------------------------------"
 
+# create ios version (armv7)
+./configure --with-ios-target=iPhoneOS --with-ios-version=$IOS_SDK --with-ios-min-version=$MIN_IOS_VERSION --with-ios-arch=armv7  --disable-shared-js --disable-tests --disable-ion --disable-jm --disable-tm --enable-llvm-hacks --disable-methodjit --with-thumb=yes --enable-strip --enable-install-strip --disable-monoic --disable-polyic --disable-ion --enable-optimize=-O3
+make -j8
+if (( $? )) ; then
+    echo "error when compiling iOS version of the library"
+    exit
+fi
+mv libjs_static.a libjs_static.armv7.a
 
-if [ ! -f ./configure ]; then
-#    patch -p0 -i build.patch || exit 1
-    autoconf213 || exit 1
+echo "------------------------------------------------------------------------"
+echo "Creating i386 version..."
+echo "------------------------------------------------------------------------"
+
+# create i386 version (simulator)
+./configure --with-ios-target=iPhoneSimulator --with-ios-version=$IOS_SDK --with-ios-min-version=$MIN_IOS_VERSION --disable-shared-js --disable-tests --disable-ion --enable-llvm-hacks --enable-debug --disable-ion --disable-jm --disable-tm --disable-methodjit --disable-monoic --disable-polyic
+make -j8
+if (( $? )) ; then
+    echo "error when compiling i386 (iOS Simulator) version of the library"
+    exit
+fi
+mv libjs_static.a libjs_static.i386.a
+
+if [ -e libjs_static.i386.a ]  && [ -e libjs_static.armv7.a ] ; then
+    echo "creating fat version of the library"
+    $LIPO -create -output libjs_static.a libjs_static.i386.a libjs_static.armv7.a
+    # remove debugging info
+    $STRIP -S libjs_static.a
+    $LIPO -info libjs_static.a
 fi
 
-# Backup the environment variables
-OLD_CC=$CC
-OLD_CFLAGS=$CFLAGS
-OLD_CXX=$CXX
-OLD_CXXFLAGS=$CXXFLAGS
-OLD_LD=$LD
-OLD_LDFLAGS=$LD
-OLD_AR=$AR
-OLD_AS=$AS
-OLD_RANLIB=$RANLIB
-OLD_HOST_CC=$HOST_CC
-OLD_HOST_CXX=$HOST_CXX
-
-
-# Build for iPhone device
-make distclean
-rm -f libjs_static.a.armv7
-export DEVROOT=/Applications/Xcode.app/Contents/Developer//Platforms/iPhoneOS.platform/Developer/
-export SDKROOT=$DEVROOT/SDKs/iPhoneOS6.0.sdk
-#_local_cflags="-isysroot $SDKROOT -no-cpp-precomp -pipe -I$SDKROOT/usr/include/ -L$SDKROOT/usr/lib/"
-
-echo "------------------------------------------------------------------------"
-echo "Building for iPhone with $SDKROOT"
-echo "------------------------------------------------------------------------"
-
-export SDKCFLAGS="-isysroot $SDKROOT -no-cpp-precomp -pipe -I$SDKROOT/usr/include/ -Wall -L$SDKROOT/usr/lib -F$SDKROOT/System/Library/Frameworks -march=armv7-a -mthumb $CAT_NATIVE_CFLAGS -no-integrated-as -DWTF_CPU_ARM_THUMB2=1 -ftree-vectorize -mfloat-abi=hard"
-export CC="$DEVROOT/usr/bin/arm-apple-darwin10-llvm-gcc-4.2 $SDKCFLAGS"
-export CFLAGS=""
-export CXX="$DEVROOT/usr/bin/arm-apple-darwin10-llvm-g++-4.2 $SDKCFLAGS -I$SDKROOT/usr/include/c++/4.2.1/"
-export CXXFLAGS="$CFLAGS"
-export LD="$DEVROOT/usr/bin/ld"
-export LDFLAGS="-L$SDKROOT/usr/lib"
-export AR="$DEVROOT/usr/bin/ar"
-export AS="$DEVROOT/usr/bin/as -arch armv7"
-export RANLIB="$DEVROOT/usr/bin/ranlib"
-export HOST_CC="/usr/bin/gcc"
-export HOST_CXX="/usr/bin/g++"
-
-echo "Testing GCC for workingness...."
-echo $CC
-$CC test.c || exit 1
-
-echo "Testing G++ for workingness...."
-echo $CXX
-$CXX test.cpp || exit 1
-
-./configure \
-	--disable-tracejit \
-	--disable-optimize \
-	--host=arm-apple-darwin \
-    --disable-shared \
-    --enable-static || exit 1
-make -j8 || exit 1
-
-mv libjs_static.a libjs_static.a.armv7
-
-
-# Build for iPhone simulator
-make distclean
-rm -f libjs_static.a.i386
-export DEVROOT=/Applications/Xcode.app/Contents/Developer//Platforms/iPhoneSimulator.platform/Developer/
-export SDKROOT=$DEVROOT/SDKs/iPhoneSimulator6.0.sdk
-
-echo "------------------------------------------------------------------------"
-echo "Building for iPhone Simulator with $SDKROOT"
-echo "------------------------------------------------------------------------"
-
-export SDKCFLAGS="-isysroot $SDKROOT -mmacosx-version-min=10.6 -L$SDKROOT/usr/lib -no-cpp-precomp -pipe $CAT_SIMULATOR_CFLAGS"
-export CC="$DEVROOT/usr/bin/i686-apple-darwin11-llvm-gcc-4.2 $SDKCFLAGS"
-export CFLAGS=""
-export CXX="$DEVROOT/usr/bin/i686-apple-darwin11-llvm-g++-4.2 $SDKCFLAGS"
-export CXXFLAGS="$CFLAGS"
-export LD="$DEVROOT/usr/bin/ld"
-export LDFLAGS="-L$SDKROOT/usr/lib"
-export AR="$DEVROOT/usr/bin/ar"
-export AS="$DEVROOT/usr/bin/as"
-export RANLIB="$DEVROOT/usr/bin/ranlib"
-export HOST_CC="/usr/bin/gcc"
-export HOST_CXX="/usr/bin/g++"
-
-echo "Testing GCC for workingness...."
-echo $CC
-$CC test.c || exit 1
-
-echo "Testing G++ for workingness...."
-echo $CXX
-$CXX test.cpp || exit 1
-
-./configure \
-	--enable-debug \
-    --enable-debugger-info-modules \
-    --disable-tracejit \
-    --disable-shared \
-	--disable-optimize \
-    --enable-static || exit 1
-make -j8 || exit 1
-
-mv libjs_static.a libjs_static.a.i386
-
-
-# Make a fat library
-export LIPO="xcrun -sdk iphoneos lipo"
-
-$LIPO \
-    -arch armv7 libjs_static.a.armv7 \
-    -arch i386 libjs_static.a.i386 \
-    -create -output libjs_static.a
-
-# Restore the environment variables
-export CC=$OLD_CC
-export CFLAGS=$OLD_CFLAGS
-export CXX=$OLD_CXX
-export CXXFLAGS=$OLD_CXXFLAGS
-export LD=$OLD_LD
-export LDFLAGS=$OLD_LDFLAGS
-export AR=$OLD_AR
-export AS=$OLD_AS
-export RANLIB=$OLD_RANLIB
-export HOST_CC=$OLD_HOST_CC
-export HOST_CXX=$OLD_HOST_CXX
+echo "*** DONE ***"
+echo "If you want to use spidermonkey, copy the 'dist' directory to some accesible place"
+echo "e.g. 'cp -pr dist ~/path/to/your/project'"
+echo "and then add the proper search paths for headers and libraries in your Xcode project"

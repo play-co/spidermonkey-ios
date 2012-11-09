@@ -1,345 +1,497 @@
 /* -*- Mode: C++; tab-width: 8; indent-tabs-mode: nil; c-basic-offset: 4 -*-
  *
- * ***** BEGIN LICENSE BLOCK *****
- * Version: MPL 1.1/GPL 2.0/LGPL 2.1
- *
- * The contents of this file are subject to the Mozilla Public License Version
- * 1.1 (the "License"); you may not use this file except in compliance with
- * the License. You may obtain a copy of the License at
- * http://www.mozilla.org/MPL/
- *
- * Software distributed under the License is distributed on an "AS IS" basis,
- * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
- * for the specific language governing rights and limitations under the
- * License.
- *
- * The Original Code is Mozilla Communicator client code, released
- * March 31, 1998.
- *
- * The Initial Developer of the Original Code is
- * Netscape Communications Corporation.
- * Portions created by the Initial Developer are Copyright (C) 1998
- * the Initial Developer. All Rights Reserved.
- *
- * Contributor(s):
- *
- * Alternatively, the contents of this file may be used under the terms of
- * either of the GNU General Public License Version 2 or later (the "GPL"),
- * or the GNU Lesser General Public License Version 2.1 or later (the "LGPL"),
- * in which case the provisions of the GPL or the LGPL are applicable instead
- * of those above. If you wish to allow use of your version of this file only
- * under the terms of either the GPL or the LGPL, and not to allow others to
- * use your version of this file under the terms of the MPL, indicate your
- * decision by deleting the provisions above and replace them with the notice
- * and other provisions required by the GPL or the LGPL. If you do not delete
- * the provisions above, a recipient may use your version of this file under
- * the terms of any one of the MPL, the GPL or the LGPL.
- *
- * ***** END LICENSE BLOCK ***** */
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 #ifndef jsscopeinlines_h___
 #define jsscopeinlines_h___
 
+#include "jsarray.h"
+#include "jsbool.h"
 #include "jscntxt.h"
 #include "jsdbgapi.h"
 #include "jsfun.h"
+#include "jsgc.h"
 #include "jsobj.h"
 #include "jsscope.h"
 
+#include "gc/Marking.h"
+#include "vm/ArgumentsObject.h"
+#include "vm/ScopeObject.h"
+#include "vm/StringObject.h"
+
 #include "jscntxtinlines.h"
+#include "jsgcinlines.h"
+#include "jsobjinlines.h"
 
-inline JSEmptyScope *
-JSScope::createEmptyScope(JSContext *cx, js::Class *clasp)
+#include "vm/ScopeObject-inl.h"
+
+namespace js {
+
+static inline void
+GetterSetterWriteBarrierPost(JSCompartment *comp, JSObject **objp)
 {
-    JS_ASSERT(!isSharedEmpty());
-    JS_ASSERT(!emptyScope);
-    emptyScope = cx->create<JSEmptyScope>(cx, clasp);
-    return emptyScope;
-}
-
-inline JSEmptyScope *
-JSScope::getEmptyScope(JSContext *cx, js::Class *clasp)
-{
-    if (emptyScope) {
-        JS_ASSERT(clasp == emptyScope->clasp);
-        return emptyScope->hold();
-    }
-    return createEmptyScope(cx, clasp);
-}
-
-inline bool
-JSScope::ensureEmptyScope(JSContext *cx, js::Class *clasp)
-{
-    if (emptyScope) {
-        JS_ASSERT(clasp == emptyScope->clasp);
-        return true;
-    }
-    if (!createEmptyScope(cx, clasp))
-        return false;
-
-    /* We are going to have only single ref to the scope. */
-    JS_ASSERT(emptyScope->nrefs == 2);
-    emptyScope->nrefs = 1;
-    return true;
-}
-
-inline void
-JSScope::updateShape(JSContext *cx)
-{
-    JS_ASSERT(object);
-    js::LeaveTraceIfGlobalObject(cx, object);
-    shape = (hasOwnShape() || !lastProp) ? js_GenerateShape(cx, false) : lastProp->shape;
-}
-
-inline void
-JSScope::updateFlags(const JSScopeProperty *sprop, bool isDefinitelyAtom)
-{
-    jsuint index;
-    if (!isDefinitelyAtom && js_IdIsIndex(sprop->id, &index))
-        setIndexedProperties();
-
-    if (sprop->isMethod())
-        setMethodBarrier();
-}
-
-inline void
-JSScope::extend(JSContext *cx, JSScopeProperty *sprop, bool isDefinitelyAtom)
-{
-    ++entryCount;
-    setLastProperty(sprop);
-    updateShape(cx);
-    updateFlags(sprop, isDefinitelyAtom);
-}
-
-/*
- * Property read barrier for deferred cloning of compiler-created function
- * objects optimized as typically non-escaping, ad-hoc methods in obj.
- */
-inline bool
-JSScope::methodReadBarrier(JSContext *cx, JSScopeProperty *sprop, js::Value *vp)
-{
-    JS_ASSERT(hasMethodBarrier());
-    JS_ASSERT(hasProperty(sprop));
-    JS_ASSERT(sprop->isMethod());
-    JS_ASSERT(&vp->toObject() == &sprop->methodObject());
-    JS_ASSERT(object->canHaveMethodBarrier());
-
-    JSObject *funobj = &vp->toObject();
-    JSFunction *fun = GET_FUNCTION_PRIVATE(cx, funobj);
-    JS_ASSERT(fun == funobj && FUN_NULL_CLOSURE(fun));
-
-    funobj = CloneFunctionObject(cx, fun, funobj->getParent());
-    if (!funobj)
-        return false;
-    funobj->setMethodObj(*object);
-
-    vp->setObject(*funobj);
-    if (!js_SetPropertyHelper(cx, object, sprop->id, 0, vp))
-        return false;
-
-#ifdef DEBUG
-    if (cx->runtime->functionMeterFilename) {
-        JS_FUNCTION_METER(cx, mreadbarrier);
-
-        typedef JSRuntime::FunctionCountMap HM;
-        HM &h = cx->runtime->methodReadBarrierCountMap;
-        HM::AddPtr p = h.lookupForAdd(fun);
-        if (!p) {
-            h.add(p, fun, 1);
-        } else {
-            JS_ASSERT(p->key == fun);
-            ++p->value;
-        }
-    }
+#ifdef JSGC_GENERATIONAL
+    comp->gcStoreBuffer.putRelocatableCell(reinterpret_cast<gc::Cell **>(objp));
 #endif
-    return true;
 }
 
-static JS_ALWAYS_INLINE bool
-ChangesMethodValue(const js::Value &prev, const js::Value &v)
+static inline void
+GetterSetterWriteBarrierPostRemove(JSCompartment *comp, JSObject **objp)
 {
-    JSObject *prevObj;
-    return prev.isObject() && (prevObj = &prev.toObject())->isFunction() &&
-           (!v.isObject() || &v.toObject() != prevObj);
+#ifdef JSGC_GENERATIONAL
+    comp->gcStoreBuffer.removeRelocatableCell(reinterpret_cast<gc::Cell **>(objp));
+#endif
 }
 
-inline bool
-JSScope::methodWriteBarrier(JSContext *cx, JSScopeProperty *sprop,
-                            const js::Value &v)
+inline
+BaseShape::BaseShape(Class *clasp, JSObject *parent, uint32_t objectFlags)
 {
-    if (flags & (BRANDED | METHOD_BARRIER)) {
-        const js::Value &prev = object->lockedGetSlot(sprop->slot);
-        if (ChangesMethodValue(prev, v)) {
-            JS_FUNCTION_METER(cx, mwritebarrier);
-            return methodShapeChange(cx, sprop);
-        }
+    JS_ASSERT(!(objectFlags & ~OBJECT_FLAG_MASK));
+    PodZero(this);
+    this->clasp = clasp;
+    this->parent = parent;
+    this->flags = objectFlags;
+}
+
+inline
+BaseShape::BaseShape(Class *clasp, JSObject *parent, uint32_t objectFlags,
+                     uint8_t attrs, js::PropertyOp rawGetter, js::StrictPropertyOp rawSetter)
+{
+    JS_ASSERT(!(objectFlags & ~OBJECT_FLAG_MASK));
+    PodZero(this);
+    this->clasp = clasp;
+    this->parent = parent;
+    this->flags = objectFlags;
+    this->rawGetter = rawGetter;
+    this->rawSetter = rawSetter;
+    if ((attrs & JSPROP_GETTER) && rawGetter) {
+        this->flags |= HAS_GETTER_OBJECT;
+        GetterSetterWriteBarrierPost(compartment(), &this->getterObj);
     }
-    return true;
-}
-
-inline bool
-JSScope::methodWriteBarrier(JSContext *cx, uint32 slot, const js::Value &v)
-{
-    if (flags & (BRANDED | METHOD_BARRIER)) {
-        const js::Value &prev = object->lockedGetSlot(slot);
-        if (ChangesMethodValue(prev, v)) {
-            JS_FUNCTION_METER(cx, mwslotbarrier);
-            return methodShapeChange(cx, slot);
-        }
-    }
-    return true;
-}
-
-inline void
-JSScope::trace(JSTracer *trc)
-{
-    JSContext *cx = trc->context;
-    JSScopeProperty *sprop = lastProp;
-    uint8 regenFlag = cx->runtime->gcRegenShapesScopeFlag;
-
-    if (IS_GC_MARKING_TRACER(trc) && cx->runtime->gcRegenShapes && !hasRegenFlag(regenFlag)) {
-        /*
-         * Either this scope has its own shape, which must be regenerated, or
-         * it must have the same shape as lastProp.
-         */
-        uint32 newShape;
-
-        if (sprop) {
-            if (!sprop->hasRegenFlag()) {
-                sprop->shape = js_RegenerateShapeForGC(cx);
-                sprop->setRegenFlag();
-            }
-            newShape = sprop->shape;
-        }
-        if (!sprop || hasOwnShape()) {
-            newShape = js_RegenerateShapeForGC(cx);
-            JS_ASSERT_IF(sprop, newShape != sprop->shape);
-        }
-        shape = newShape;
-        flags ^= JSScope::SHAPE_REGEN;
-
-        /* Also regenerate the shapes of this scope's empty scope, if there is one. */
-        JSScope *empty = emptyScope;
-        if (empty) {
-            JS_ASSERT(!empty->emptyScope);
-            if (!empty->hasRegenFlag(regenFlag)) {
-                uint32 newEmptyShape = js_RegenerateShapeForGC(cx);
-
-                JS_PROPERTY_TREE(cx).emptyShapeChange(empty->shape, newEmptyShape);
-                empty->shape = newEmptyShape;
-                empty->flags ^= JSScope::SHAPE_REGEN;
-            }
-        }
-    }
-
-    if (sprop) {
-        JS_ASSERT(hasProperty(sprop));
-
-        /* Trace scope's property tree ancestor line. */
-        do {
-            sprop->trace(trc);
-        } while ((sprop = sprop->parent) != NULL);
+    if ((attrs & JSPROP_SETTER) && rawSetter) {
+        this->flags |= HAS_SETTER_OBJECT;
+        GetterSetterWriteBarrierPost(compartment(), &this->setterObj);
     }
 }
 
 inline
-JSScopeProperty::JSScopeProperty(jsid id, js::PropertyOp getter, js::PropertyOp setter,
-                                 uint32 slot, uintN attrs, uintN flags, intN shortid)
-  : id(id), rawGetter(getter), rawSetter(setter), slot(slot), attrs(uint8(attrs)),
-    flags(uint8(flags)), shortid(int16(shortid))
+BaseShape::BaseShape(const StackBaseShape &base)
 {
-    JS_ASSERT_IF(getter && (attrs & JSPROP_GETTER), getterObj->isCallable());
-    JS_ASSERT_IF(setter && (attrs & JSPROP_SETTER), setterObj->isCallable());
+    PodZero(this);
+    this->clasp = base.clasp;
+    this->parent = base.parent;
+    this->flags = base.flags;
+    this->rawGetter = base.rawGetter;
+    this->rawSetter = base.rawSetter;
+    if ((base.flags & HAS_GETTER_OBJECT) && base.rawGetter) {
+        GetterSetterWriteBarrierPost(compartment(), &this->getterObj);
+    }
+    if ((base.flags & HAS_SETTER_OBJECT) && base.rawSetter) {
+        GetterSetterWriteBarrierPost(compartment(), &this->setterObj);
+    }
 }
 
-inline JSDHashNumber
-JSScopeProperty::hash() const
+inline BaseShape &
+BaseShape::operator=(const BaseShape &other)
 {
-    JSDHashNumber hash = 0;
+    clasp = other.clasp;
+    parent = other.parent;
+    flags = other.flags;
+    slotSpan_ = other.slotSpan_;
+    if (flags & HAS_GETTER_OBJECT) {
+        getterObj = other.getterObj;
+        GetterSetterWriteBarrierPost(compartment(), &getterObj);
+    } else {
+        rawGetter = other.rawGetter;
+        GetterSetterWriteBarrierPostRemove(compartment(), &getterObj);
+    }
+    if (flags & HAS_SETTER_OBJECT) {
+        setterObj = other.setterObj;
+        GetterSetterWriteBarrierPost(compartment(), &setterObj);
+    } else {
+        rawSetter = other.rawSetter;
+        GetterSetterWriteBarrierPostRemove(compartment(), &setterObj);
+    }
+    return *this;
+}
+
+inline bool
+BaseShape::matchesGetterSetter(PropertyOp rawGetter, StrictPropertyOp rawSetter) const
+{
+    return rawGetter == this->rawGetter && rawSetter == this->rawSetter;
+}
+
+inline
+StackBaseShape::StackBaseShape(Shape *shape)
+  : flags(shape->getObjectFlags()),
+    clasp(shape->getObjectClass()),
+    parent(shape->getObjectParent())
+{
+    updateGetterSetter(shape->attrs, shape->getter(), shape->setter());
+}
+
+inline void
+StackBaseShape::updateGetterSetter(uint8_t attrs,
+                                   PropertyOp rawGetter,
+                                   StrictPropertyOp rawSetter)
+{
+    flags &= ~(BaseShape::HAS_GETTER_OBJECT | BaseShape::HAS_SETTER_OBJECT);
+    if ((attrs & JSPROP_GETTER) && rawGetter) {
+        JS_ASSERT(!IsPoisonedPtr(rawGetter));
+        flags |= BaseShape::HAS_GETTER_OBJECT;
+    }
+    if ((attrs & JSPROP_SETTER) && rawSetter) {
+        JS_ASSERT(!IsPoisonedPtr(rawSetter));
+        flags |= BaseShape::HAS_SETTER_OBJECT;
+    }
+
+    this->rawGetter = rawGetter;
+    this->rawSetter = rawSetter;
+}
+
+inline void
+BaseShape::adoptUnowned(UnownedBaseShape *other)
+{
+    /*
+     * This is a base shape owned by a dictionary object, update it to reflect the
+     * unowned base shape of a new last property.
+     */
+    JS_ASSERT(isOwned());
+    DebugOnly<uint32_t> flags = getObjectFlags();
+    JS_ASSERT((flags & other->getObjectFlags()) == flags);
+
+    uint32_t span = slotSpan();
+    ShapeTable *table = &this->table();
+
+    *this = *other;
+    setOwned(other);
+    setTable(table);
+    setSlotSpan(span);
+
+    assertConsistency();
+}
+
+inline void
+BaseShape::setOwned(UnownedBaseShape *unowned)
+{
+    flags |= OWNED_SHAPE;
+    this->unowned_ = unowned;
+}
+
+inline void
+BaseShape::assertConsistency()
+{
+#ifdef DEBUG
+    if (isOwned()) {
+        UnownedBaseShape *unowned = baseUnowned();
+        JS_ASSERT(hasGetterObject() == unowned->hasGetterObject());
+        JS_ASSERT(hasSetterObject() == unowned->hasSetterObject());
+        JS_ASSERT_IF(hasGetterObject(), getterObject() == unowned->getterObject());
+        JS_ASSERT_IF(hasSetterObject(), setterObject() == unowned->setterObject());
+        JS_ASSERT(getObjectParent() == unowned->getObjectParent());
+        JS_ASSERT(getObjectFlags() == unowned->getObjectFlags());
+    }
+#endif
+}
+
+inline
+Shape::Shape(const StackShape &other, uint32_t nfixed)
+  : base_(other.base),
+    propid_(other.propid),
+    slotInfo(other.maybeSlot() | (nfixed << FIXED_SLOTS_SHIFT)),
+    attrs(other.attrs),
+    flags(other.flags),
+    shortid_(other.shortid),
+    parent(NULL)
+{
+    kids.setNull();
+}
+
+inline
+Shape::Shape(UnownedBaseShape *base, uint32_t nfixed)
+  : base_(base),
+    propid_(JSID_EMPTY),
+    slotInfo(SHAPE_INVALID_SLOT | (nfixed << FIXED_SLOTS_SHIFT)),
+    attrs(JSPROP_SHARED),
+    flags(0),
+    shortid_(0),
+    parent(NULL)
+{
+    JS_ASSERT(base);
+    kids.setNull();
+}
+
+inline HashNumber
+StackShape::hash() const
+{
+    HashNumber hash = uintptr_t(base);
 
     /* Accumulate from least to most random so the low bits are most random. */
-    JS_ASSERT_IF(isMethod(), !rawSetter || rawSetter == js_watch_set);
-    if (rawGetter)
-        hash = JS_ROTATE_LEFT32(hash, 4) ^ jsuword(rawGetter);
-    if (rawSetter)
-        hash = JS_ROTATE_LEFT32(hash, 4) ^ jsuword(rawSetter);
-    hash = JS_ROTATE_LEFT32(hash, 4) ^ (flags & PUBLIC_FLAGS);
+    hash = JS_ROTATE_LEFT32(hash, 4) ^ (flags & Shape::PUBLIC_FLAGS);
     hash = JS_ROTATE_LEFT32(hash, 4) ^ attrs;
     hash = JS_ROTATE_LEFT32(hash, 4) ^ shortid;
-    hash = JS_ROTATE_LEFT32(hash, 4) ^ slot;
-    hash = JS_ROTATE_LEFT32(hash, 4) ^ JSID_BITS(id);
+    hash = JS_ROTATE_LEFT32(hash, 4) ^ slot_;
+    hash = JS_ROTATE_LEFT32(hash, 4) ^ JSID_BITS(propid);
     return hash;
 }
 
 inline bool
-JSScopeProperty::matches(const JSScopeProperty *p) const
+Shape::matches(const js::Shape *other) const
 {
-    JS_ASSERT(!JSID_IS_VOID(id));
-    JS_ASSERT(!JSID_IS_VOID(p->id));
-    return id == p->id &&
-           matchesParamsAfterId(p->rawGetter, p->rawSetter, p->slot, p->attrs, p->flags,
-                                p->shortid);
+    return propid_.get() == other->propid_.get() &&
+           matchesParamsAfterId(other->base(), other->maybeSlot(), other->attrs,
+                                other->flags, other->shortid_);
 }
 
 inline bool
-JSScopeProperty::matchesParamsAfterId(js::PropertyOp agetter, js::PropertyOp asetter, uint32 aslot,
-                                      uintN aattrs, uintN aflags, intN ashortid) const
+Shape::matches(const StackShape &other) const
 {
-    JS_ASSERT(!JSID_IS_VOID(id));
-    return rawGetter == agetter &&
-           rawSetter == asetter &&
-           slot == aslot &&
+    return propid_.get() == other.propid &&
+           matchesParamsAfterId(other.base, other.slot_, other.attrs, other.flags, other.shortid);
+}
+
+inline bool
+Shape::matchesParamsAfterId(BaseShape *base, uint32_t aslot,
+                            unsigned aattrs, unsigned aflags, int ashortid) const
+{
+    return base->unowned() == this->base()->unowned() &&
+           maybeSlot() == aslot &&
            attrs == aattrs &&
            ((flags ^ aflags) & PUBLIC_FLAGS) == 0 &&
-           shortid == ashortid;
+           shortid_ == ashortid;
 }
 
 inline bool
-JSScopeProperty::get(JSContext* cx, JSObject* obj, JSObject *pobj, js::Value* vp)
+Shape::getUserId(JSContext *cx, jsid *idp) const
 {
-    JS_ASSERT(!JSID_IS_VOID(this->id));
+    AssertCanGC();
+    const Shape *self = this;
+#ifdef DEBUG
+    {
+        SkipRoot skip(cx, &self);
+        MaybeCheckStackRoots(cx);
+    }
+#endif
+    if (self->hasShortID()) {
+        int16_t id = self->shortid();
+        if (id < 0)
+            return ValueToId(cx, Int32Value(id), idp);
+        *idp = INT_TO_JSID(id);
+    } else {
+        *idp = self->propid();
+    }
+    return true;
+}
+
+inline bool
+Shape::get(JSContext* cx, HandleObject receiver, JSObject* obj, JSObject *pobj, MutableHandleValue vp)
+{
     JS_ASSERT(!hasDefaultGetter());
 
     if (hasGetterValue()) {
-        JS_ASSERT(!isMethod());
-        js::Value fval = getterValue();
-        return js::InternalGetOrSet(cx, obj, id, fval, JSACC_READ, 0, 0, vp);
+        Value fval = getterValue();
+        return InvokeGetterOrSetter(cx, receiver, fval, 0, 0, vp.address());
     }
 
-    if (isMethod()) {
-        vp->setObject(methodObject());
+    Rooted<Shape *> self(cx, this);
+    RootedId id(cx);
+    if (!self->getUserId(cx, id.address()))
+        return false;
 
-        JSScope *scope = pobj->scope();
-        JS_ASSERT(scope->object == pobj);
-        return scope->methodReadBarrier(cx, this, vp);
-    }
-
-    /*
-     * |with (it) color;| ends up here, as do XML filter-expressions.
-     * Avoid exposing the With object to native getters.
-     */
-    if (obj->getClass() == &js_WithClass)
-        obj = js_UnwrapWithObject(cx, obj);
-    return js::callJSPropertyOp(cx, getterOp(), obj, SPROP_USERID(this), vp);
+    return CallJSPropertyOp(cx, self->getterOp(), receiver, id, vp);
 }
 
 inline bool
-JSScopeProperty::set(JSContext* cx, JSObject* obj, js::Value* vp)
+Shape::set(JSContext* cx, HandleObject obj, HandleObject receiver, bool strict, MutableHandleValue vp)
 {
     JS_ASSERT_IF(hasDefaultSetter(), hasGetterValue());
 
     if (attrs & JSPROP_SETTER) {
-        js::Value fval = setterValue();
-        return js::InternalGetOrSet(cx, obj, id, fval, JSACC_WRITE, 1, vp, vp);
+        Value fval = setterValue();
+        return InvokeGetterOrSetter(cx, receiver, fval, 1, vp.address(), vp.address());
     }
 
     if (attrs & JSPROP_GETTER)
         return js_ReportGetterOnlyAssignment(cx);
 
-    /* See the comment in JSScopeProperty::get as to why we check for With. */
-    if (obj->getClass() == &js_WithClass)
-        obj = js_UnwrapWithObject(cx, obj);
-    return js::callJSPropertyOpSetter(cx, setterOp(), obj, SPROP_USERID(this), vp);
+    Rooted<Shape *> self(cx, this);
+    RootedId id(cx);
+    if (!self->getUserId(cx, id.address()))
+        return false;
+
+    /*
+     * |with (it) color;| ends up here, as do XML filter-expressions.
+     * Avoid exposing the With object to native setters.
+     */
+    if (obj->isWith()) {
+        RootedObject nobj(cx, &obj->asWith().object());
+        return CallJSPropertyOpSetter(cx, self->setterOp(), nobj, id, strict, vp);
+    }
+
+    return CallJSPropertyOpSetter(cx, self->setterOp(), obj, id, strict, vp);
 }
+
+inline void
+Shape::setParent(js::Shape *p)
+{
+    JS_ASSERT_IF(p && !p->hasMissingSlot() && !inDictionary(),
+                 p->maybeSlot() <= maybeSlot());
+    JS_ASSERT_IF(p && !inDictionary(),
+                 hasSlot() == (p->maybeSlot() != maybeSlot()));
+    parent = p;
+}
+
+inline void
+Shape::removeFromDictionary(JSObject *obj)
+{
+    JS_ASSERT(inDictionary());
+    JS_ASSERT(obj->inDictionaryMode());
+    JS_ASSERT(listp);
+
+    JS_ASSERT(obj->shape_->inDictionary());
+    JS_ASSERT(obj->shape_->listp == &obj->shape_);
+
+    if (parent)
+        parent->listp = listp;
+    *listp = parent;
+    listp = NULL;
+}
+
+inline void
+Shape::insertIntoDictionary(HeapPtrShape *dictp)
+{
+    /*
+     * Don't assert inDictionaryMode() here because we may be called from
+     * JSObject::toDictionaryMode via JSObject::newDictionaryShape.
+     */
+    JS_ASSERT(inDictionary());
+    JS_ASSERT(!listp);
+
+    JS_ASSERT_IF(*dictp, (*dictp)->inDictionary());
+    JS_ASSERT_IF(*dictp, (*dictp)->listp == dictp);
+    JS_ASSERT_IF(*dictp, compartment() == (*dictp)->compartment());
+
+    setParent(*dictp);
+    if (parent)
+        parent->listp = &parent;
+    listp = (HeapPtrShape *) dictp;
+    *dictp = this;
+}
+
+void
+Shape::initDictionaryShape(const StackShape &child, uint32_t nfixed, HeapPtrShape *dictp)
+{
+    new (this) Shape(child, nfixed);
+    this->flags |= IN_DICTIONARY;
+
+    this->listp = NULL;
+    insertIntoDictionary(dictp);
+}
+
+inline
+EmptyShape::EmptyShape(UnownedBaseShape *base, uint32_t nfixed)
+  : js::Shape(base, nfixed)
+{
+    /* Only empty shapes can be NON_NATIVE. */
+    if (!getObjectClass()->isNative())
+        flags |= NON_NATIVE;
+}
+
+inline void
+Shape::writeBarrierPre(Shape *shape)
+{
+#ifdef JSGC_INCREMENTAL
+    if (!shape)
+        return;
+
+    JSCompartment *comp = shape->compartment();
+    if (comp->needsBarrier()) {
+        Shape *tmp = const_cast<Shape *>(shape);
+        MarkShapeUnbarriered(comp->barrierTracer(), &tmp, "write barrier");
+        JS_ASSERT(tmp == shape);
+    }
+#endif
+}
+
+inline void
+Shape::writeBarrierPost(Shape *shape, void *addr)
+{
+}
+
+inline void
+Shape::readBarrier(Shape *shape)
+{
+#ifdef JSGC_INCREMENTAL
+    JSCompartment *comp = shape->compartment();
+    if (comp->needsBarrier()) {
+        Shape *tmp = const_cast<Shape *>(shape);
+        MarkShapeUnbarriered(comp->barrierTracer(), &tmp, "read barrier");
+        JS_ASSERT(tmp == shape);
+    }
+#endif
+}
+
+inline void
+Shape::markChildren(JSTracer *trc)
+{
+    MarkBaseShape(trc, &base_, "base");
+    gc::MarkId(trc, &propidRef(), "propid");
+    if (parent)
+        MarkShape(trc, &parent, "parent");
+}
+
+inline void
+BaseShape::writeBarrierPre(BaseShape *base)
+{
+#ifdef JSGC_INCREMENTAL
+    if (!base)
+        return;
+
+    JSCompartment *comp = base->compartment();
+    if (comp->needsBarrier()) {
+        BaseShape *tmp = base;
+        MarkBaseShapeUnbarriered(comp->barrierTracer(), &tmp, "write barrier");
+        JS_ASSERT(tmp == base);
+    }
+#endif
+}
+
+inline void
+BaseShape::writeBarrierPost(BaseShape *shape, void *addr)
+{
+}
+
+inline void
+BaseShape::readBarrier(BaseShape *base)
+{
+#ifdef JSGC_INCREMENTAL
+    JSCompartment *comp = base->compartment();
+    if (comp->needsBarrier()) {
+        BaseShape *tmp = base;
+        MarkBaseShapeUnbarriered(comp->barrierTracer(), &tmp, "read barrier");
+        JS_ASSERT(tmp == base);
+    }
+#endif
+}
+
+inline void
+BaseShape::markChildren(JSTracer *trc)
+{
+    if (hasGetterObject())
+        MarkObjectUnbarriered(trc, &getterObj, "getter");
+
+    if (hasSetterObject())
+        MarkObjectUnbarriered(trc, &setterObj, "setter");
+
+    if (isOwned())
+        MarkBaseShape(trc, &unowned_, "base");
+
+    if (parent)
+        MarkObject(trc, &parent, "parent");
+}
+
+} /* namespace js */
 
 #endif /* jsscopeinlines_h___ */
