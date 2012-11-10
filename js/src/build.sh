@@ -16,7 +16,7 @@ echo "Creating arm version..."
 echo "------------------------------------------------------------------------"
 
 # create ios version (armv7)
-./configure --with-ios-target=iPhoneOS --with-ios-version=$IOS_SDK --with-ios-min-version=$MIN_IOS_VERSION --with-ios-arch=armv7  --disable-shared-js --disable-tests --disable-ion --disable-jm --disable-tm --enable-llvm-hacks --disable-methodjit --with-thumb=yes --enable-strip --enable-install-strip --disable-monoic --disable-polyic --disable-ion --enable-optimize=-O3
+./configure --with-ios-target=iPhoneOS --with-ios-version=$IOS_SDK --with-ios-min-version=$MIN_IOS_VERSION --with-ios-arch=armv7  --disable-shared-js --disable-tests --disable-ion --disable-jm --disable-tm --enable-llvm-hacks --disable-methodjit --with-thumb=yes --enable-strip --enable-install-strip --disable-monoic --disable-polyic --disable-ion --disable-root-analysis --disable-exact-rooting --enable-gcincremental --enable-optimize=-O3
 make -j8
 if (( $? )) ; then
     echo "error when compiling iOS version of the library"

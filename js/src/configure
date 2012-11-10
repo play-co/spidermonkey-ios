@@ -1406,12 +1406,14 @@ iPhoneOS|iPhoneSimulator)
         ios_arch=i386
         target_name=x86
         target=i386-darwin
+		IOS_OPT_FLAGS=""
     else
         if test -z "$ios_arch" ; then
             ios_arch=armv7
         fi 
         target_name=arm
         target=arm-darwin
+		IOS_OPT_FLAGS="-mvectorize-with-neon-quad -fprefetch-loop-arrays -mfloat-abi=hard -ftree-vectorize -march=armv7-a -mfpu=vfpv3-d16"
     fi
     target_os=darwin
 
@@ -1435,7 +1437,6 @@ iPhoneOS|iPhoneSimulator)
     STRIP="$ios_toolchain"/strip
     LDFLAGS="-isysroot $ios_sdk_root -arch $ios_arch -v"
 
-	IOS_OPT_FLAGS="-mvectorize-with-neon-quad -mfpu=neon -fprefetch-loop-arrays -mfloat-abi=softfp -ftree-vectorize"
     CFLAGS="-isysroot $ios_sdk_root -arch $ios_arch -miphoneos-version-min=$ios_deploy_version -I$ios_sdk_root/usr/include -pipe -Wno-implicit-int -Wno-return-type -integrated-as $IOS_OPT_FLAGS"
     CXXFLAGS="$CFLAGS"
     CPPFLAGS=""

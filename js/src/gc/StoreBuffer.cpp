@@ -133,7 +133,7 @@ template <typename T>
 void
 StoreBuffer::RelocatableMonoTypeBuffer<T>::unput(const T &v)
 {
-    put(v.tagged());
+    this->put(v.tagged());
 }
 
 /*** GenericBuffer ***/
