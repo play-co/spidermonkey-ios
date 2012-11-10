@@ -146,10 +146,10 @@
 #endif
 
 /* Support for JS_NewGlobalObject. */
-#define JS_HAS_NEW_GLOBAL_OBJECT        1
+#define JS_HAS_NEW_GLOBAL_OBJECT        0
 
 /* Support for JS_MakeSystemObject. */
-#define JS_HAS_MAKE_SYSTEM_OBJECT       1
+#define JS_HAS_MAKE_SYSTEM_OBJECT       0
 
 /* Feature-test macro for evolving destructuring support. */
 #define JS_HAS_DESTRUCTURING_SHORTHAND  (JS_HAS_DESTRUCTURING == 2)
@@ -158,7 +158,7 @@
  * Feature for Object.prototype.__{define,lookup}{G,S}etter__ legacy support;
  * support likely to be made opt-in at some future time.
  */
-#define OLD_GETTER_SETTER_METHODS       1
+#define OLD_GETTER_SETTER_METHODS       0
 
 /* A kill-switch for bug 586842.  Embedders shouldn't touch this! */
 #define USE_NEW_OBJECT_REPRESENTATION 0

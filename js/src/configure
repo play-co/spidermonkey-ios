@@ -1435,7 +1435,7 @@ iPhoneOS|iPhoneSimulator)
     STRIP="$ios_toolchain"/strip
     LDFLAGS="-isysroot $ios_sdk_root -arch $ios_arch -v"
 
-	IOS_OPT_FLAGS="-mvectorize-with-neon-quad -mfpu=neon -fprefetch-loop-arrays -mfloat-abi=softfp" # -ftree-vectorize"
+	IOS_OPT_FLAGS="-mvectorize-with-neon-quad -mfpu=neon -fprefetch-loop-arrays -mfloat-abi=softfp -ftree-vectorize"
     CFLAGS="-isysroot $ios_sdk_root -arch $ios_arch -miphoneos-version-min=$ios_deploy_version -I$ios_sdk_root/usr/include -pipe -Wno-implicit-int -Wno-return-type -integrated-as $IOS_OPT_FLAGS"
     CXXFLAGS="$CFLAGS"
     CPPFLAGS=""

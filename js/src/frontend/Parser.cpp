@@ -5447,10 +5447,7 @@ Parser::argumentList(ParseNode *listNode)
 #if JS_HAS_GENERATOR_EXPRS
         if (arg0 && !guard.maybeNoteGenerator(argNode))
             return false;
-#else
-        // TODO: MAYBE BROKE HERE! -cat
-        if (arg0)
-            return false;
+        // TODO: MAYBE BROKE HERE -cat
 #endif
 
         arg0 = false;

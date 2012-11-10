@@ -13,6 +13,9 @@
  * code that is (only currently) mfbt-incompatible.
  */
 
+/* Check out this awesome hack -cat */
+#define inline __inline__ __attribute__((always_inline))
+
 /*
  * MOZ_INLINE is a macro which expands to tell the compiler that the method
  * decorated with it should be inlined.  This macro is usable from C and C++
