@@ -146,7 +146,7 @@
 #endif
 
 /* Support for JS_NewGlobalObject. */
-#define JS_HAS_NEW_GLOBAL_OBJECT        0
+#define JS_HAS_NEW_GLOBAL_OBJECT        1
 
 /* Support for JS_MakeSystemObject. */
 #define JS_HAS_MAKE_SYSTEM_OBJECT       0
