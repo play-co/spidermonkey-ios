@@ -1219,6 +1219,40 @@ Class js::SlowArrayClass = {
         NULL,       /* iteratorObject  */
         NULL,       /* unused      */
         false,      /* isWrappedNative */
+    },
+    {
+        array_lookupGeneric,
+        array_lookupProperty,
+        array_lookupElement,
+        array_lookupSpecial,
+        array_defineGeneric,
+        array_defineProperty,
+        array_defineElement,
+        array_defineSpecial,
+        array_getGeneric,
+        array_getProperty,
+        array_getElement,
+        NULL, /* getElementIfPresent, because this is hard for now for
+                 slow arrays */
+        array_getSpecial,
+        array_setGeneric,
+        array_setProperty,
+        array_setElement,
+        array_setSpecial,
+        array_getGenericAttributes,
+        array_getPropertyAttributes,
+        array_getElementAttributes,
+        array_getSpecialAttributes,
+        array_setGenericAttributes,
+        array_setPropertyAttributes,
+        array_setElementAttributes,
+        array_setSpecialAttributes,
+        array_deleteProperty,
+        array_deleteElement,
+        array_deleteSpecial,
+        NULL,       /* enumerate      */
+        NULL,       /* typeOf         */
+        NULL,       /* thisObject     */
     }
 };
 
