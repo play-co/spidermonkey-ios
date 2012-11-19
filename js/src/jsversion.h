@@ -158,7 +158,7 @@
  * Feature for Object.prototype.__{define,lookup}{G,S}etter__ legacy support;
  * support likely to be made opt-in at some future time.
  */
-#define OLD_GETTER_SETTER_METHODS       0
+#define OLD_GETTER_SETTER_METHODS       1
 
 /* A kill-switch for bug 586842.  Embedders shouldn't touch this! */
 #define USE_NEW_OBJECT_REPRESENTATION 0
