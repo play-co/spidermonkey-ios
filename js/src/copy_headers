@@ -1,0 +1,7 @@
+#!/bin/sh
+rm -rf ../../../tealeaf/deps/spidermonkey/*
+mkdir ../../../tealeaf/deps/spidermonkey/ds
+mkdir ../../../tealeaf/deps/spidermonkey/js
+mkdir ../../../tealeaf/deps/spidermonkey/gc
+mkdir ../../../tealeaf/deps/spidermonkey/mozilla
+for path in `find ./dist/include -iname \*.h`; do cp -L -R $path "../../../tealeaf/deps/spidermonkey/`echo $path | cut -c 16-`"; done;
