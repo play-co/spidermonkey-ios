@@ -1,5 +1,6 @@
+Only in .: -L
+Only in .: -R
 Only in .: .deps
-Only in .: .jsobj.cpp.swp
 Only in .: ArgumentsObject.o
 Only in .: BytecodeCompiler.o
 Only in .: BytecodeEmitter.o
@@ -126,160 +127,8 @@ Only in ./config: nsinstall_real
 Only in .: config.cache
 Only in .: config.log
 Only in .: config.status
-diff -aur /Users/cat/Downloads/origsm/js/src/configure ./configure
---- /Users/cat/Downloads/origsm/js/src/configure	2012-11-16 17:25:06.000000000 -0800
-+++ ./configure	2012-11-12 16:34:04.000000000 -0800
-@@ -95,6 +95,18 @@
-   --with-gonk-toolchain-prefix=DIR
-                           prefix to gonk toolchain commands"
- ac_help="$ac_help
-+  --with-ios-target=SDK
-+                     what target sdk to use, defaults to iPhoneSimulator"
-+ac_help="$ac_help
-+  --with-ios-version=VER
-+                      version of the iOS SDK, defaults to 6.0"
-+ac_help="$ac_help
-+  --with-ios-min-version=VER
-+                          deploy target version, defaults to 4.3"
-+ac_help="$ac_help
-+  --with-ios-arch=ARCH
-+                   iOS architecture, defaults to armv7 for device, x86 for simulator"
-+ac_help="$ac_help
-   --with-android-ndk=DIR
-                           location where the Android NDK can be found"
- ac_help="$ac_help
-@@ -1287,6 +1299,13 @@
- fi
- 
- 
-+# Check whether --with-ios-target or --without-ios-target was given.
-+if test "${with_ios_target+set}" = set; then
-+  withval="$with_ios_target"
-+  ios_target=$withval
-+fi
-+
-+
- if test -n "$gonkdir" ; then
-     kernel_name=`uname -s | tr "[:upper:]" "[:lower:]"`
- 
-@@ -1347,6 +1366,104 @@
- EOF
- 
-     CROSS_COMPILE=1
-+
-+elif test -n "$ios_target" ; then
-+    
-+
-+# Check whether --with-ios-version or --without-ios-version was given.
-+if test "${with_ios_version+set}" = set; then
-+  withval="$with_ios_version"
-+  ios_sdk_version=$withval
-+else
-+  ios_sdk_version=6.0
-+fi
-+
-+
-+# Check whether --with-ios-min-version or --without-ios-min-version was given.
-+if test "${with_ios_min_version+set}" = set; then
-+  withval="$with_ios_min_version"
-+  ios_deploy_version=$withval
-+else
-+  ios_deploy_version=4.3
-+fi
-+
-+
-+# Check whether --with-ios-arch or --without-ios-arch was given.
-+if test "${with_ios_arch+set}" = set; then
-+  withval="$with_ios_arch"
-+  ios_arch=$withval
-+fi
-+
-+
-+case "$ios_target" in
-+iPhoneOS|iPhoneSimulator)
-+        if ! test -d "/Applications/Xcode.app/Contents/Developer/Platforms" ; then
-+        { echo "configure: error: You must install Xcode first from the App Store" 1>&2; exit 1; }
-+    fi
-+
-+    if test "$ios_target" == "iPhoneSimulator" ; then
-+                CPU_ARCH=i386
-+        ios_arch=i386
-+        target_name=x86
-+        target=i386-darwin
-+		IOS_OPT_FLAGS=""
-+    else
-+        if test -z "$ios_arch" ; then
-+            ios_arch=armv7
-+        fi 
-+        target_name=arm
-+        target=arm-darwin
-+		IOS_OPT_FLAGS="-mvectorize-with-neon-quad -fprefetch-loop-arrays -mfloat-abi=hard -ftree-vectorize -march=armv7-a -mfpu=vfpv3-d16"
-+    fi
-+    target_os=darwin
-+
-+    xcode_base="/Applications/Xcode.app/Contents/Developer/Platforms"
-+    ios_sdk_root=""
-+    ios_toolchain="/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin"
-+
-+        ios_sdk_root="$xcode_base"/$ios_target.platform/Developer/SDKs/$ios_target"$ios_sdk_version".sdk
-+    if ! test -d "$ios_sdk_root" ; then
-+        { echo "configure: error: Invalid SDK version" 1>&2; exit 1; }
-+    fi
-+
-+        AS="$ios_toolchain"/as
-+    CC="$ios_toolchain"/clang
-+    CXX="$ios_toolchain"/clang++
-+    CPP="$ios_toolchain/clang -E"
-+    LD="$ios_toolchain"/ld
-+    AR="$ios_toolchain"/ar
-+    AS="$ios_toolchain/as -arch armv7"
-+    RANLIB="$ios_toolchain"/ranlib
-+    STRIP="$ios_toolchain"/strip
-+    LDFLAGS="-isysroot $ios_sdk_root -arch $ios_arch -v"
-+
-+    CFLAGS="-isysroot $ios_sdk_root -arch $ios_arch -miphoneos-version-min=$ios_deploy_version -I$ios_sdk_root/usr/include -pipe -Wno-implicit-int -Wno-return-type -integrated-as $IOS_OPT_FLAGS"
-+    CXXFLAGS="$CFLAGS"
-+    CPPFLAGS=""
-+
-+        if test -z "$HOST_CPPFLAGS" ; then
-+        HOST_CPPFLAGS=" "
-+    fi
-+    if test -z "$HOST_CFLAGS" ; then
-+        HOST_CFLAGS=" "
-+    fi
-+    if test -z "$HOST_CXXFLAGS" ; then
-+        HOST_CXXFLAGS=" "
-+    fi
-+    if test -z "$HOST_LDFLAGS" ; then
-+        HOST_LDFLAGS=" "
-+    fi
-+
-+    cat >> confdefs.pytmp <<\EOF
-+        (''' IPHONEOS ''', ' 1 ')
-+EOF
-+cat >> confdefs.h <<\EOF
-+#define IPHONEOS 1
-+EOF
-+
-+    CROSS_COMPILE=1
-+esac
-+
- else
-     
- 
-@@ -12893,10 +13010,10 @@
- 
- if test "$ENABLE_METHODJIT_SPEW"; then
-     cat >> confdefs.pytmp <<\EOF
--    (''' JS_METHODJIT_SPEW ''', ' 1 ')
-+    (''' JS_METHODJIT_SPEW ''', ' 0 ')
- EOF
- cat >> confdefs.h <<\EOF
--#define JS_METHODJIT_SPEW 1
-+#define JS_METHODJIT_SPEW 0
- EOF
- 
- fi
+Only in .: copy_headers
+Only in .: cp
 Only in .: dist
 Only in .: diy-fp.o
 Only in .: double-conversion.o
@@ -290,150 +139,6 @@ Only in ./editline: libeditline.a.desc
 Only in ./editline: sysunix.o
 Only in .: fast-dtoa.o
 Only in .: fixed-dtoa.o
-diff -aur /Users/cat/Downloads/origsm/js/src/frontend/BytecodeEmitter.cpp ./frontend/BytecodeEmitter.cpp
---- /Users/cat/Downloads/origsm/js/src/frontend/BytecodeEmitter.cpp	2012-11-07 11:54:41.000000000 -0800
-+++ ./frontend/BytecodeEmitter.cpp	2012-11-12 16:34:04.000000000 -0800
-@@ -3238,6 +3238,10 @@
-     return true;
- }
- 
-+#else
-+
-+struct LetNotes;
-+
- #endif /* JS_HAS_DESTRUCTURING */
- 
- static bool
-diff -aur /Users/cat/Downloads/origsm/js/src/frontend/Parser.cpp ./frontend/Parser.cpp
---- /Users/cat/Downloads/origsm/js/src/frontend/Parser.cpp	2012-11-07 11:54:41.000000000 -0800
-+++ ./frontend/Parser.cpp	2012-11-12 16:34:04.000000000 -0800
-@@ -3177,6 +3177,7 @@
-         if (!pn3)
-             return NULL;
- 
-+#if JS_HAS_BLOCK_SCOPE
-         if (blockObj) {
-             /*
-              * Now that the pn3 has been parsed, push the let scope. To hold
-@@ -3192,6 +3193,7 @@
-             block->pn_pos = pn1->pn_pos;
-             pn1 = block;
-         }
-+#endif
- 
-         if (forDecl) {
-             /*
-@@ -3235,6 +3237,7 @@
-         if (!forHead)
-             return NULL;
-     } else {
-+#if JS_HAS_BLOCK_SCOPE
-         if (blockObj) {
-             /*
-              * Desugar 'for (let A; B; C) D' into 'let (A) { for (; B; C) D }'
-@@ -3253,6 +3256,7 @@
-             block->pn_expr = pn;
-             forParent = let;
-         }
-+#endif
- 
-         if (pn->pn_iflags & JSITER_FOREACH) {
-             reportError(pn, JSMSG_BAD_FOR_EACH_LOOP);
-@@ -5382,19 +5386,19 @@
- ParseNode *
- Parser::assignExprWithoutYield(unsigned msg)
- {
--#ifdef JS_HAS_GENERATORS
-+#if JS_HAS_GENERATORS
-     GenexpGuard yieldGuard(this);
- #endif
-     ParseNode *res = assignExpr();
-+#if JS_HAS_GENERATORS
-     yieldGuard.endBody();
-     if (res) {
--#ifdef JS_HAS_GENERATORS
-         if (!yieldGuard.checkValidBody(res, msg)) {
-             freeTree(res);
-             res = NULL;
-         }
--#endif
-     }
-+#endif
-     return res;
- }
- 
-@@ -5404,15 +5408,19 @@
-     if (tokenStream.matchToken(TOK_RP, TSF_OPERAND))
-         return true;
- 
-+#if JS_HAS_GENERATOR_EXPRS
-     GenexpGuard guard(this);
-+#endif
-     bool arg0 = true;
- 
-     do {
-         ParseNode *argNode = assignExpr();
-         if (!argNode)
-             return false;
-+#if JS_HAS_GENERATOR_EXPRS
-         if (arg0)
-             guard.endBody();
-+#endif
- 
- #if JS_HAS_GENERATORS
-         if (argNode->isKind(PNK_YIELD) &&
-@@ -5436,8 +5444,11 @@
-             }
-         } else
- #endif
-+#if JS_HAS_GENERATOR_EXPRS
-         if (arg0 && !guard.maybeNoteGenerator(argNode))
-             return false;
-+        // TODO: MAYBE BROKE HERE -cat
-+#endif
- 
-         arg0 = false;
- 
-@@ -7023,12 +7034,16 @@
-     if (genexp)
-         *genexp = false;
- 
-+#if JS_HAS_GENERATOR_EXPRS
-     GenexpGuard guard(this);
-+#endif
- 
-     pn = bracketedExpr();
-     if (!pn)
-         return NULL;
-+#if JS_HAS_GENERATOR_EXPRS
-     guard.endBody();
-+#endif
- 
- #if JS_HAS_GENERATOR_EXPRS
-     if (tokenStream.matchToken(TOK_FOR)) {
-@@ -7054,8 +7069,10 @@
-     } else
- #endif /* JS_HAS_GENERATOR_EXPRS */
- 
-+#if JS_HAS_GENERATOR_EXPRS
-     if (!guard.maybeNoteGenerator(pn))
-         return NULL;
-+#endif
- 
-     return pn;
- }
-diff -aur /Users/cat/Downloads/origsm/js/src/gc/StoreBuffer.cpp ./gc/StoreBuffer.cpp
---- /Users/cat/Downloads/origsm/js/src/gc/StoreBuffer.cpp	2012-11-07 11:54:41.000000000 -0800
-+++ ./gc/StoreBuffer.cpp	2012-11-12 16:34:04.000000000 -0800
-@@ -133,7 +133,7 @@
- void
- StoreBuffer::RelocatableMonoTypeBuffer<T>::unput(const T &v)
- {
--    put(v.tagged());
-+    this->put(v.tagged());
- }
- 
- /*** GenericBuffer ***/
 Only in .: host_jskwgen
 Only in .: host_jskwgen.o
 Only in .: host_jsoplengen
@@ -793,7 +498,7 @@ Only in .: jstypedarray.o
 Only in .: jsutil.o
 diff -aur /Users/cat/Downloads/origsm/js/src/jsversion.h ./jsversion.h
 --- /Users/cat/Downloads/origsm/js/src/jsversion.h	2012-11-07 11:54:41.000000000 -0800
-+++ ./jsversion.h	2012-11-19 15:12:32.000000000 -0800
++++ ./jsversion.h	2012-11-21 18:34:15.000000000 -0800
 @@ -124,20 +124,20 @@
  
  #elif 180 <= JS_VERSION && JS_VERSION <= 185
@@ -807,9 +512,8 @@ diff -aur /Users/cat/Downloads/origsm/js/src/jsversion.h ./jsversion.h
 +#define JS_HAS_TOSOURCE         0       /* has Object/Array toSource method */
  #define JS_HAS_CATCH_GUARD      1       /* has exception handling catch guard */
 -#define JS_HAS_UNEVAL           1       /* has uneval() top-level function */
--#define JS_HAS_CONST            1       /* has JS2 const as alternative var */
 +#define JS_HAS_UNEVAL           0       /* has uneval() top-level function */
-+#define JS_HAS_CONST            0       /* has JS2 const as alternative var */
+ #define JS_HAS_CONST            1       /* has JS2 const as alternative var */
  #define JS_HAS_FUN_EXPR_STMT    1       /* has function expression statement */
 -#define JS_HAS_NO_SUCH_METHOD   1       /* has o.__noSuchMethod__ handler */
 -#define JS_HAS_GENERATORS       1       /* has yield in generator function */
@@ -844,6 +548,7 @@ Only in .: libjs_static.a
 Only in .: libjs_static.a.desc
 Only in .: libjs_static.armv7.a
 Only in .: libjs_static.i386.a
+Only in .: mozilla
 Only in .: newsm.patch
 Only in .: pm_stub.o
 Only in .: prmjtime.o
@@ -860,294 +565,500 @@ Only in ./shell: tmpQjIErE.list
 Only in .: strtod.o
 Only in ./tests: Makefile
 Only in .: unallmakefiles
-diff -aur /Users/cat/Downloads/origsm/js/src/vm/Debugger.cpp ./vm/Debugger.cpp
---- /Users/cat/Downloads/origsm/js/src/vm/Debugger.cpp	2012-11-07 11:54:41.000000000 -0800
-+++ ./vm/Debugger.cpp	2012-11-12 16:34:12.000000000 -0800
-@@ -3258,6 +3258,8 @@
-     return true;
- }
- 
-+#if JS_HAS_GENERATORS
-+
- static JSBool
- DebuggerFrame_getGenerator(JSContext *cx, unsigned argc, Value *vp)
- {
-@@ -3266,6 +3268,8 @@
-     return true;
- }
- 
-+#endif
-+
- static JSBool
- DebuggerFrame_getConstructing(JSContext *cx, unsigned argc, Value *vp)
- {
-@@ -3716,7 +3720,9 @@
-     JS_PSG("callee", DebuggerFrame_getCallee, 0),
-     JS_PSG("constructing", DebuggerFrame_getConstructing, 0),
-     JS_PSG("environment", DebuggerFrame_getEnvironment, 0),
-+#if JS_HAS_GENERATORS
-     JS_PSG("generator", DebuggerFrame_getGenerator, 0),
-+#endif
-     JS_PSG("live", DebuggerFrame_getLive, 0),
-     JS_PSG("offset", DebuggerFrame_getOffset, 0),
-     JS_PSG("older", DebuggerFrame_getOlder, 0),
+Only in .: update_patch.sh
 diff -aur /Users/cat/Downloads/origsm/js/src/vm/NumericConversions.h ./vm/NumericConversions.h
---- /Users/cat/Downloads/origsm/js/src/vm/NumericConversions.h	2012-11-07 11:54:41.000000000 -0800
-+++ ./vm/NumericConversions.h	2012-11-12 16:34:12.000000000 -0800
-@@ -152,13 +152,15 @@
- 
- /* ES5 9.5 ToInt32 (specialized for doubles). */
- inline int32_t
--ToInt32(double d)
-+ToInt32(double dd)
- {
- #if defined (__arm__) && defined (__GNUC__)
-+    float d = dd;
-     int32_t i;
-     uint32_t    tmp0;
-     uint32_t    tmp1;
-     uint32_t    tmp2;
-+    uint32_t    tmp3;
-     asm (
-     // We use a pure integer solution here. In the 'softfp' ABI, the argument
-     // will start in r0 and r1, and VFP can't do all of the necessary ECMA
-@@ -172,12 +174,12 @@
-     // %1, %2 and %3 are used as temporary values.
- 
-     // Extract the exponent.
--"   mov     %1, %R4, LSR #20\n"
-+"   mov     %1, %4, LSR #20\n"
- "   bic     %1, %1, #(1 << 11)\n"  // Clear the sign.
- 
-     // Set the implicit top bit of the mantissa. This clobbers a bit of the
-     // exponent, but we have already extracted that.
--"   orr     %R4, %R4, #(1 << 20)\n"
-+"   orr     %4, %4, #(1 << 20)\n"
- 
-     // Special Cases
-     //   We should return zero in the following special cases:
-@@ -213,15 +215,16 @@
-     // a logical OR to push long shifts into the 32 <= (exp&0xff) <= 255 range.
- "   bic     %2, %3, #0xff\n"
- "   orr     %3, %3, %2, LSR #3\n"
-+
-     // We can now perform a straight shift, avoiding the need for any
-     // conditional instructions or extra branches.
--"   mov     %Q4, %Q4, LSL %3\n"
-+"   mov     %5, %5, LSL %3\n"
- "   b       2f\n"
- "1:\n" // Shift r0 right by 52-exp.
-     // We know that 0 <= exp < 52, and we can shift up to 255 bits so 52-exp
-     // will always be a valid shift and we can sk%3 the range check for this case.
- "   rsb     %3, %1, #52\n"
--"   mov     %Q4, %Q4, LSR %3\n"
-+"   mov     %5, %5, LSR %3\n"
- 
-     //  %1 = (decoded) exponent
-     //  %R4 = upper mantissa and sign
-@@ -236,7 +239,7 @@
-     // it left more to remove the sign and exponent so it is effectively
-     // pre-shifted by 31 bits.
- "   subs    %3, %1, #31\n"          // Calculate exp-31
--"   mov     %1, %R4, LSL #11\n"     // Re-use %1 as a temporary register.
-+"   mov     %1, %4, LSL #11\n"     // Re-use %1 as a temporary register.
- "   bmi     3f\n"
- 
-     // Shift %R4 left by exp-31.
-@@ -258,25 +261,26 @@
- 
- "4:\n"
-     // Combine the converted parts.
--"   orr     %Q4, %Q4, %2\n"
-+"   orr     %5, %5, %2\n"
-     // Negate the result if we have to, and move it to %0 in the process. To
-     // avoid conditionals, we can do this by inverting on %R4[31], then adding
-     // %R4[31]>>31.
--"   eor     %Q4, %Q4, %R4, ASR #31\n"
--"   add     %0, %Q4, %R4, LSR #31\n"
-+"   eor     %5, %5, %4, ASR #31\n"
-+"   add     %0, %5, %4, LSR #31\n"
- "   b       9f\n"
-+
- "8:\n"
-     // +/-INFINITY, +/-0, subnormals, NaNs, and anything else out-of-range that
-     // will result in a conversion of '0'.
- "   mov     %0, #0\n"
- "9:\n"
--    : "=r" (i), "=&r" (tmp0), "=&r" (tmp1), "=&r" (tmp2), "=&r" (d)
-+    : "=r" (i), "=&r" (tmp0), "=&r" (tmp1), "=&r" (tmp2), "=&r" (d), "=r" (tmp3)
-     : "4" (d)
-     : "cc"
-         );
-     return i;
- #else
--    return ToIntWidth<32, int32_t>(d);
-+    return ToIntWidth<32, int32_t>(dd);
+--- /Users/cat/Downloads/origsm/js/src/vm/NumericConversions.h	2012-11-21 15:58:43.000000000 -0800
++++ ./vm/NumericConversions.h	2012-11-21 20:54:53.000000000 -0800
+@@ -150,138 +150,360 @@
  #endif
  }
  
-diff -aur /Users/cat/Downloads/origsm/js/src/vm/ScopeObject.cpp ./vm/ScopeObject.cpp
---- /Users/cat/Downloads/origsm/js/src/vm/ScopeObject.cpp	2012-11-07 11:54:41.000000000 -0800
-+++ ./vm/ScopeObject.cpp	2012-11-12 16:34:12.000000000 -0800
-@@ -1579,7 +1579,7 @@
-             e.removeFront();
-             continue;
-         }
+-/* ES5 9.5 ToInt32 (specialized for doubles). */
+-inline int32_t
+-ToInt32(double dd)
+-{
+-#if defined (__arm__) && defined (__GNUC__)
+-    float d = dd;
+-    int32_t i;
+-    uint32_t    tmp0;
+-    uint32_t    tmp1;
+-    uint32_t    tmp2;
+-    uint32_t    tmp3;
+-    asm (
+-    // We use a pure integer solution here. In the 'softfp' ABI, the argument
+-    // will start in r0 and r1, and VFP can't do all of the necessary ECMA
+-    // conversions by itself so some integer code will be required anyway. A
+-    // hybrid solution is faster on A9, but this pure integer solution is
+-    // notably faster for A8.
 -
-+#if JS_HAS_GENERATORS
-         /*
-          * As explained in onGeneratorFrameChange, liveScopes includes
-          * suspended generator frames. Since a generator can be finalized while
-@@ -1592,6 +1592,7 @@
-                 continue;
-             }
-         }
-+#endif
-     }
- }
- 
-@@ -1869,6 +1870,7 @@
- StackFrame *
- DebugScopes::hasLiveFrame(ScopeObject &scope)
- {
-+#if JS_HAS_GENERATORS
-     if (LiveScopeMap::Ptr p = liveScopes.lookup(&scope)) {
-         StackFrame *fp = p->value;
- 
-@@ -1888,6 +1890,7 @@
- 
-         return fp;
-     }
-+#endif
-     return NULL;
- }
- 
-diff -aur /Users/cat/Downloads/origsm/js/src/vm/Stack.cpp ./vm/Stack.cpp
---- /Users/cat/Downloads/origsm/js/src/vm/Stack.cpp	2012-11-07 11:54:41.000000000 -0800
-+++ ./vm/Stack.cpp	2012-11-12 16:34:12.000000000 -0800
-@@ -97,11 +97,15 @@
-                                const Value *othervp, Value *othersp)
- {
-     JS_ASSERT(vp == (Value *)this - ((Value *)otherfp - othervp));
-+#if JS_HAS_GENERATORS
-     JS_ASSERT(othervp == otherfp->generatorArgsSnapshotBegin());
-+#endif
-     JS_ASSERT(othersp >= otherfp->slots());
-+#if JS_HAS_GENERATORS
-     JS_ASSERT(othersp <= otherfp->generatorSlotsSnapshotBegin() + otherfp->script()->nslots);
-+#endif
-     JS_ASSERT((Value *)this - vp == (Value *)otherfp - othervp);
+-    // %0 is the result register, and may alias either of the %[QR]1 registers.
+-    // %Q4 holds the lower part of the mantissa.
+-    // %R4 holds the sign, exponent, and the upper part of the mantissa.
+-    // %1, %2 and %3 are used as temporary values.
 -
-+#if JS_HAS_GENERATORS
-     /* Copy args, StackFrame, and slots. */
-     const Value *srcend = otherfp->generatorArgsSnapshotEnd();
-     Value *dst = vp;
-@@ -110,21 +114,30 @@
-         if (doPostBarrier)
-             HeapValue::writeBarrierPost(*dst, dst);
-     }
-+#endif
-+    // MAYBE THIS IS BROKEN -cat
- 
-     *this = *otherfp;
-     if (doPostBarrier)
-         writeBarrierPost();
- 
-+#if JS_HAS_GENERATORS
-     srcend = othersp;
-     dst = slots();
-+#else
-+    const Value *srcend = otherfp->actuals();
-+    Value *dst = slots();
-+#endif
-     for (const Value *src = otherfp->slots(); src < srcend; src++, dst++) {
-         *dst = *src;
-         if (doPostBarrier)
-             HeapValue::writeBarrierPost(*dst, dst);
-     }
- 
-+#if JS_HAS_GENERATORS
-     if (cx->compartment->debugMode())
-         cx->runtime->debugScopes->onGeneratorFrameChange(otherfp, this, cx);
-+#endif
- }
- 
- /* Note: explicit instantiation for js_NewGenerator located in jsiter.cpp. */
-@@ -154,6 +167,8 @@
-         HeapValue::writeBarrierPost(rval_, &rval_);
- }
- 
-+#if JS_HAS_GENERATORS
+-    // Extract the exponent.
+-"   mov     %1, %4, LSR #20\n"
+-"   bic     %1, %1, #(1 << 11)\n"  // Clear the sign.
+-
+-    // Set the implicit top bit of the mantissa. This clobbers a bit of the
+-    // exponent, but we have already extracted that.
+-"   orr     %4, %4, #(1 << 20)\n"
+-
+-    // Special Cases
+-    //   We should return zero in the following special cases:
+-    //    - Exponent is 0x000 - 1023: +/-0 or subnormal.
+-    //    - Exponent is 0x7ff - 1023: +/-INFINITY or NaN
+-    //      - This case is implicitly handled by the standard code path anyway,
+-    //        as shifting the mantissa up by the exponent will result in '0'.
+-    //
+-    // The result is composed of the mantissa, prepended with '1' and
+-    // bit-shifted left by the (decoded) exponent. Note that because the r1[20]
+-    // is the bit with value '1', r1 is effectively already shifted (left) by
+-    // 20 bits, and r0 is already shifted by 52 bits.
+-
+-    // Adjust the exponent to remove the encoding offset. If the decoded
+-    // exponent is negative, quickly bail out with '0' as such values round to
+-    // zero anyway. This also catches +/-0 and subnormals.
+-"   sub     %1, %1, #0xff\n"
+-"   subs    %1, %1, #0x300\n"
+-"   bmi     8f\n"
+-
+-    //  %1 = (decoded) exponent >= 0
+-    //  %R4 = upper mantissa and sign
+-
+-    // ---- Lower Mantissa ----
+-"   subs    %3, %1, #52\n"         // Calculate exp-52
+-"   bmi     1f\n"
+-
+-    // Shift r0 left by exp-52.
+-    // Ensure that we don't overflow ARM's 8-bit shift operand range.
+-    // We need to handle anything up to an 11-bit value here as we know that
+-    // 52 <= exp <= 1024 (0x400). Any shift beyond 31 bits results in zero
+-    // anyway, so as long as we don't touch the bottom 5 bits, we can use
+-    // a logical OR to push long shifts into the 32 <= (exp&0xff) <= 255 range.
+-"   bic     %2, %3, #0xff\n"
+-"   orr     %3, %3, %2, LSR #3\n"
+-
+-    // We can now perform a straight shift, avoiding the need for any
+-    // conditional instructions or extra branches.
+-"   mov     %5, %5, LSL %3\n"
+-"   b       2f\n"
+-"1:\n" // Shift r0 right by 52-exp.
+-    // We know that 0 <= exp < 52, and we can shift up to 255 bits so 52-exp
+-    // will always be a valid shift and we can sk%3 the range check for this case.
+-"   rsb     %3, %1, #52\n"
+-"   mov     %5, %5, LSR %3\n"
+-
+-    //  %1 = (decoded) exponent
+-    //  %R4 = upper mantissa and sign
+-    //  %Q4 = partially-converted integer
+-
+-"2:\n"
+-    // ---- Upper Mantissa ----
+-    // This is much the same as the lower mantissa, with a few different
+-    // boundary checks and some masking to hide the exponent & sign bit in the
+-    // upper word.
+-    // Note that the upper mantissa is pre-shifted by 20 in %R4, but we shift
+-    // it left more to remove the sign and exponent so it is effectively
+-    // pre-shifted by 31 bits.
+-"   subs    %3, %1, #31\n"          // Calculate exp-31
+-"   mov     %1, %4, LSL #11\n"     // Re-use %1 as a temporary register.
+-"   bmi     3f\n"
+-
+-    // Shift %R4 left by exp-31.
+-    // Avoid overflowing the 8-bit shift range, as before.
+-"   bic     %2, %3, #0xff\n"
+-"   orr     %3, %3, %2, LSR #3\n"
+-    // Perform the shift.
+-"   mov     %2, %1, LSL %3\n"
+-"   b       4f\n"
+-"3:\n" // Shift r1 right by 31-exp.
+-    // We know that 0 <= exp < 31, and we can shift up to 255 bits so 31-exp
+-    // will always be a valid shift and we can skip the range check for this case.
+-"   rsb     %3, %3, #0\n"          // Calculate 31-exp from -(exp-31)
+-"   mov     %2, %1, LSR %3\n"      // Thumb-2 can't do "LSR %3" in "orr".
+-
+-    //  %Q4 = partially-converted integer (lower)
+-    //  %R4 = upper mantissa and sign
+-    //  %2 = partially-converted integer (upper)
+-
+-"4:\n"
+-    // Combine the converted parts.
+-"   orr     %5, %5, %2\n"
+-    // Negate the result if we have to, and move it to %0 in the process. To
+-    // avoid conditionals, we can do this by inverting on %R4[31], then adding
+-    // %R4[31]>>31.
+-"   eor     %5, %5, %4, ASR #31\n"
+-"   add     %0, %5, %4, LSR #31\n"
+-"   b       9f\n"
+-
+-"8:\n"
+-    // +/-INFINITY, +/-0, subnormals, NaNs, and anything else out-of-range that
+-    // will result in a conversion of '0'.
+-"   mov     %0, #0\n"
+-"9:\n"
+-    : "=r" (i), "=&r" (tmp0), "=&r" (tmp1), "=&r" (tmp2), "=&r" (d), "=r" (tmp3)
+-    : "4" (d)
+-    : "cc"
+-        );
+-    return i;
+-#else
+-    return ToIntWidth<32, int32_t>(dd);
+-#endif
 +
- JSGenerator *
- StackFrame::maybeSuspendedGenerator(JSRuntime *rt)
- {
-@@ -175,6 +190,8 @@
-     return gen;
++
++
++template <class Dest, class Source>
++struct BitCastHelper {
++  inline static Dest cast(const Source& source) {
++    Dest dest;
++    memcpy(&dest, &source, sizeof(dest));
++    return dest;
++  }
++};
++
++template <class Dest, class Source>
++struct BitCastHelper<Dest, Source*> {
++  inline static Dest cast(Source* source) {
++    return BitCastHelper<Dest, uintptr_t>::
++        cast(reinterpret_cast<uintptr_t>(source));
++  }
++};
++
++template <class Dest, class Source>
++inline Dest BitCast(const Source& source);
++
++template <class Dest, class Source>
++inline Dest BitCast(const Source& source) {
++  return BitCastHelper<Dest, Source>::cast(source);
++}
++
++
++
++
++// This "Do It Yourself Floating Point" class implements a floating-point number
++// with a uint64 significand and an int exponent. Normalized DiyFp numbers will
++// have the most significant bit of the significand set.
++// Multiplication and Subtraction do not normalize their results.
++// DiyFp are not designed to contain special doubles (NaN and Infinity).
++class DiyFp {
++ public:
++  static const int kSignificandSize = 64;
++
++  DiyFp() : f_(0), e_(0) {}
++  DiyFp(uint64_t f, int e) : f_(f), e_(e) {}
++
++  // this = this - other.
++  // The exponents of both numbers must be the same and the significand of this
++  // must be bigger than the significand of other.
++  // The result will not be normalized.
++  void Subtract(const DiyFp& other) {
++    f_ -= other.f_;
++  }
++
++  // Returns a - b.
++  // The exponents of both numbers must be the same and this must be bigger
++  // than other. The result will not be normalized.
++  static DiyFp Minus(const DiyFp& a, const DiyFp& b) {
++    DiyFp result = a;
++    result.Subtract(b);
++    return result;
++  }
++
++
++  // this = this * other.
++  void Multiply(const DiyFp& other);
++
++  // returns a * b;
++  static DiyFp Times(const DiyFp& a, const DiyFp& b) {
++    DiyFp result = a;
++    result.Multiply(b);
++    return result;
++  }
++
++  void Normalize() {
++    uint64_t f = f_;
++    int e = e_;
++
++    // This method is mainly called for normalizing boundaries. In general
++    // boundaries need to be shifted by 10 bits. We thus optimize for this case.
++    const uint64_t k10MSBits = static_cast<uint64_t>(0x3FF) << 54;
++    while ((f & k10MSBits) == 0) {
++      f <<= 10;
++      e -= 10;
++    }
++    while ((f & kUint64MSB) == 0) {
++      f <<= 1;
++      e--;
++    }
++    f_ = f;
++    e_ = e;
++  }
++
++  static DiyFp Normalize(const DiyFp& a) {
++    DiyFp result = a;
++    result.Normalize();
++    return result;
++  }
++
++  uint64_t f() const { return f_; }
++  int e() const { return e_; }
++
++  void set_f(uint64_t new_value) { f_ = new_value; }
++  void set_e(int new_value) { e_ = new_value; }
++
++ private:
++  static const uint64_t kUint64MSB = static_cast<uint64_t>(1) << 63;
++
++  uint64_t f_;
++  int e_;
++};
++
++
++
++
++
++
++
++
++
++// We assume that doubles and uint64_t have the same endianness.
++inline uint64_t double_to_uint64(double d) { return BitCast<uint64_t>(d); }
++inline double uint64_to_double(uint64_t d64) { return BitCast<double>(d64); }
++
++#define V8_2PART_UINT64_C(a, b) (((static_cast<uint64_t>(a) << 32) + 0x##b##u))
++
++// Helper functions for doubles.
++class Double {
++ public:
++  static const uint64_t kSignMask = V8_2PART_UINT64_C(0x80000000, 00000000);
++  static const uint64_t kExponentMask = V8_2PART_UINT64_C(0x7FF00000, 00000000);
++  static const uint64_t kSignificandMask =
++      V8_2PART_UINT64_C(0x000FFFFF, FFFFFFFF);
++  static const uint64_t kHiddenBit = V8_2PART_UINT64_C(0x00100000, 00000000);
++  static const int kPhysicalSignificandSize = 52;  // Excludes the hidden bit.
++  static const int kSignificandSize = 53;
++
++  Double() : d64_(0) {}
++  explicit Double(double d) : d64_(double_to_uint64(d)) {}
++  explicit Double(uint64_t d64) : d64_(d64) {}
++  explicit Double(DiyFp diy_fp)
++    : d64_(DiyFpToUint64(diy_fp)) {}
++
++  // The value encoded by this Double must be greater or equal to +0.0.
++  // It must not be special (infinity, or NaN).
++  DiyFp AsDiyFp() const {
++    return DiyFp(Significand(), Exponent());
++  }
++
++  // The value encoded by this Double must be strictly greater than 0.
++  DiyFp AsNormalizedDiyFp() const {
++    uint64_t f = Significand();
++    int e = Exponent();
++
++    // The current double could be a denormal.
++    while ((f & kHiddenBit) == 0) {
++      f <<= 1;
++      e--;
++    }
++    // Do the final shifts in one go.
++    f <<= DiyFp::kSignificandSize - kSignificandSize;
++    e -= DiyFp::kSignificandSize - kSignificandSize;
++    return DiyFp(f, e);
++  }
++
++  // Returns the double's bit as uint64.
++  uint64_t AsUint64() const {
++    return d64_;
++  }
++
++  // Returns the next greater double. Returns +infinity on input +infinity.
++  double NextDouble() const {
++    if (d64_ == kInfinity) return Double(kInfinity).value();
++    if (Sign() < 0 && Significand() == 0) {
++      // -0.0
++      return 0.0;
++    }
++    if (Sign() < 0) {
++      return Double(d64_ - 1).value();
++    } else {
++      return Double(d64_ + 1).value();
++    }
++  }
++
++  int Exponent() const {
++    if (IsDenormal()) return kDenormalExponent;
++
++    uint64_t d64 = AsUint64();
++    int biased_e =
++        static_cast<int>((d64 & kExponentMask) >> kPhysicalSignificandSize);
++    return biased_e - kExponentBias;
++  }
++
++  uint64_t Significand() const {
++    uint64_t d64 = AsUint64();
++    uint64_t significand = d64 & kSignificandMask;
++    if (!IsDenormal()) {
++      return significand + kHiddenBit;
++    } else {
++      return significand;
++    }
++  }
++
++  // Returns true if the double is a denormal.
++  bool IsDenormal() const {
++    uint64_t d64 = AsUint64();
++    return (d64 & kExponentMask) == 0;
++  }
++
++  // We consider denormals not to be special.
++  // Hence only Infinity and NaN are special.
++  bool IsSpecial() const {
++    uint64_t d64 = AsUint64();
++    return (d64 & kExponentMask) == kExponentMask;
++  }
++
++  bool IsInfinite() const {
++    uint64_t d64 = AsUint64();
++    return ((d64 & kExponentMask) == kExponentMask) &&
++        ((d64 & kSignificandMask) == 0);
++  }
++
++  int Sign() const {
++    uint64_t d64 = AsUint64();
++    return (d64 & kSignMask) == 0? 1: -1;
++  }
++
++  // Precondition: the value encoded by this Double must be greater or equal
++  // than +0.0.
++  DiyFp UpperBoundary() const {
++    return DiyFp(Significand() * 2 + 1, Exponent() - 1);
++  }
++
++  // Returns the two boundaries of this.
++  // The bigger boundary (m_plus) is normalized. The lower boundary has the same
++  // exponent as m_plus.
++  // Precondition: the value encoded by this Double must be greater than 0.
++  void NormalizedBoundaries(DiyFp* out_m_minus, DiyFp* out_m_plus) const {
++    DiyFp v = this->AsDiyFp();
++    bool significand_is_zero = (v.f() == kHiddenBit);
++    DiyFp m_plus = DiyFp::Normalize(DiyFp((v.f() << 1) + 1, v.e() - 1));
++    DiyFp m_minus;
++    if (significand_is_zero && v.e() != kDenormalExponent) {
++      // The boundary is closer. Think of v = 1000e10 and v- = 9999e9.
++      // Then the boundary (== (v - v-)/2) is not just at a distance of 1e9 but
++      // at a distance of 1e8.
++      // The only exception is for the smallest normal: the largest denormal is
++      // at the same distance as its successor.
++      // Note: denormals have the same exponent as the smallest normals.
++      m_minus = DiyFp((v.f() << 2) - 1, v.e() - 2);
++    } else {
++      m_minus = DiyFp((v.f() << 1) - 1, v.e() - 1);
++    }
++    m_minus.set_f(m_minus.f() << (m_minus.e() - m_plus.e()));
++    m_minus.set_e(m_plus.e());
++    *out_m_plus = m_plus;
++    *out_m_minus = m_minus;
++  }
++
++  double value() const { return uint64_to_double(d64_); }
++
++  // Returns the significand size for a given order of magnitude.
++  // If v = f*2^e with 2^p-1 <= f <= 2^p then p+e is v's order of magnitude.
++  // This function returns the number of significant binary digits v will have
++  // once its encoded into a double. In almost all cases this is equal to
++  // kSignificandSize. The only exception are denormals. They start with leading
++  // zeroes and their effective significand-size is hence smaller.
++  static int SignificandSizeForOrderOfMagnitude(int order) {
++    if (order >= (kDenormalExponent + kSignificandSize)) {
++      return kSignificandSize;
++    }
++    if (order <= kDenormalExponent) return 0;
++    return order - kDenormalExponent;
++  }
++
++ private:
++  static const int kExponentBias = 0x3FF + kPhysicalSignificandSize;
++  static const int kDenormalExponent = -kExponentBias + 1;
++  static const int kMaxExponent = 0x7FF - kExponentBias;
++  static const uint64_t kInfinity = V8_2PART_UINT64_C(0x7FF00000, 00000000);
++
++  const uint64_t d64_;
++
++  static uint64_t DiyFpToUint64(DiyFp diy_fp) {
++    uint64_t significand = diy_fp.f();
++    int exponent = diy_fp.e();
++    while (significand > kHiddenBit + kSignificandMask) {
++      significand >>= 1;
++      exponent++;
++    }
++    if (exponent >= kMaxExponent) {
++      return kInfinity;
++    }
++    if (exponent < kDenormalExponent) {
++      return 0;
++    }
++    while (exponent > kDenormalExponent && (significand & kHiddenBit) == 0) {
++      significand <<= 1;
++      exponent--;
++    }
++    uint64_t biased_exponent;
++    if (exponent == kDenormalExponent && (significand & kHiddenBit) == 0) {
++      biased_exponent = 0;
++    } else {
++      biased_exponent = static_cast<uint64_t>(exponent + kExponentBias);
++    }
++    return (significand & kSignificandMask) |
++        (biased_exponent << kPhysicalSignificandSize);
++  }
++};
++
++
++
++
++
++
++
++
++
++
++
++
++
++
++
++
++
++
++// The fast double-to-(unsigned-)int conversion routine does not guarantee
++// rounding towards zero.
++// The result is unspecified if x is infinite or NaN, or if the rounded
++// integer value is outside the range of type int.
++inline int FastD2I(double x) {
++  // The static_cast convertion from double to int used to be slow, but
++  // as new benchmarks show, now it is much faster than lrint().
++  return static_cast<int>(x);
++}
++
++inline double FastI2D(int x) {
++  // There is no rounding involved in converting an integer to a
++  // double, so this code should compile to a few instructions without
++  // any FPU pipeline stalls.
++  return static_cast<double>(x);
++}
++
++inline int32_t ToInt32(double x) {
++  int32_t i = FastD2I(x);
++  if (FastI2D(i) == x) return i;
++  Double d(x);
++  int exponent = d.Exponent();
++  if (exponent < 0) {
++    if (exponent <= -Double::kSignificandSize) return 0;
++    return d.Sign() * static_cast<int32_t>(d.Significand() >> -exponent);
++  } else {
++    if (exponent > 31) return 0;
++    return d.Sign() * static_cast<int32_t>(d.Significand() << exponent);
++  }
  }
  
-+#endif
-+
- jsbytecode *
- StackFrame::prevpcSlow(InlinedSite **pinlined)
- {
-@@ -280,7 +297,9 @@
- {
-     RootedScript script(cx, this->script());
- 
-+#if JS_HAS_GENERATORS
-     JS_ASSERT(!isGeneratorFrame());
-+#endif
-     JS_ASSERT(cx->regs().pc == script->code);
- 
-     if (isEvalFrame()) {
-@@ -1122,6 +1141,8 @@
-     Debug_SetValueRangeToCrashOnTouch(space().firstUnused(), oldend);
- }
- 
-+#if JS_HAS_GENERATORS
-+
- bool
- ContextStack::pushGeneratorFrame(JSContext *cx, JSGenerator *gen, GeneratorFrameGuard *gfg)
- {
-@@ -1192,6 +1213,8 @@
-     JS_ASSERT(ImplicitCast<const FrameGuard>(gfg).pushed());
- }
- 
-+#endif
-+
- bool
- ContextStack::saveFrameChain()
- {
-diff -aur /Users/cat/Downloads/origsm/js/src/vm/Stack.h ./vm/Stack.h
---- /Users/cat/Downloads/origsm/js/src/vm/Stack.h	2012-11-07 11:54:41.000000000 -0800
-+++ ./vm/Stack.h	2012-11-12 16:34:12.000000000 -0800
-@@ -855,7 +855,7 @@
-     void **addressOfNativeReturnAddress() {
-         return &ncode_;
-     }
--
-+#if JS_HAS_GENERATORS
-     /*
-      * A "generator" frame is a function frame associated with a generator.
-      * Since generators are not executed LIFO, the VM copies a single abstract
-@@ -893,7 +893,7 @@
-         JS_ASSERT(isGeneratorFrame());
-         return (Value *)(this + 1);
-     }
--
-+#endif
-     enum TriggerPostBarriers {
-         DoPostBarrier = true,
-         NoPostBarrier = false
-@@ -901,8 +901,9 @@
-     template <TriggerPostBarriers doPostBarrier>
-     void copyFrameAndValues(JSContext *cx, Value *vp, StackFrame *otherfp,
-                             const Value *othervp, Value *othersp);
--
-+#if JS_HAS_GENERATORS
-     JSGenerator *maybeSuspendedGenerator(JSRuntime *rt);
-+#endif
- 
-     /*
-      * js::Execute pushes both global and function frames (since eval() in a
+ /* ES5 9.6 (specialized for doubles). */

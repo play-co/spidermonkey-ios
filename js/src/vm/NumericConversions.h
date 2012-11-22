@@ -150,138 +150,360 @@ ToIntWidth(double d)
 #endif
 }
 
-/* ES5 9.5 ToInt32 (specialized for doubles). */
-inline int32_t
-ToInt32(double dd)
-{
-#if defined (__arm__) && defined (__GNUC__)
-    float d = dd;
-    int32_t i;
-    uint32_t    tmp0;
-    uint32_t    tmp1;
-    uint32_t    tmp2;
-    uint32_t    tmp3;
-    asm (
-    // We use a pure integer solution here. In the 'softfp' ABI, the argument
-    // will start in r0 and r1, and VFP can't do all of the necessary ECMA
-    // conversions by itself so some integer code will be required anyway. A
-    // hybrid solution is faster on A9, but this pure integer solution is
-    // notably faster for A8.
 
-    // %0 is the result register, and may alias either of the %[QR]1 registers.
-    // %Q4 holds the lower part of the mantissa.
-    // %R4 holds the sign, exponent, and the upper part of the mantissa.
-    // %1, %2 and %3 are used as temporary values.
 
-    // Extract the exponent.
-"   mov     %1, %4, LSR #20\n"
-"   bic     %1, %1, #(1 << 11)\n"  // Clear the sign.
 
-    // Set the implicit top bit of the mantissa. This clobbers a bit of the
-    // exponent, but we have already extracted that.
-"   orr     %4, %4, #(1 << 20)\n"
+template <class Dest, class Source>
+struct BitCastHelper {
+  inline static Dest cast(const Source& source) {
+    Dest dest;
+    memcpy(&dest, &source, sizeof(dest));
+    return dest;
+  }
+};
 
-    // Special Cases
-    //   We should return zero in the following special cases:
-    //    - Exponent is 0x000 - 1023: +/-0 or subnormal.
-    //    - Exponent is 0x7ff - 1023: +/-INFINITY or NaN
-    //      - This case is implicitly handled by the standard code path anyway,
-    //        as shifting the mantissa up by the exponent will result in '0'.
-    //
-    // The result is composed of the mantissa, prepended with '1' and
-    // bit-shifted left by the (decoded) exponent. Note that because the r1[20]
-    // is the bit with value '1', r1 is effectively already shifted (left) by
-    // 20 bits, and r0 is already shifted by 52 bits.
+template <class Dest, class Source>
+struct BitCastHelper<Dest, Source*> {
+  inline static Dest cast(Source* source) {
+    return BitCastHelper<Dest, uintptr_t>::
+        cast(reinterpret_cast<uintptr_t>(source));
+  }
+};
 
-    // Adjust the exponent to remove the encoding offset. If the decoded
-    // exponent is negative, quickly bail out with '0' as such values round to
-    // zero anyway. This also catches +/-0 and subnormals.
-"   sub     %1, %1, #0xff\n"
-"   subs    %1, %1, #0x300\n"
-"   bmi     8f\n"
+template <class Dest, class Source>
+inline Dest BitCast(const Source& source);
 
-    //  %1 = (decoded) exponent >= 0
-    //  %R4 = upper mantissa and sign
+template <class Dest, class Source>
+inline Dest BitCast(const Source& source) {
+  return BitCastHelper<Dest, Source>::cast(source);
+}
 
-    // ---- Lower Mantissa ----
-"   subs    %3, %1, #52\n"         // Calculate exp-52
-"   bmi     1f\n"
 
-    // Shift r0 left by exp-52.
-    // Ensure that we don't overflow ARM's 8-bit shift operand range.
-    // We need to handle anything up to an 11-bit value here as we know that
-    // 52 <= exp <= 1024 (0x400). Any shift beyond 31 bits results in zero
-    // anyway, so as long as we don't touch the bottom 5 bits, we can use
-    // a logical OR to push long shifts into the 32 <= (exp&0xff) <= 255 range.
-"   bic     %2, %3, #0xff\n"
-"   orr     %3, %3, %2, LSR #3\n"
 
-    // We can now perform a straight shift, avoiding the need for any
-    // conditional instructions or extra branches.
-"   mov     %5, %5, LSL %3\n"
-"   b       2f\n"
-"1:\n" // Shift r0 right by 52-exp.
-    // We know that 0 <= exp < 52, and we can shift up to 255 bits so 52-exp
-    // will always be a valid shift and we can sk%3 the range check for this case.
-"   rsb     %3, %1, #52\n"
-"   mov     %5, %5, LSR %3\n"
 
-    //  %1 = (decoded) exponent
-    //  %R4 = upper mantissa and sign
-    //  %Q4 = partially-converted integer
+// This "Do It Yourself Floating Point" class implements a floating-point number
+// with a uint64 significand and an int exponent. Normalized DiyFp numbers will
+// have the most significant bit of the significand set.
+// Multiplication and Subtraction do not normalize their results.
+// DiyFp are not designed to contain special doubles (NaN and Infinity).
+class DiyFp {
+ public:
+  static const int kSignificandSize = 64;
 
-"2:\n"
-    // ---- Upper Mantissa ----
-    // This is much the same as the lower mantissa, with a few different
-    // boundary checks and some masking to hide the exponent & sign bit in the
-    // upper word.
-    // Note that the upper mantissa is pre-shifted by 20 in %R4, but we shift
-    // it left more to remove the sign and exponent so it is effectively
-    // pre-shifted by 31 bits.
-"   subs    %3, %1, #31\n"          // Calculate exp-31
-"   mov     %1, %4, LSL #11\n"     // Re-use %1 as a temporary register.
-"   bmi     3f\n"
+  DiyFp() : f_(0), e_(0) {}
+  DiyFp(uint64_t f, int e) : f_(f), e_(e) {}
 
-    // Shift %R4 left by exp-31.
-    // Avoid overflowing the 8-bit shift range, as before.
-"   bic     %2, %3, #0xff\n"
-"   orr     %3, %3, %2, LSR #3\n"
-    // Perform the shift.
-"   mov     %2, %1, LSL %3\n"
-"   b       4f\n"
-"3:\n" // Shift r1 right by 31-exp.
-    // We know that 0 <= exp < 31, and we can shift up to 255 bits so 31-exp
-    // will always be a valid shift and we can skip the range check for this case.
-"   rsb     %3, %3, #0\n"          // Calculate 31-exp from -(exp-31)
-"   mov     %2, %1, LSR %3\n"      // Thumb-2 can't do "LSR %3" in "orr".
+  // this = this - other.
+  // The exponents of both numbers must be the same and the significand of this
+  // must be bigger than the significand of other.
+  // The result will not be normalized.
+  void Subtract(const DiyFp& other) {
+    f_ -= other.f_;
+  }
 
-    //  %Q4 = partially-converted integer (lower)
-    //  %R4 = upper mantissa and sign
-    //  %2 = partially-converted integer (upper)
+  // Returns a - b.
+  // The exponents of both numbers must be the same and this must be bigger
+  // than other. The result will not be normalized.
+  static DiyFp Minus(const DiyFp& a, const DiyFp& b) {
+    DiyFp result = a;
+    result.Subtract(b);
+    return result;
+  }
 
-"4:\n"
-    // Combine the converted parts.
-"   orr     %5, %5, %2\n"
-    // Negate the result if we have to, and move it to %0 in the process. To
-    // avoid conditionals, we can do this by inverting on %R4[31], then adding
-    // %R4[31]>>31.
-"   eor     %5, %5, %4, ASR #31\n"
-"   add     %0, %5, %4, LSR #31\n"
-"   b       9f\n"
 
-"8:\n"
-    // +/-INFINITY, +/-0, subnormals, NaNs, and anything else out-of-range that
-    // will result in a conversion of '0'.
-"   mov     %0, #0\n"
-"9:\n"
-    : "=r" (i), "=&r" (tmp0), "=&r" (tmp1), "=&r" (tmp2), "=&r" (d), "=r" (tmp3)
-    : "4" (d)
-    : "cc"
-        );
-    return i;
-#else
-    return ToIntWidth<32, int32_t>(dd);
-#endif
+  // this = this * other.
+  void Multiply(const DiyFp& other);
+
+  // returns a * b;
+  static DiyFp Times(const DiyFp& a, const DiyFp& b) {
+    DiyFp result = a;
+    result.Multiply(b);
+    return result;
+  }
+
+  void Normalize() {
+    uint64_t f = f_;
+    int e = e_;
+
+    // This method is mainly called for normalizing boundaries. In general
+    // boundaries need to be shifted by 10 bits. We thus optimize for this case.
+    const uint64_t k10MSBits = static_cast<uint64_t>(0x3FF) << 54;
+    while ((f & k10MSBits) == 0) {
+      f <<= 10;
+      e -= 10;
+    }
+    while ((f & kUint64MSB) == 0) {
+      f <<= 1;
+      e--;
+    }
+    f_ = f;
+    e_ = e;
+  }
+
+  static DiyFp Normalize(const DiyFp& a) {
+    DiyFp result = a;
+    result.Normalize();
+    return result;
+  }
+
+  uint64_t f() const { return f_; }
+  int e() const { return e_; }
+
+  void set_f(uint64_t new_value) { f_ = new_value; }
+  void set_e(int new_value) { e_ = new_value; }
+
+ private:
+  static const uint64_t kUint64MSB = static_cast<uint64_t>(1) << 63;
+
+  uint64_t f_;
+  int e_;
+};
+
+
+
+
+
+
+
+
+
+// We assume that doubles and uint64_t have the same endianness.
+inline uint64_t double_to_uint64(double d) { return BitCast<uint64_t>(d); }
+inline double uint64_to_double(uint64_t d64) { return BitCast<double>(d64); }
+
+#define V8_2PART_UINT64_C(a, b) (((static_cast<uint64_t>(a) << 32) + 0x##b##u))
+
+// Helper functions for doubles.
+class Double {
+ public:
+  static const uint64_t kSignMask = V8_2PART_UINT64_C(0x80000000, 00000000);
+  static const uint64_t kExponentMask = V8_2PART_UINT64_C(0x7FF00000, 00000000);
+  static const uint64_t kSignificandMask =
+      V8_2PART_UINT64_C(0x000FFFFF, FFFFFFFF);
+  static const uint64_t kHiddenBit = V8_2PART_UINT64_C(0x00100000, 00000000);
+  static const int kPhysicalSignificandSize = 52;  // Excludes the hidden bit.
+  static const int kSignificandSize = 53;
+
+  Double() : d64_(0) {}
+  explicit Double(double d) : d64_(double_to_uint64(d)) {}
+  explicit Double(uint64_t d64) : d64_(d64) {}
+  explicit Double(DiyFp diy_fp)
+    : d64_(DiyFpToUint64(diy_fp)) {}
+
+  // The value encoded by this Double must be greater or equal to +0.0.
+  // It must not be special (infinity, or NaN).
+  DiyFp AsDiyFp() const {
+    return DiyFp(Significand(), Exponent());
+  }
+
+  // The value encoded by this Double must be strictly greater than 0.
+  DiyFp AsNormalizedDiyFp() const {
+    uint64_t f = Significand();
+    int e = Exponent();
+
+    // The current double could be a denormal.
+    while ((f & kHiddenBit) == 0) {
+      f <<= 1;
+      e--;
+    }
+    // Do the final shifts in one go.
+    f <<= DiyFp::kSignificandSize - kSignificandSize;
+    e -= DiyFp::kSignificandSize - kSignificandSize;
+    return DiyFp(f, e);
+  }
+
+  // Returns the double's bit as uint64.
+  uint64_t AsUint64() const {
+    return d64_;
+  }
+
+  // Returns the next greater double. Returns +infinity on input +infinity.
+  double NextDouble() const {
+    if (d64_ == kInfinity) return Double(kInfinity).value();
+    if (Sign() < 0 && Significand() == 0) {
+      // -0.0
+      return 0.0;
+    }
+    if (Sign() < 0) {
+      return Double(d64_ - 1).value();
+    } else {
+      return Double(d64_ + 1).value();
+    }
+  }
+
+  int Exponent() const {
+    if (IsDenormal()) return kDenormalExponent;
+
+    uint64_t d64 = AsUint64();
+    int biased_e =
+        static_cast<int>((d64 & kExponentMask) >> kPhysicalSignificandSize);
+    return biased_e - kExponentBias;
+  }
+
+  uint64_t Significand() const {
+    uint64_t d64 = AsUint64();
+    uint64_t significand = d64 & kSignificandMask;
+    if (!IsDenormal()) {
+      return significand + kHiddenBit;
+    } else {
+      return significand;
+    }
+  }
+
+  // Returns true if the double is a denormal.
+  bool IsDenormal() const {
+    uint64_t d64 = AsUint64();
+    return (d64 & kExponentMask) == 0;
+  }
+
+  // We consider denormals not to be special.
+  // Hence only Infinity and NaN are special.
+  bool IsSpecial() const {
+    uint64_t d64 = AsUint64();
+    return (d64 & kExponentMask) == kExponentMask;
+  }
+
+  bool IsInfinite() const {
+    uint64_t d64 = AsUint64();
+    return ((d64 & kExponentMask) == kExponentMask) &&
+        ((d64 & kSignificandMask) == 0);
+  }
+
+  int Sign() const {
+    uint64_t d64 = AsUint64();
+    return (d64 & kSignMask) == 0? 1: -1;
+  }
+
+  // Precondition: the value encoded by this Double must be greater or equal
+  // than +0.0.
+  DiyFp UpperBoundary() const {
+    return DiyFp(Significand() * 2 + 1, Exponent() - 1);
+  }
+
+  // Returns the two boundaries of this.
+  // The bigger boundary (m_plus) is normalized. The lower boundary has the same
+  // exponent as m_plus.
+  // Precondition: the value encoded by this Double must be greater than 0.
+  void NormalizedBoundaries(DiyFp* out_m_minus, DiyFp* out_m_plus) const {
+    DiyFp v = this->AsDiyFp();
+    bool significand_is_zero = (v.f() == kHiddenBit);
+    DiyFp m_plus = DiyFp::Normalize(DiyFp((v.f() << 1) + 1, v.e() - 1));
+    DiyFp m_minus;
+    if (significand_is_zero && v.e() != kDenormalExponent) {
+      // The boundary is closer. Think of v = 1000e10 and v- = 9999e9.
+      // Then the boundary (== (v - v-)/2) is not just at a distance of 1e9 but
+      // at a distance of 1e8.
+      // The only exception is for the smallest normal: the largest denormal is
+      // at the same distance as its successor.
+      // Note: denormals have the same exponent as the smallest normals.
+      m_minus = DiyFp((v.f() << 2) - 1, v.e() - 2);
+    } else {
+      m_minus = DiyFp((v.f() << 1) - 1, v.e() - 1);
+    }
+    m_minus.set_f(m_minus.f() << (m_minus.e() - m_plus.e()));
+    m_minus.set_e(m_plus.e());
+    *out_m_plus = m_plus;
+    *out_m_minus = m_minus;
+  }
+
+  double value() const { return uint64_to_double(d64_); }
+
+  // Returns the significand size for a given order of magnitude.
+  // If v = f*2^e with 2^p-1 <= f <= 2^p then p+e is v's order of magnitude.
+  // This function returns the number of significant binary digits v will have
+  // once its encoded into a double. In almost all cases this is equal to
+  // kSignificandSize. The only exception are denormals. They start with leading
+  // zeroes and their effective significand-size is hence smaller.
+  static int SignificandSizeForOrderOfMagnitude(int order) {
+    if (order >= (kDenormalExponent + kSignificandSize)) {
+      return kSignificandSize;
+    }
+    if (order <= kDenormalExponent) return 0;
+    return order - kDenormalExponent;
+  }
+
+ private:
+  static const int kExponentBias = 0x3FF + kPhysicalSignificandSize;
+  static const int kDenormalExponent = -kExponentBias + 1;
+  static const int kMaxExponent = 0x7FF - kExponentBias;
+  static const uint64_t kInfinity = V8_2PART_UINT64_C(0x7FF00000, 00000000);
+
+  const uint64_t d64_;
+
+  static uint64_t DiyFpToUint64(DiyFp diy_fp) {
+    uint64_t significand = diy_fp.f();
+    int exponent = diy_fp.e();
+    while (significand > kHiddenBit + kSignificandMask) {
+      significand >>= 1;
+      exponent++;
+    }
+    if (exponent >= kMaxExponent) {
+      return kInfinity;
+    }
+    if (exponent < kDenormalExponent) {
+      return 0;
+    }
+    while (exponent > kDenormalExponent && (significand & kHiddenBit) == 0) {
+      significand <<= 1;
+      exponent--;
+    }
+    uint64_t biased_exponent;
+    if (exponent == kDenormalExponent && (significand & kHiddenBit) == 0) {
+      biased_exponent = 0;
+    } else {
+      biased_exponent = static_cast<uint64_t>(exponent + kExponentBias);
+    }
+    return (significand & kSignificandMask) |
+        (biased_exponent << kPhysicalSignificandSize);
+  }
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// The fast double-to-(unsigned-)int conversion routine does not guarantee
+// rounding towards zero.
+// The result is unspecified if x is infinite or NaN, or if the rounded
+// integer value is outside the range of type int.
+inline int FastD2I(double x) {
+  // The static_cast convertion from double to int used to be slow, but
+  // as new benchmarks show, now it is much faster than lrint().
+  return static_cast<int>(x);
+}
+
+inline double FastI2D(int x) {
+  // There is no rounding involved in converting an integer to a
+  // double, so this code should compile to a few instructions without
+  // any FPU pipeline stalls.
+  return static_cast<double>(x);
+}
+
+inline int32_t ToInt32(double x) {
+  int32_t i = FastD2I(x);
+  if (FastI2D(i) == x) return i;
+  Double d(x);
+  int exponent = d.Exponent();
+  if (exponent < 0) {
+    if (exponent <= -Double::kSignificandSize) return 0;
+    return d.Sign() * static_cast<int32_t>(d.Significand() >> -exponent);
+  } else {
+    if (exponent > 31) return 0;
+    return d.Sign() * static_cast<int32_t>(d.Significand() << exponent);
+  }
 }
 
 /* ES5 9.6 (specialized for doubles). */
