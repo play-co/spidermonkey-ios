@@ -16,7 +16,7 @@ echo "Creating arm version..."
 echo "------------------------------------------------------------------------"
 
 # create ios version (armv7)
-./configure --with-ios-target=iPhoneOS --with-ios-version=$IOS_SDK --with-ios-min-version=$MIN_IOS_VERSION --with-ios-arch=armv7  --disable-shared-js --disable-tests --disable-ion --disable-jm --disable-tm --enable-llvm-hacks --disable-methodjit --with-thumb=yes --enable-strip --enable-install-strip --disable-monoic --disable-polyic --disable-ion --disable-root-analysis --disable-exact-rooting --enable-gcincremental --enable-optimize=-O3
+./configure --with-ios-target=iPhoneOS --with-ios-version=$IOS_SDK --with-ios-min-version=$MIN_IOS_VERSION --with-ios-arch=armv7  --disable-shared-js --disable-tests --disable-ion --disable-jm --disable-tm --enable-llvm-hacks --disable-methodjit --with-thumb=yes --enable-strip --enable-install-strip --disable-monoic --disable-polyic --disable-root-analysis --disable-exact-rooting --enable-gcincremental --enable-optimize=-O3
 make -j8
 if (( $? )) ; then
     echo "error when compiling iOS version of the library"
@@ -29,7 +29,7 @@ echo "Creating i386 version..."
 echo "------------------------------------------------------------------------"
 
 # create i386 version (simulator)
-./configure --with-ios-target=iPhoneSimulator --with-ios-version=$IOS_SDK --with-ios-min-version=$MIN_IOS_VERSION --disable-shared-js --disable-tests --disable-ion --enable-llvm-hacks --enable-debug --disable-ion --disable-jm --disable-tm --disable-methodjit --disable-monoic --disable-polyic
+./configure --with-ios-target=iPhoneSimulator --with-ios-version=$IOS_SDK --with-ios-min-version=$MIN_IOS_VERSION --disable-shared-js --disable-tests --disable-ion --disable-jm --disable-tm --enable-llvm-hacks --disable-methodjit --enable-strip --enable-install-strip --disable-monoic --disable-polyic --disable-root-analysis --disable-exact-rooting --enable-gcincremental --enable-optimize=-O3
 make -j8
 if (( $? )) ; then
     echo "error when compiling i386 (iOS Simulator) version of the library"

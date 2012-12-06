@@ -62,17 +62,13 @@
 #define JS_BYTES_PER_WORD 4
 #define JS_CPU_X86 1
 #define JS_DEFAULT_JITREPORT_GRANULARITY 3
-#define JS_GC_ZEAL 1
 #define JS_HAS_XML_SUPPORT 1
 #define JS_HAVE_ENDIAN_H 1
 #define JS_HAVE_MACHINE_ENDIAN_H 1
 #define JS_METHODJIT_TYPED_ARRAY 1
 #define JS_NUNBOX32 1
 #define MOZ_DEBUG_SYMBOLS 1
-#define MOZ_DEMANGLE_SYMBOLS 1
 #define MOZ_DLL_SUFFIX ".dylib"
-#define MOZ_REFLOW_PERF 1
-#define MOZ_REFLOW_PERF_DSP 1
 #define NEED_CPP_UNUSED_IMPLEMENTATIONS 1
 #define NEW_H <new>
 #define NS_ALWAYS_INLINE __attribute__((always_inline))
