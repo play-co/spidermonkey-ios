@@ -2889,7 +2889,7 @@ GCHelperThread::finish()
 void
 GCHelperThread::threadMain(void *arg)
 {
-    PR_SetCurrentThreadName("JS GC Helper");
+//    PR_SetCurrentThreadName("JS GC Helper");
     static_cast<GCHelperThread *>(arg)->threadLoop();
 }
 

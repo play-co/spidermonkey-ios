@@ -880,7 +880,7 @@ JSScript::destroyScriptCounts(FreeOp *fop)
 void
 SourceCompressorThread::compressorThread(void *arg)
 {
-    PR_SetCurrentThreadName("JS Source Compressing Thread");
+    //PR_SetCurrentThreadName("JS Source Compressing Thread");
     static_cast<SourceCompressorThread *>(arg)->threadLoop();
 }
 
