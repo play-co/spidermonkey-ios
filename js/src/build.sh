@@ -15,7 +15,7 @@ CWD="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
 NSPR_PREFIX="$CWD/../../nsprpub/dist/"
 NSPR_INCL="$NSPR_PREFIX/include/nspr/"
-NSPR_LIB="$NSPR_PREFIX/lib/"
+NSPR_LIB="$CWD/../../nsprpub/"
 
 echo "------------------------------------------------------------------------"
 echo "Creating arm version..."

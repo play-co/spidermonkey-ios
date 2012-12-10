@@ -2777,7 +2777,7 @@ KillWatchdog()
 static void
 WatchdogMain(void *arg)
 {
-    PR_SetCurrentThreadName("JS Watchdog");
+    //PR_SetCurrentThreadName("JS Watchdog");
 
     JSRuntime *rt = (JSRuntime *) arg;
 

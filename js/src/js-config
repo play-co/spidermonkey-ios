@@ -6,8 +6,8 @@
 prefix='/usr/local'
 mozilla_version=''
 LIBRARY_NAME='mozjs'
-NSPR_CFLAGS=''
-JS_CONFIG_LIBS='  -lm -lz'
+NSPR_CFLAGS='-I/Users/cat/cleanroom/ios/spidermonkey-ios/js/src/../../nsprpub/dist//include/nspr/'
+JS_CONFIG_LIBS='/Users/cat/cleanroom/ios/spidermonkey-ios/js/src/../../nsprpub//libnspr4.a  -lm -lz'
 MOZ_JS_LIBS='-L/usr/local/lib -lmozjs'
 
 usage()
