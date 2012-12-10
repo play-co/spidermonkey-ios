@@ -195,7 +195,11 @@ PR_IMPLEMENT(PRStatus) PR_GetSystemInfo(PRSysInfo cmd, char *buf, PRUint32 bufle
 
       case PR_SI_ARCHITECTURE:
         /* Return the architecture of the machine (ie. x86, mips, alpha, ...)*/
+#ifdef ARM7DARWIN
+        (void)PR_snprintf(buf, buflen, "armv7");
+#else
         (void)PR_snprintf(buf, buflen, _PR_SI_ARCHITECTURE);
+#endif
         break;
 	  default:
 			PR_SetError(PR_INVALID_ARGUMENT_ERROR, 0);

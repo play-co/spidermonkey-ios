@@ -47,7 +47,7 @@
 #include <dlfcn.h>  /* For dlopen, dlsym, dlclose */
 #endif
 
-#if defined(DARWIN)
+#if defined(DARWIN) && !defined(ARM7DARWIN)
 #include <crt_externs.h>
 #else
 PR_IMPORT_DATA(char **) environ;
@@ -184,7 +184,7 @@ ForkAndExec(
         PRBool found = PR_FALSE;
 
         if (NULL == childEnvp) {
-#ifdef DARWIN
+#if defined(DARWIN) && !defined(ARM7DARWIN)
             childEnvp = *(_NSGetEnviron());
 #else
             childEnvp = environ;

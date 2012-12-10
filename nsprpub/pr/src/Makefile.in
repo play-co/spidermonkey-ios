@@ -394,14 +394,6 @@ export::
 
 build:: $(TARGETS)
 	$(INSTALL) -m 444 $(TARGETS) $(dist_libdir)
-ifdef SHARED_LIBRARY
-ifeq ($(OS_ARCH),HP-UX)
-	$(INSTALL) -m 755 $(SHARED_LIBRARY) $(dist_libdir)
-	$(INSTALL) -m 755 $(SHARED_LIBRARY) $(dist_bindir)
-else
-	$(INSTALL) -m 444 $(SHARED_LIBRARY) $(dist_bindir)
-endif
-endif
 
 ifeq ($(BUILD_AIX_RTL_LIBC),1)
 $(AIX_RTL_LIBC): /usr/ccs/lib/libc.a

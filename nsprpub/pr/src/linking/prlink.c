@@ -36,6 +36,8 @@
  *
  * ***** END LICENSE BLOCK ***** */
 
+#if 0
+
 #include "primpl.h"
 
 #include <string.h>
@@ -45,7 +47,7 @@
 #endif
 
 #if defined(XP_MACOSX) && defined(USE_MACH_DYLD)
-#include <Carbon/Carbon.h>
+//#include <Carbon/Carbon.h>
 #include <CoreFoundation/CoreFoundation.h>
 #endif
 
@@ -1634,3 +1636,5 @@ PR_GetLibraryFilePathname(const char *name, PRFuncPtr addr)
     return NULL;
 #endif
 }
+
+#endif

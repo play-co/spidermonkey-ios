@@ -176,8 +176,3 @@ export:: $(TARGETS) $(HEADERS)
 ifeq ($(OS_ARCH),OS2)
 	$(INSTALL) -m 444 $(TARGETS) $(dist_bindir)
 endif
-ifeq ($(OS_ARCH),HP-UX)
-ifdef SHARED_LIBRARY
-	$(INSTALL) -m 755 $(SHARED_LIBRARY) $(dist_libdir)
-endif
-endif

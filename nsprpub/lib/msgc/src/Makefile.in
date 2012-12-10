@@ -88,6 +88,3 @@ include $(topsrcdir)/config/rules.mk
 
 export:: $(TARGETS)
 	$(INSTALL) -m 444 $(TARGETS) $(dist_libdir)
-ifdef SHARED_LIBRARY
-	$(INSTALL) -m 444 $(SHARED_LIBRARY) $(dist_bindir)
-endif

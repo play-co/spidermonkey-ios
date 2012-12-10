@@ -231,7 +231,7 @@ static void _PR_InitStuff(void)
     _PR_InitNet();
     _PR_InitTime();
     _PR_InitLog();
-    _PR_InitLinker();
+//    _PR_InitLinker();
     _PR_InitCallOnce();
     _PR_InitDtoa();
     _PR_InitMW();
@@ -411,7 +411,7 @@ PR_IMPLEMENT(PRStatus) PR_Cleanup()
         _PR_CleanupTime();
         _PR_CleanupDtoa();
         _PR_CleanupCallOnce();
-		_PR_ShutdownLinker();
+//		_PR_ShutdownLinker();
         _PR_CleanupNet();
         _PR_CleanupIO();
         /* Release the primordial thread's private data, etc. */
