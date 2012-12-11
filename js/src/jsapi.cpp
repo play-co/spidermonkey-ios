@@ -765,6 +765,7 @@ JSRuntime::JSRuntime(JSUseHelperThreads useHelperThreads)
     gcVerifyPostData(NULL),
     gcChunkAllocationSinceLastGC(false),
     gcNextFullGCTime(0),
+    gcNextSmallGCTime(0),
     gcLastGCTime(0),
     gcJitReleaseTime(0),
     gcMode(JSGC_MODE_GLOBAL),

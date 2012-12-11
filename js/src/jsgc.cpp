@@ -118,6 +118,7 @@ namespace gc {
 
 /* Perform a Full GC every 20 seconds if MaybeGC is called */
 static const uint64_t GC_IDLE_FULL_SPAN = 20 * 1000 * 1000;
+static const uint64_t GC_IDLE_SMALL_SPAN = 1 * 1000 * 1000;
 
 /* Increase the IGC marking slice time if we are in highFrequencyGC mode. */
 const int IGC_MARK_SLICE_MULTIPLIER = 2;
@@ -2625,14 +2626,20 @@ MaybeGC(JSContext *cx)
      * tolerate this.
      */
     int64_t now = PRMJ_Now();
-    if (rt->gcNextFullGCTime && rt->gcNextFullGCTime <= now) {
+    // Run incremental GC periodically
+    if (rt->gcNextSmallGCTime && rt->gcNextSmallGCTime <= now) {
         if (rt->gcChunkAllocationSinceLastGC ||
             rt->gcNumArenasFreeCommitted > FreeCommittedArenasThreshold)
         {
-            PrepareForFullGC(rt);
-            GCSlice(rt, GC_SHRINK, gcreason::MAYBEGC);
+            if (rt->gcNextFullGCTime && rt->gcNextFullGCTime <= now) {
+                PrepareForFullGC(rt);
+                GCSlice(rt, GC_SHRINK, gcreason::FULL_GC_TIMER);
+                rt->gcNextFullGCTime = now + GC_IDLE_FULL_SPAN;
+            } else {
+                GCSlice(rt, GC_NORMAL, gcreason::MAYBEGC);
+            }
         } else {
-            rt->gcNextFullGCTime = now + GC_IDLE_FULL_SPAN;
+            rt->gcNextSmallGCTime = now + GC_IDLE_SMALL_SPAN;
         }
     }
 #endif
@@ -4027,7 +4034,9 @@ AutoGCSession::AutoGCSession(JSRuntime *rt)
 AutoGCSession::~AutoGCSession()
 {
 #ifndef JS_MORE_DETERMINISTIC
-    runtime->gcNextFullGCTime = PRMJ_Now() + GC_IDLE_FULL_SPAN;
+    uint64_t now = PRMJ_Now();
+    runtime->gcNextFullGCTime = now + GC_IDLE_FULL_SPAN;
+    runtime->gcNextSmallGCTime = now + GC_IDLE_SMALL_SPAN;
 #endif
 
     runtime->gcChunkAllocationSinceLastGC = false;

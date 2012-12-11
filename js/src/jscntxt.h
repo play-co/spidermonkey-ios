@@ -610,6 +610,7 @@ struct JSRuntime : js::RuntimeFriendFields
     void                *gcVerifyPostData;
     bool                gcChunkAllocationSinceLastGC;
     int64_t             gcNextFullGCTime;
+    int64_t             gcNextSmallGCTime;
     int64_t             gcLastGCTime;
     int64_t             gcJitReleaseTime;
     JSGCMode            gcMode;
