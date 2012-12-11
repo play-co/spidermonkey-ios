@@ -117,7 +117,7 @@ namespace js {
 namespace gc {
 
 /* Perform a Full GC every 20 seconds if MaybeGC is called */
-static const uint64_t GC_IDLE_FULL_SPAN = 20 * 1000 * 1000;
+static const uint64_t GC_IDLE_FULL_SPAN = 10 * 1000 * 1000;
 static const uint64_t GC_IDLE_SMALL_SPAN = 1 * 1000 * 1000;
 
 /* Increase the IGC marking slice time if we are in highFrequencyGC mode. */
