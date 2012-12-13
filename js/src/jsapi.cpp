@@ -6221,6 +6221,190 @@ JS_EncodeString(JSContext *cx, JSRawString strArg)
     return DeflateString(cx, chars, str->length());
 }
 
+
+
+
+
+
+
+
+
+
+/*
+ * Holy shit would you believe that Mozilla hasn't implemented this? -cat
+ */
+
+// Basic types
+typedef unsigned long UUTF32;
+typedef unsigned short UTF16;
+typedef unsigned char UTF8;
+
+static const UUTF32 halfBase = 0x0010000UL;
+static const UUTF32 halfMask = 0x3FFUL;
+
+static const int halfShift  = 10; /* used for shifting by 10 bits */
+
+#define UNI_SUR_HIGH_START  (UUTF32)0xD800
+#define UNI_SUR_HIGH_END    (UUTF32)0xDBFF
+#define UNI_SUR_LOW_START   (UUTF32)0xDC00
+#define UNI_SUR_LOW_END     (UUTF32)0xDFFF
+
+/* Some fundamental constants */
+#define UNI_REPLACEMENT_CHAR (UUTF32)0x0000FFFD
+#define UNI_MAX_BMP (UUTF32)0x0000FFFF
+#define UNI_MAX_UTF16 (UUTF32)0x0010FFFF
+#define UNI_MAX_UUTF32 (UUTF32)0x7FFFFFFF
+#define UNI_MAX_LEGAL_UUTF32 (UUTF32)0x0010FFFF
+
+/*
+ * Once the bits are split out into bytes of UTF-8, this is a mask OR-ed
+ * into the first byte, depending on how many bytes follow.  There are
+ * as many entries in this table as there are UTF-8 sequence types.
+ * (I.e., one byte sequence, two byte... etc.). Remember that sequencs
+ * for *legal* UTF-8 will be 4 or fewer bytes total.
+ */
+static const UTF8 firstByteMark[7] = { 0x00, 0x00, 0xC0, 0xE0, 0xF0, 0xF8, 0xFC };
+
+int ConvertUTF16toUTF8 (
+    const UTF16* sourceStart, const UTF16* sourceEnd, 
+    UTF8* targetStart, UTF8* targetEnd) {
+
+    const UTF16 *source = sourceStart;
+    UTF8 *target = targetStart;
+
+    while (source < sourceEnd) {
+        UUTF32 ch;
+        int bytesToWrite = 0;
+        const UUTF32 byteMask = 0xBF;
+        const UUTF32 byteMark = 0x80; 
+        const UTF16* oldSource = source; /* In case we have to back up because of target overflow. */
+        ch = *source++;
+
+        /* If we have a surrogate pair, convert to UUTF32 first. */
+        if (ch >= UNI_SUR_HIGH_START && ch <= UNI_SUR_HIGH_END) {
+            /* If the 16 bits following the high surrogate are in the source buffer... */
+            if (source < sourceEnd) {
+                UUTF32 ch2 = *source;
+                /* If it's a low surrogate, convert to UUTF32. */
+                if (ch2 >= UNI_SUR_LOW_START && ch2 <= UNI_SUR_LOW_END) {
+                    ch = ((ch - UNI_SUR_HIGH_START) << halfShift) + (ch2 - UNI_SUR_LOW_START) + halfBase;
+                    ++source;
+                }
+            } else { /* We don't have the 16 bits following the high surrogate. */
+                --source; /* return to the high surrogate */
+                return -1;
+            }
+        }
+
+        /* Figure out how many bytes the result will require */
+        if (ch < (UUTF32)0x80) {
+            bytesToWrite = 1;
+        } else if (ch < (UUTF32)0x800) {
+            bytesToWrite = 2;
+        } else if (ch < (UUTF32)0x10000) {
+            bytesToWrite = 3;
+        } else if (ch < (UUTF32)0x110000) {
+            bytesToWrite = 4;
+        } else {
+            bytesToWrite = 3;
+            ch = UNI_REPLACEMENT_CHAR;
+        }
+
+        target += bytesToWrite;
+
+        if (target > targetEnd) {
+            source = oldSource; /* Back up source pointer! */
+            target -= bytesToWrite;
+            return -1;
+        }
+
+        switch (bytesToWrite) { /* note: everything falls through. */
+            case 4: *--target = (UTF8)((ch | byteMark) & byteMask); ch >>= 6;
+            case 3: *--target = (UTF8)((ch | byteMark) & byteMask); ch >>= 6;
+            case 2: *--target = (UTF8)((ch | byteMark) & byteMask); ch >>= 6;
+            case 1: *--target =  (UTF8)(ch | firstByteMark[bytesToWrite]);
+        }
+
+        target += bytesToWrite;
+    }
+
+    return (int)(target - targetStart);
+}
+
+int ConvertUTF16toUTF8_Length (
+    const UTF16* sourceStart, const UTF16* sourceEnd) {
+
+    int len = 0;
+
+    const UTF16 *source = sourceStart;
+
+    while (source < sourceEnd) {
+        UUTF32 ch;
+        int bytesToWrite = 0;
+        const UUTF32 byteMask = 0xBF;
+        const UUTF32 byteMark = 0x80; 
+        const UTF16* oldSource = source; /* In case we have to back up because of target overflow. */
+        ch = *source++;
+
+        /* If we have a surrogate pair, convert to UUTF32 first. */
+        if (ch >= UNI_SUR_HIGH_START && ch <= UNI_SUR_HIGH_END) {
+            /* If the 16 bits following the high surrogate are in the source buffer... */
+            if (source < sourceEnd) {
+                UUTF32 ch2 = *source;
+                /* If it's a low surrogate, convert to UUTF32. */
+                if (ch2 >= UNI_SUR_LOW_START && ch2 <= UNI_SUR_LOW_END) {
+                    ch = ((ch - UNI_SUR_HIGH_START) << halfShift) + (ch2 - UNI_SUR_LOW_START) + halfBase;
+                    ++source;
+                }
+            } else { /* We don't have the 16 bits following the high surrogate. */
+                --source; /* return to the high surrogate */
+                return -1;
+            }
+        }
+
+        /* Figure out how many bytes the result will require */
+        if (ch < (UUTF32)0x80) {
+            bytesToWrite = 1;
+        } else if (ch < (UUTF32)0x800) {
+            bytesToWrite = 2;
+        } else if (ch < (UUTF32)0x10000) {
+            bytesToWrite = 3;
+        } else if (ch < (UUTF32)0x110000) {
+            bytesToWrite = 4;
+        } else {
+            bytesToWrite = 3;
+            ch = UNI_REPLACEMENT_CHAR;
+        }
+
+        len += bytesToWrite;
+    }
+
+    return len;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 JS_PUBLIC_API(size_t)
 JS_GetStringEncodingLength(JSContext *cx, JSString *str)
 {
@@ -6233,31 +6417,19 @@ JS_GetStringEncodingLength(JSContext *cx, JSString *str)
     const jschar *chars = str->getChars(cx);
     if (!chars)
         return size_t(-1);
-    return GetDeflatedStringLength(cx, chars, str->length());
+
+    return ConvertUTF16toUTF8_Length(chars, chars + str->length());
 }
 
 JS_PUBLIC_API(size_t)
 JS_EncodeStringToBuffer(JSString *str, char *buffer, size_t length)
 {
-    /*
-     * FIXME bug 612141 - fix DeflateStringToBuffer interface so the result
-     * would allow to distinguish between insufficient buffer and encoding
-     * error.
-     */
     size_t writtenLength = length;
     const jschar *chars = str->getChars(NULL);
     if (!chars)
         return size_t(-1);
-    if (DeflateStringToBuffer(NULL, chars, str->length(), buffer, &writtenLength)) {
-        JS_ASSERT(writtenLength <= length);
-        return writtenLength;
-    }
-    JS_ASSERT(writtenLength <= length);
-    size_t necessaryLength = GetDeflatedStringLength(NULL, chars, str->length());
-    if (necessaryLength == size_t(-1))
-        return size_t(-1);
-    JS_ASSERT(writtenLength == length); // C strings are NOT encoded.
-    return necessaryLength;
+
+    return ConvertUTF16toUTF8(chars, chars + str->length(), (UTF8*)buffer, (UTF8*)buffer + length);
 }
 
 JS_PUBLIC_API(JSBool)
