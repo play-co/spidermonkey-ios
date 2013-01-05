@@ -438,10 +438,12 @@ MarkValueRange(JSTracer *trc, size_t len, EncapsulatedValue *vec, const char *na
 void
 MarkValueRootRange(JSTracer *trc, size_t len, Value *vec, const char *name)
 {
-    JS_ROOT_MARKING_ASSERT(trc);
-    for (size_t i = 0; i < len; ++i) {
-        JS_SET_TRACING_INDEX(trc, name, i);
-        MarkValueInternal(trc, &vec[i]);
+    if (trc && vec) {
+        JS_ROOT_MARKING_ASSERT(trc);
+        for (size_t i = 0; i < len; ++i) {
+            JS_SET_TRACING_INDEX(trc, name, i);
+            MarkValueInternal(trc, &vec[i]);
+        }
     }
 }
 
