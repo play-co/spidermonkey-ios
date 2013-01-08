@@ -1,4 +1,4 @@
-ACDEFINES = -DSTATIC_EXPORTABLE_JS_API=1 -DIPHONEOS=1 -DCROSS_COMPILE=1 -DX_DISPLAY_MISSING=1 -DD_INO=d_ino -DJS_CPU_X86=1 -DJS_NUNBOX32=1 -DJS_METHODJIT_TYPED_ARRAY=1 -DSTDC_HEADERS=1 -DHAVE_STDCALL=1 -DHAVE_SSIZE_T=1 -DHAVE_ST_BLKSIZE=1 -DHAVE_SIGINFO_T=1 -DJS_BYTES_PER_WORD=4 -DJS_BITS_PER_WORD_LOG2=5 -DJS_ALIGN_OF_POINTER=4 -DJS_BYTES_PER_DOUBLE=8 -DHAVE_ENDIAN_H=1 -DJS_HAVE_ENDIAN_H=1 -DHAVE_MACHINE_ENDIAN_H=1 -DJS_HAVE_MACHINE_ENDIAN_H=1 -DHAVE_UINT=1 -DHAVE_VISIBILITY_HIDDEN_ATTRIBUTE=1 -DHAVE_VISIBILITY_ATTRIBUTE=1 -DHAVE_DIRENT_H=1 -DHAVE_GETOPT_H=1 -DHAVE_MEMORY_H=1 -DHAVE_UNISTD_H=1 -DHAVE_NL_TYPES_H=1 -DHAVE_SYS_STATVFS_H=1 -DHAVE_SYS_MOUNT_H=1 -DNEW_H=\<new\> -DHAVE_SYS_CDEFS_H=1 -DHAVE_DLADDR=1 -DHAVE_FCHMOD=1 -DHAVE_FLOCKFILE=1 -DHAVE_GETC_UNLOCKED=1 -DHAVE_GETPAGESIZE=1 -DHAVE_LCHOWN=1 -DHAVE_LOCALTIME_R=1 -DHAVE_LSTAT64=1 -DHAVE_MEMMOVE=1 -DHAVE_RANDOM=1 -DHAVE_RINT=1 -DHAVE_SBRK=1 -DHAVE_SNPRINTF=1 -DHAVE_STAT64=1 -DHAVE_STATVFS=1 -DHAVE_STRERROR=1 -DHAVE_STRTOK_R=1 -DHAVE_WCRTOMB=1 -DHAVE_MBRTOWC=1 -DHAVE_CPP_PARTIAL_SPECIALIZATION=1 -DHAVE_CPP_AMBIGUITY_RESOLVING_USING=1 -DNEED_CPP_UNUSED_IMPLEMENTATIONS=1 -DHAVE_I18N_LC_MESSAGES=1 -DHAVE_LOCALECONV=1 -DNS_ALWAYS_INLINE=__attribute__\(\(always_inline\)\) -DNS_ATTR_MALLOC=__attribute__\(\(malloc\)\) -DNS_WARN_UNUSED_RESULT=__attribute__\(\(warn_unused_result\)\) -DMOZ_DEBUG_SYMBOLS=1 -DJSGC_INCREMENTAL=1 -DHAVE___CXA_DEMANGLE=1 -DJS_DEFAULT_JITREPORT_GRANULARITY=3 -DJS_HAS_XML_SUPPORT=1 -DHAVE_TM_ZONE_TM_GMTOFF=1 -DCPP_THROW_NEW=throw\(\) -DEDITLINE=1 -DMOZ_DLL_SUFFIX=\".dylib\" -DXP_MACOSX=1 -DXP_UNIX=1 -DJS_THREADSAFE=1 -DHAVE_SETLOCALE=1 -DHAVE_LOCALECONV=1
+ACDEFINES = -DSTATIC_EXPORTABLE_JS_API=1 -DIPHONEOS=1 -DCROSS_COMPILE=1 -DX_DISPLAY_MISSING=1 -DMOZ_THUMB2=1 -DD_INO=d_ino -DJS_CPU_ARM=1 -DJS_NUNBOX32=1 -DSTDC_HEADERS=1 -DHAVE_STDCALL=1 -DHAVE_SSIZE_T=1 -DHAVE_ST_BLKSIZE=1 -DHAVE_SIGINFO_T=1 -DJS_BYTES_PER_WORD=4 -DJS_BITS_PER_WORD_LOG2=5 -DJS_ALIGN_OF_POINTER=4 -DJS_BYTES_PER_DOUBLE=8 -DHAVE_ENDIAN_H=1 -DJS_HAVE_ENDIAN_H=1 -DHAVE_MACHINE_ENDIAN_H=1 -DJS_HAVE_MACHINE_ENDIAN_H=1 -DHAVE_UINT=1 -DHAVE_VISIBILITY_HIDDEN_ATTRIBUTE=1 -DHAVE_VISIBILITY_ATTRIBUTE=1 -DHAVE_DIRENT_H=1 -DHAVE_GETOPT_H=1 -DHAVE_MEMORY_H=1 -DHAVE_UNISTD_H=1 -DHAVE_NL_TYPES_H=1 -DHAVE_SYS_STATVFS_H=1 -DHAVE_SYS_MOUNT_H=1 -DNEW_H=\<new\> -DHAVE_SYS_CDEFS_H=1 -DHAVE_DLADDR=1 -DHAVE_FCHMOD=1 -DHAVE_FLOCKFILE=1 -DHAVE_GETC_UNLOCKED=1 -DHAVE_GETPAGESIZE=1 -DHAVE_LCHOWN=1 -DHAVE_LOCALTIME_R=1 -DHAVE_LSTAT64=1 -DHAVE_MEMMOVE=1 -DHAVE_RANDOM=1 -DHAVE_RINT=1 -DHAVE_SBRK=1 -DHAVE_SNPRINTF=1 -DHAVE_STAT64=1 -DHAVE_STATVFS=1 -DHAVE_STRERROR=1 -DHAVE_STRTOK_R=1 -DHAVE_WCRTOMB=1 -DHAVE_MBRTOWC=1 -DHAVE_CPP_PARTIAL_SPECIALIZATION=1 -DHAVE_CPP_AMBIGUITY_RESOLVING_USING=1 -DNEED_CPP_UNUSED_IMPLEMENTATIONS=1 -DHAVE_I18N_LC_MESSAGES=1 -DHAVE_LOCALECONV=1 -DNS_ALWAYS_INLINE=__attribute__\(\(always_inline\)\) -DNS_ATTR_MALLOC=__attribute__\(\(malloc\)\) -DNS_WARN_UNUSED_RESULT=__attribute__\(\(warn_unused_result\)\) -DMOZ_DEBUG_SYMBOLS=1 -DJSGC_INCREMENTAL=1 -DHAVE___CXA_DEMANGLE=1 -DJS_DEFAULT_JITREPORT_GRANULARITY=3 -DJS_HAS_XML_SUPPORT=1 -DHAVE_TM_ZONE_TM_GMTOFF=1 -DCPP_THROW_NEW=throw\(\) -DEDITLINE=1 -DMOZ_DLL_SUFFIX=\".dylib\" -DXP_MACOSX=1 -DXP_UNIX=1 -DJS_THREADSAFE=1 -DHAVE_SETLOCALE=1 -DHAVE_LOCALECONV=1
 AIX_OBJMODEL = 
 ANDROID_CPU_ARCH = 
 ANDROID_NDK = /usr/local/android-ndk-r8b
@@ -11,7 +11,7 @@ AR_EXTRACT = $(AR) x
 AR_FLAGS = cr $@
 AR_LIST = $(AR) t
 AS = $(CC)
-ASFLAGS =  -fPIC
+ASFLAGS =  -mthumb -fPIC
 ASM_SUFFIX = s
 AS_DASH_C_FLAG = -c
 AUTOCONF = /usr/local/bin/autoconf
@@ -21,7 +21,7 @@ BIN_SUFFIX =
 CC = /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang
 CCACHE = no
 CC_VERSION = 
-CFLAGS = -Qunused-arguments -Wall -Wpointer-arith -Wdeclaration-after-statement -Werror=return-type -Wtype-limits -Wempty-body -Wno-unused -Wno-overlength-strings -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator6.0.sdk -arch i386 -miphoneos-version-min=4.3 -I/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator6.0.sdk/usr/include -pipe -Wno-implicit-int -Wno-return-type -integrated-as -fno-common -ffunction-sections -fdata-sections -pthread -pipe
+CFLAGS = -Qunused-arguments -Wall -Wpointer-arith -Wdeclaration-after-statement -Werror=return-type -Wtype-limits -Wempty-body -Wno-unused -Wno-overlength-strings -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS6.0.sdk -arch armv7 -miphoneos-version-min=4.3 -I/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS6.0.sdk/usr/include -pipe -Wno-implicit-int -Wno-return-type -integrated-as -mvectorize-with-neon-quad -fprefetch-loop-arrays -mfloat-abi=hard -ftree-vectorize -march=armv7-a -mfpu=vfpv3-d16 -mthumb -fno-common -ffunction-sections -fdata-sections -pthread -pipe
 CLANG_CXX = 1
 CL_INCLUDES_PREFIX = 
 CPP = /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -E
@@ -30,7 +30,7 @@ CPU_ARCH = x86_64
 CROSS_COMPILE = 1
 CXX = /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang++
 CXXCPP = /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang++ -E
-CXXFLAGS = -Qunused-arguments -Wall -Wpointer-arith -Woverloaded-virtual -Werror=return-type -Wtype-limits -Wempty-body -Wno-ctor-dtor-privacy -Wno-overlength-strings -Wno-invalid-offsetof -Wno-variadic-macros -Wno-c++0x-extensions -Wno-extended-offsetof -Wno-unknown-warning-option -Wno-return-type-c-linkage -Wno-mismatched-tags -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator6.0.sdk -arch i386 -miphoneos-version-min=4.3 -I/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator6.0.sdk/usr/include -pipe -Wno-implicit-int -Wno-return-type -integrated-as -fno-common -fno-rtti -ffunction-sections -fdata-sections -fno-exceptions -pthread -pipe
+CXXFLAGS = -Qunused-arguments -Wall -Wpointer-arith -Woverloaded-virtual -Werror=return-type -Wtype-limits -Wempty-body -Wno-ctor-dtor-privacy -Wno-overlength-strings -Wno-invalid-offsetof -Wno-variadic-macros -Wno-c++0x-extensions -Wno-extended-offsetof -Wno-unknown-warning-option -Wno-return-type-c-linkage -Wno-mismatched-tags -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS6.0.sdk -arch armv7 -miphoneos-version-min=4.3 -I/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS6.0.sdk/usr/include -pipe -Wno-implicit-int -Wno-return-type -integrated-as -mvectorize-with-neon-quad -fprefetch-loop-arrays -mfloat-abi=hard -ftree-vectorize -march=armv7-a -mfpu=vfpv3-d16 -mthumb -fno-common -fno-rtti -ffunction-sections -fdata-sections -fno-exceptions -pthread -pipe
 CXX_VERSION = 
 DEFS = 
 DEHYDRA_PATH = 
@@ -44,7 +44,7 @@ EDITLINE_LIBS = $(DEPTH)/editline/$(LIB_PREFIX)editline.$(LIB_SUFFIX)
 ENABLE_ION = 
 ENABLE_METHODJIT = 
 ENABLE_METHODJIT_SPEW = 
-ENABLE_STRIP = 
+ENABLE_STRIP = 1
 ENABLE_TESTS = 
 ENABLE_TRACE_LOGGING = 
 EXPAND_LIBS_LIST_STYLE = list
@@ -90,7 +90,7 @@ JS_HAS_CTYPES =
 JS_NATIVE_EDITLINE = 1
 JS_SHARED_LIBRARY = 
 LD = /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/ld
-LDFLAGS =  -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator6.0.sdk -arch i386 -v -lobjc
+LDFLAGS =  -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS6.0.sdk -arch armv7 -v -mthumb -lobjc
 LD_PRINT_ICF_SECTIONS = 
 LIBICONV = 
 LIBOBJS =  memcmp.o
@@ -153,7 +153,7 @@ MOZ_POST_DSO_LIB_COMMAND =
 MOZ_POST_PROGRAM_COMMAND = 
 MOZ_PROFILING = 
 MOZ_SHARK = 
-MOZ_THUMB2 = 
+MOZ_THUMB2 = 1
 MOZ_TOOLS_DIR = 
 MOZ_UI_LOCALE = 
 MOZ_USING_CCACHE = 
@@ -171,12 +171,12 @@ NSPR_LIBS = /Users/cat/cleanroom/ios/spidermonkey-ios/js/src/../../nsprpub//libn
 NS_TRACE_MALLOC = 
 OBJ_SUFFIX = o
 OS_ARCH = Darwin
-OS_CFLAGS = -Qunused-arguments -Wall -Wpointer-arith -Wdeclaration-after-statement -Werror=return-type -Wtype-limits -Wempty-body -Wno-unused -Wno-overlength-strings -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator6.0.sdk -arch i386 -miphoneos-version-min=4.3 -I/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator6.0.sdk/usr/include -pipe -Wno-implicit-int -Wno-return-type -integrated-as -fno-common -ffunction-sections -fdata-sections -pthread -pipe
+OS_CFLAGS = -Qunused-arguments -Wall -Wpointer-arith -Wdeclaration-after-statement -Werror=return-type -Wtype-limits -Wempty-body -Wno-unused -Wno-overlength-strings -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS6.0.sdk -arch armv7 -miphoneos-version-min=4.3 -I/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS6.0.sdk/usr/include -pipe -Wno-implicit-int -Wno-return-type -integrated-as -mvectorize-with-neon-quad -fprefetch-loop-arrays -mfloat-abi=hard -ftree-vectorize -march=armv7-a -mfpu=vfpv3-d16 -mthumb -fno-common -ffunction-sections -fdata-sections -pthread -pipe
 OS_COMPILE_CFLAGS = -include $(DEPTH)/js-confdefs.h -DMOZILLA_CLIENT $(filter-out %/.pp,-MD -MF $(MDDEPDIR)/$(@F).pp)
 OS_COMPILE_CXXFLAGS = -DMOZILLA_CLIENT -include $(DEPTH)/js-confdefs.h $(filter-out %/.pp,-MD -MF $(MDDEPDIR)/$(@F).pp)
 OS_CPPFLAGS = -Qunused-arguments 
-OS_CXXFLAGS = -Qunused-arguments -Wall -Wpointer-arith -Woverloaded-virtual -Werror=return-type -Wtype-limits -Wempty-body -Wno-ctor-dtor-privacy -Wno-overlength-strings -Wno-invalid-offsetof -Wno-variadic-macros -Wno-c++0x-extensions -Wno-extended-offsetof -Wno-unknown-warning-option -Wno-return-type-c-linkage -Wno-mismatched-tags -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator6.0.sdk -arch i386 -miphoneos-version-min=4.3 -I/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator6.0.sdk/usr/include -pipe -Wno-implicit-int -Wno-return-type -integrated-as -fno-common -fno-rtti -ffunction-sections -fdata-sections -fno-exceptions -pthread -pipe
-OS_LDFLAGS =  -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator6.0.sdk -arch i386 -v -lobjc
+OS_CXXFLAGS = -Qunused-arguments -Wall -Wpointer-arith -Woverloaded-virtual -Werror=return-type -Wtype-limits -Wempty-body -Wno-ctor-dtor-privacy -Wno-overlength-strings -Wno-invalid-offsetof -Wno-variadic-macros -Wno-c++0x-extensions -Wno-extended-offsetof -Wno-unknown-warning-option -Wno-return-type-c-linkage -Wno-mismatched-tags -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS6.0.sdk -arch armv7 -miphoneos-version-min=4.3 -I/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS6.0.sdk/usr/include -pipe -Wno-implicit-int -Wno-return-type -integrated-as -mvectorize-with-neon-quad -fprefetch-loop-arrays -mfloat-abi=hard -ftree-vectorize -march=armv7-a -mfpu=vfpv3-d16 -mthumb -fno-common -fno-rtti -ffunction-sections -fdata-sections -fno-exceptions -pthread -pipe
+OS_LDFLAGS =  -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS6.0.sdk -arch armv7 -v -mthumb -lobjc
 OS_LIBS = 
 OS_RELEASE = 
 OS_TARGET = Darwin
@@ -184,7 +184,7 @@ OS_TEST = x86_64
 PBBUILD_BIN = /usr/bin/xcodebuild
 PERL = /usr/bin/perl
 PKG_CONFIG = 
-PKG_SKIP_STRIP = 1
+PKG_SKIP_STRIP = 
 PROFILE_GEN_CFLAGS = -fprofile-generate
 PROFILE_GEN_LDFLAGS = -fprofile-generate
 PROFILE_USE_CFLAGS = -fprofile-use -fprofile-correction -Wcoverage-mismatch
@@ -223,7 +223,7 @@ X_EXTRA_LIBS =
 X_LIBS = 
 X_PRE_LIBS = 
 _MSC_VER = 
-ac_configure_args =  --with-ios-target=iPhoneSimulator --with-ios-version=6.0 --with-ios-min-version=4.3 --disable-shared-js --disable-tests --disable-ion --disable-jm --disable-tm --enable-llvm-hacks --disable-methodjit --disable-strip --disable-install-strip --disable-monoic --disable-polyic --disable-root-analysis --disable-exact-rooting --enable-gcincremental --enable-optimize=-O3 --enable-threadsafe --with-nspr-cflags=-I/Users/cat/cleanroom/ios/spidermonkey-ios/js/src/../../nsprpub/dist//include/nspr/ --with-nspr-prefix=/Users/cat/cleanroom/ios/spidermonkey-ios/js/src/../../nsprpub/dist/ --with-nspr-libs=/Users/cat/cleanroom/ios/spidermonkey-ios/js/src/../../nsprpub//libnspr4.a
+ac_configure_args =  --with-ios-target=iPhoneOS --with-ios-version=6.0 --with-ios-min-version=4.3 --with-ios-arch=armv7 --disable-shared-js --disable-tests --disable-ion --disable-jm --disable-tm --enable-llvm-hacks --disable-methodjit --with-thumb=yes --enable-strip --enable-install-strip --disable-monoic --disable-polyic --disable-root-analysis --disable-exact-rooting --enable-gcincremental --enable-optimize=-O3 --enable-threadsafe --with-nspr-cflags=-I/Users/cat/cleanroom/ios/spidermonkey-ios/js/src/../../nsprpub/dist//include/nspr/ --with-nspr-prefix=/Users/cat/cleanroom/ios/spidermonkey-ios/js/src/../../nsprpub/dist/ --with-nspr-libs=/Users/cat/cleanroom/ios/spidermonkey-ios/js/src/../../nsprpub//libnspr4.a
 bindir = ${exec_prefix}/bin
 build = x86_64-apple-darwin11.4.2
 build_alias = x86_64-apple-darwin11.4.2
@@ -249,7 +249,7 @@ program_transform_name = s,x,x,
 sbindir = ${exec_prefix}/sbin
 sharedstatedir = ${prefix}/com
 sysconfdir = ${prefix}/etc
-target = i386-darwin
+target = arm-darwin
 target_alias = x86_64-apple-darwin11.4.2
 target_cpu = x86_64
 target_os = darwin

@@ -118,10 +118,10 @@ ac_cv_prog_LD=${ac_cv_prog_LD=/Applications/Xcode.app/Contents/Developer/Toolcha
 ac_cv_prog_LN_S=${ac_cv_prog_LN_S='ln -s'}
 ac_cv_prog_RANLIB=${ac_cv_prog_RANLIB=/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/ranlib}
 ac_cv_prog_STRIP=${ac_cv_prog_STRIP=/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/strip}
-ac_cv_prog_cc_cross=${ac_cv_prog_cc_cross=no}
+ac_cv_prog_cc_cross=${ac_cv_prog_cc_cross=yes}
 ac_cv_prog_cc_g=${ac_cv_prog_cc_g=yes}
 ac_cv_prog_cc_works=${ac_cv_prog_cc_works=yes}
-ac_cv_prog_cxx_cross=${ac_cv_prog_cxx_cross=no}
+ac_cv_prog_cxx_cross=${ac_cv_prog_cxx_cross=yes}
 ac_cv_prog_cxx_g=${ac_cv_prog_cxx_g=yes}
 ac_cv_prog_cxx_works=${ac_cv_prog_cxx_works=yes}
 ac_cv_prog_gcc=${ac_cv_prog_gcc=yes}

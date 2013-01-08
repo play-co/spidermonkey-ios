@@ -110,16 +110,13 @@ ScriptDebugEpilogue(JSContext *cx, StackFrame *fp, bool okArg)
     JS_ASSERT(fp == cx->fp());
     JSBool ok = okArg;
 
-    // Call hook ALWAYS executed even if data isn't there.  This means that the
-    // closure (aka hookData) is unreliable but that's fine by me -cat
-    void *hookData = fp->maybeHookData();
-
+    // Changed to execute the epilogue hook every time -cat
     if (fp->isFramePushedByExecute()) {
         if (JSInterpreterHook hook = cx->runtime->debugHooks.executeHook)
-            hook(cx, Jsvalify(fp), false, &ok, hookData);
+            hook(cx, Jsvalify(fp), false, &ok, cx->runtime->debugHooks.executeHookData);
     } else {
         if (JSInterpreterHook hook = cx->runtime->debugHooks.callHook)
-            hook(cx, Jsvalify(fp), false, &ok, hookData);
+            hook(cx, Jsvalify(fp), false, &ok, cx->runtime->debugHooks.callHookData);
     }
 
     return Debugger::onLeaveFrame(cx, ok);
