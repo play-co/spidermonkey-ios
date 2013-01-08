@@ -110,14 +110,16 @@ ScriptDebugEpilogue(JSContext *cx, StackFrame *fp, bool okArg)
     JS_ASSERT(fp == cx->fp());
     JSBool ok = okArg;
 
-    if (void *hookData = fp->maybeHookData()) {
-        if (fp->isFramePushedByExecute()) {
-            if (JSInterpreterHook hook = cx->runtime->debugHooks.executeHook)
-                hook(cx, Jsvalify(fp), false, &ok, hookData);
-        } else {
-            if (JSInterpreterHook hook = cx->runtime->debugHooks.callHook)
-                hook(cx, Jsvalify(fp), false, &ok, hookData);
-        }
+    // Call hook ALWAYS executed even if data isn't there.  This means that the
+    // closure (aka hookData) is unreliable but that's fine by me -cat
+    void *hookData = fp->maybeHookData();
+
+    if (fp->isFramePushedByExecute()) {
+        if (JSInterpreterHook hook = cx->runtime->debugHooks.executeHook)
+            hook(cx, Jsvalify(fp), false, &ok, hookData);
+    } else {
+        if (JSInterpreterHook hook = cx->runtime->debugHooks.callHook)
+            hook(cx, Jsvalify(fp), false, &ok, hookData);
     }
 
     return Debugger::onLeaveFrame(cx, ok);
