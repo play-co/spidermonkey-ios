@@ -13,7 +13,6 @@
  * code that is (only currently) mfbt-incompatible.
  */
 
-/* Check out this awesome hack -cat */
 #define inline __inline__ __attribute__((always_inline))
 
 /*
