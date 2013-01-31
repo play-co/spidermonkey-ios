@@ -6231,7 +6231,7 @@ JS_EncodeString(JSContext *cx, JSRawString strArg)
 
 
 /*
- * Holy shit would you believe that Mozilla hasn't implemented this? -cat
+ * Implement UTF16 -> UTF8 conversion
  */
 
 // Basic types
