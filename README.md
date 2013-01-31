@@ -28,3 +28,4 @@ Major improvements:
 ++ Fixed a null exception in MarkValueRootRange
 ++ JS_EncodeStringToBuffer() now does UTF8 conversion instead of truncation,
 	which fixes Chinese/Korean text strings
+
