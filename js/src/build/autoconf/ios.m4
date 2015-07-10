@@ -35,7 +35,11 @@ iPhoneOS|iPhoneSimulator)
         AC_MSG_ERROR([You must install Xcode first from the App Store])
     fi
 
+
+    mios_flag="-miphoneos-version-min"
+
     if test "$ios_target" == "iPhoneSimulator" ; then
+        mios_flag="-mios-simulator-version-min"
         if test "$ios_arch" == "i386"; then
             dnl force ios_arch to i386 for simulator
             CPU_ARCH=i386
@@ -82,9 +86,9 @@ iPhoneOS|iPhoneSimulator)
     AR="$ios_toolchain"/ar
     RANLIB="$ios_toolchain"/ranlib
     STRIP="$ios_toolchain"/strip
-    LDFLAGS="-isysroot $ios_sdk_root -arch $ios_arch -v"
+    LDFLAGS="-isysroot $ios_sdk_root -arch $ios_arch -v -fPIC"
 
-    CFLAGS="-isysroot $ios_sdk_root -arch $ios_arch -miphoneos-version-min=$ios_deploy_version -I$ios_sdk_root/usr/include -pipe -Wno-implicit-int -Wno-return-type"
+    CFLAGS="-isysroot $ios_sdk_root -arch $ios_arch $mios_flag=$ios_deploy_version -I$ios_sdk_root/usr/include -pipe -Wno-implicit-int -Wno-return-type -fPIC"
     CXXFLAGS="$CFLAGS"
     CPPFLAGS="$CFLAGS"
 

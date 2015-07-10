@@ -3,8 +3,10 @@
 ## this script is supposed to be run one directory below the original configure script
 ## usually in build-ios
 
-MIN_IOS_VERSION=4.3
-IOS_SDK=7.1
+MIN_IOS_VERSION=5.1
+IOS_SDK=8.1
+
+. ../../../functions.sh
 
 LIPO="xcrun -sdk iphoneos lipo"
 STRIP="xcrun -sdk iphoneos strip"
@@ -17,11 +19,12 @@ cpus=$(sysctl hw.ncpu | awk '{print $2}')
 #
 # create i386 version (simulator)
 #
-#../configure --with-ios-target=iPhoneSimulator --with-ios-version=$IOS_SDK --with-ios-min-version=$MIN_IOS_VERSION --disable-shared-js --disable-tests --disable-ion --enable-llvm-hacks --enable-debug
+            #--disable-shared-js --disable-tests --disable-ion --disable-jm --disable-tm --enable-llvm-hacks --disable-methodjit --disable-monoic --disable-polyic \
 ../configure --with-ios-target=iPhoneSimulator --with-ios-version=$IOS_SDK --with-ios-min-version=$MIN_IOS_VERSION --with-ios-arch=i386 \
-            --disable-shared-js --disable-tests --disable-ion --disable-jm --disable-tm --enable-llvm-hacks --disable-methodjit --disable-monoic --disable-polyic \
+            --disable-shared-js --enable-tests --disable-ion --disable-jm --disable-tm --enable-llvm-hacks --disable-methodjit --disable-monoic --disable-polyic \
             --enable-optimize=-O3 --enable-strip --enable-install-strip \
-            --disable-debug --without-intl-api --disable-threadsafe
+            --disable-debug --without-intl-api --enable-threadsafe --enable-posix-nspr-emulation  --enable-exact-rooting
+assert_success $? "configure i386"
 make -j$cpus
 if (( $? )) ; then
     echo "error when compiling i386 (iOS Simulator) version of the library"
@@ -32,11 +35,11 @@ mv libjs_static.a libjs_static.i386.a
 #
 # create x86_64 version (simulator)
 #
-#../configure --with-ios-target=iPhoneSimulator --with-ios-version=$IOS_SDK --with-ios-min-version=$MIN_IOS_VERSION --disable-shared-js --disable-tests --disable-ion --enable-llvm-hacks --enable-debug
 ../configure --with-ios-target=iPhoneSimulator --with-ios-version=$IOS_SDK --with-ios-min-version=$MIN_IOS_VERSION --with-ios-arch=x86_64 \
             --disable-shared-js --disable-tests --disable-ion --disable-jm --disable-tm --enable-llvm-hacks --disable-methodjit --disable-monoic --disable-polyic \
             --enable-optimize=-O3 --enable-strip --enable-install-strip \
-            --disable-debug --without-intl-api --disable-threadsafe
+            --disable-debug --without-intl-api --enable-threadsafe --enable-posix-nspr-emulation  --enable-exact-rooting
+assert_success $? "configure x86_64"
 make -j$cpus
 if (( $? )) ; then
     echo "error when compiling x86_64 (iOS Simulator) version of the library"
@@ -50,7 +53,8 @@ mv libjs_static.a libjs_static.x86_64.a
 #
 ../configure --with-ios-target=iPhoneOS --with-ios-version=$IOS_SDK --with-ios-min-version=$MIN_IOS_VERSION --with-ios-arch=armv7 \
             --disable-shared-js --disable-tests --disable-ion --disable-jm --disable-tm --enable-llvm-hacks --disable-methodjit --disable-monoic --disable-polyic --disable-yarr-jit \
-            --enable-optimize=-O3 --with-thumb=yes --enable-strip --enable-install-strip --without-intl-api --disable-debug --disable-threadsafe
+            --enable-optimize=-O3 --with-thumb=yes --enable-strip --enable-install-strip --without-intl-api --disable-debug --enable-threadsafe --enable-posix-nspr-emulation --enable-exact-rooting
+assert_success $? "configure armv7"
 make -j$cpus
 if (( $? )) ; then
     echo "error when compiling iOS version of the library"
@@ -62,11 +66,10 @@ mv libjs_static.a libjs_static.armv7.a
 #
 # create ios version (armv7s)
 #
-
-#../configure --with-ios-target=iPhoneOS --with-ios-version=$IOS_SDK --with-ios-min-version=$MIN_IOS_VERSION --with-ios-arch=armv7s  --disable-shared-js --disable-tests --disable-ion --disable-jm --disable-tm --enable-llvm-hacks --disable-methodjit --with-thumb=yes --enable-strip --enable-install-strip --disable-monoic --disable-polyic --disable-ion --enable-optimize=-O1
 ../configure --with-ios-target=iPhoneOS --with-ios-version=$IOS_SDK --with-ios-min-version=$MIN_IOS_VERSION --with-ios-arch=armv7s \
             --disable-shared-js --disable-tests --disable-ion --disable-jm --disable-tm --enable-llvm-hacks --disable-methodjit --disable-monoic --disable-polyic --disable-yarr-jit \
-            --enable-optimize=-O3 --with-thumb=yes --enable-strip --enable-install-strip --without-intl-api --disable-debug --disable-threadsafe
+            --enable-optimize=-O3 --with-thumb=yes --enable-strip --enable-install-strip --without-intl-api --disable-debug --enable-threadsafe --enable-posix-nspr-emulation --enable-exact-rooting
+assert_success $? "configure armv7s"
 make -j$cpus
 if (( $? )) ; then
     echo "error when compiling iOS version of the library"
@@ -77,23 +80,24 @@ mv libjs_static.a libjs_static.armv7s.a
 #
 # create ios version (arm64)
 #
-
-#../configure --with-ios-target=iPhoneOS --with-ios-version=$IOS_SDK --with-ios-min-version=$MIN_IOS_VERSION --with-ios-arch=arm64 \
-#            --disable-shared-js --disable-tests --disable-ion --disable-jm --disable-tm --enable-llvm-hacks --disable-methodjit --disable-monoic --disable-polyic --disable-yarr-jit \
-#            --enable-optimize=-O3 --with-thumb=yes --enable-strip --enable-install-strip --without-intl-api --disable-debug --disable-threadsafe
-#make -j$cpus
-#if (( $? )) ; then
-#    echo "error when compiling iOS version of the library"
-#    exit
-#fi
-#mv libjs_static.a libjs_static.arm64.a
+../configure --with-ios-target=iPhoneOS --with-ios-version=$IOS_SDK --with-ios-min-version=$MIN_IOS_VERSION --with-ios-arch=arm64 \
+            --disable-shared-js --disable-tests --disable-ion --disable-jm --disable-tm --enable-llvm-hacks --disable-methodjit --disable-monoic --disable-polyic --disable-yarr-jit \
+            --enable-optimize=-O3 --with-thumb=yes --enable-strip --enable-install-strip --without-intl-api --disable-debug --enable-threadsafe --enable-posix-nspr-emulation --enable-exact-rooting
+assert_success $? "configure arm64"
+make -j$cpus
+assert_success $? "compile arm64"
+mv libjs_static.a libjs_static.arm64.a
 
 #
 # lipo create
 #
-if [ -e libjs_static.i386.a ] && [ -e libjs_static.x86_64.a ] && [ -e libjs_static.armv7.a ] && [ -e libjs_static.armv7s.a ] ; then
+if [ -e libjs_static.i386.a ] &&
+    [ -e libjs_static.x86_64.a ] &&
+    [ -e libjs_static.armv7.a ] &&
+    [ -e libjs_static.arm64.a ] &&
+    [ -e libjs_static.armv7s.a ] ; then
     echo "creating fat version of the library"
-    $LIPO -create -output libjs_static.a libjs_static.i386.a libjs_static.x86_64.a libjs_static.armv7.a libjs_static.armv7s.a
+    $LIPO -create -output libjs_static.a libjs_static.i386.a libjs_static.x86_64.a libjs_static.armv7.a libjs_static.armv7s.a libjs_static.arm64.a
     # remove debugging info
     $STRIP -S libjs_static.a
     $LIPO -info libjs_static.a
